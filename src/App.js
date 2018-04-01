@@ -95,23 +95,32 @@ class App extends Component {
     }));
   };
 
-  pickOrDrop = () => {
+  drop = () => {
     this.setState(state => {
       const { holding, columns, position } = state;
-      let newHolding = [];
-      const newColumns = columns.map((column, index) => {
-        if (index === position) {
-          if (holding.length > 0) {
-            return column.concat(holding);
-          } else {
-            newHolding = newHolding.concat(
-              takeRightWhile(column, ({ id }) => id === last(column).id)
-            );
-            return column.slice(0, column.length - newHolding.length);
-          }
-        }
-        return column;
-      });
+      const newColumns = columns.map(
+        (column, index) =>
+          index === position ? column.concat(holding) : column
+      );
+
+      return { ...state, columns: newColumns, holding: [] };
+    });
+  };
+
+  pick = () => {
+    this.setState(state => {
+      const { columns, position } = state;
+      const selectedColumn = columns[position];
+      const newHolding = takeRightWhile(
+        selectedColumn,
+        ({ id }) => id === last(selectedColumn).id
+      );
+      const newColumns = columns.map(
+        (column, index) =>
+          index === position
+            ? column.slice(0, column.length - newHolding.length)
+            : column
+      );
 
       return { ...state, columns: newColumns, holding: newHolding };
     });
@@ -120,7 +129,11 @@ class App extends Component {
   handleKeyDown = evt => {
     switch (evt.code) {
       case "Space":
-        this.pickOrDrop();
+        if (this.state.holding.length > 0) {
+          this.drop();
+        } else {
+          this.pick();
+        }
         break;
       case "ArrowLeft":
         this.moveLeft();
