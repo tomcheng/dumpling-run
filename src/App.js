@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import styled from "styled-components";
+import last from "lodash/last";
 import sample from "lodash/sample";
+import takeRightWhile from "lodash/takeRightWhile";
 
 const NUM_COLUMNS = 10;
 const GUTTER = 2;
@@ -102,8 +104,10 @@ class App extends Component {
           if (holding.length > 0) {
             return column.concat(holding);
           } else {
-            newHolding = newHolding.concat(column.slice(-1));
-            return column.slice(0, column.length - 1);
+            newHolding = newHolding.concat(
+              takeRightWhile(column, ({ id }) => id === last(column).id)
+            );
+            return column.slice(0, column.length - newHolding.length);
           }
         }
         return column;
