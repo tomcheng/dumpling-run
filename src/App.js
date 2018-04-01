@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import styled from "styled-components";
+import isEqual from "lodash/isEqual";
 import keys from "lodash/keys";
 import last from "lodash/last";
 import sample from "lodash/sample";
 import takeRightWhile from "lodash/takeRightWhile";
+import { getAdjacents } from "./utils/gridUtils";
 
 const NUM_COLUMNS = 10;
 const GUTTER = 2;
@@ -96,18 +98,6 @@ class App extends Component {
     }));
   };
 
-  drop = () => {
-    this.setState(state => {
-      const { holding, columns, position } = state;
-      const newColumns = columns.map(
-        (column, index) =>
-          index === position ? column.concat(holding) : column
-      );
-
-      return { ...state, columns: newColumns, holding: [] };
-    });
-  };
-
   pick = () => {
     this.setState(state => {
       const { columns, position } = state;
@@ -125,6 +115,38 @@ class App extends Component {
 
       return { ...state, columns: newColumns, holding: newHolding };
     });
+  };
+
+  drop = () => {
+    this.setState(state => {
+      const { holding, columns, position } = state;
+      const newColumns = columns.map(
+        (column, index) =>
+          index === position ? column.concat(holding) : column
+      );
+
+      return { ...state, columns: newColumns, holding: [] };
+    }, this.detectBlock);
+  };
+
+  detectBlock = () => {
+    const { position, columns } = this.state;
+
+    const coordinates = getAdjacents(columns, [
+      position,
+      columns[position].length - 1
+    ]);
+
+    if (coordinates.length >= 4) {
+      const newColumns = columns.map((column, columnIndex) =>
+        column.filter(
+          (block, blockIndex) =>
+            !coordinates.some(c => isEqual(c, [columnIndex, blockIndex]))
+        )
+      );
+
+      this.setState({ columns: newColumns });
+    }
   };
 
   handleKeyDown = evt => {
