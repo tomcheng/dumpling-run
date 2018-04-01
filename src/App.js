@@ -1,17 +1,18 @@
 import React, { Component } from "react";
 import styled from "styled-components";
+import keys from "lodash/keys";
 import last from "lodash/last";
 import sample from "lodash/sample";
 import takeRightWhile from "lodash/takeRightWhile";
 
 const NUM_COLUMNS = 10;
 const GUTTER = 2;
-const COLORS = [
-  { id: "red", hex: "#cc0000" },
-  { id: "green", hex: "#69a84e" },
-  { id: "blue", hex: "#3b78d8" },
-  { id: "yellow", hex: "#d0d14d" }
-];
+const COLORS = {
+  red: { hex: "#cc0000" },
+  green: { hex: "#69a84e" },
+  blue: { hex: "#3b78d8" },
+  yellow: { hex: "#d0d14d" }
+};
 
 const Container = styled.div`
   display: flex;
@@ -61,9 +62,9 @@ const Player = styled.div`
 
 const generateColumns = () =>
   [...Array(NUM_COLUMNS)].map(() => [
-    sample(COLORS),
-    sample(COLORS),
-    sample(COLORS)
+    sample(keys(COLORS)),
+    sample(keys(COLORS)),
+    sample(keys(COLORS))
   ]);
 
 class App extends Component {
@@ -113,7 +114,7 @@ class App extends Component {
       const selectedColumn = columns[position];
       const newHolding = takeRightWhile(
         selectedColumn,
-        ({ id }) => id === last(selectedColumn).id
+        color => color === last(selectedColumn)
       );
       const newColumns = columns.map(
         (column, index) =>
@@ -152,10 +153,13 @@ class App extends Component {
     return (
       <Container>
         <Columns>
-          {[...Array(NUM_COLUMNS)].map((_, index) => (
-            <Column key={index}>
-              {columns[index].map(({ hex }, blockIndex) => (
-                <Block key={blockIndex} style={{ backgroundColor: hex }} />
+          {columns.map((column, columnIndex) => (
+            <Column key={columnIndex}>
+              {column.map((color, blockIndex) => (
+                <Block
+                  key={blockIndex}
+                  style={{ backgroundColor: COLORS[color].hex }}
+                />
               ))}
             </Column>
           ))}
