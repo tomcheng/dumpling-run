@@ -1,17 +1,16 @@
 import { Component } from "react";
 import PropTypes from "prop-types";
 
-const NEW_ROW_INTERVAL = 15000;
-
 class Timer extends Component {
   static propTypes = {
+    interval: PropTypes.number.isRequired,
     onAddNewRow: PropTypes.func.isRequired
   };
 
   componentDidMount() {
     this.timer = setInterval(() => {
       this.props.onAddNewRow();
-    }, NEW_ROW_INTERVAL)
+    }, this.props.interval);
   }
 
   componentWillUnmount() {

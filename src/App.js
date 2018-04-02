@@ -9,12 +9,15 @@ import { getAdjacents } from "./utils/gridUtils";
 import Timer from "./components/Timer";
 
 const NUM_COLUMNS = 10;
+const STARTING_ROWS = 5;
+const MAX_ROWS = 14;
+const NEW_ROW_INTERVAL = 15000;
 const GUTTER = 2;
 const COLORS = {
-  red: { hex: "#cc0000" },
-  green: { hex: "#69a84e" },
-  blue: { hex: "#3b78d8" },
-  yellow: { hex: "#d0d14d" }
+  red: { hex: "#ff0009" },
+  orange: { hex: "#ffa300" },
+  blue: { hex: "#0384e7" },
+  yellow: { hex: "#e8df04" }
 };
 
 const Container = styled.div`
@@ -64,17 +67,16 @@ const Player = styled.div`
 `;
 
 const generateColumns = () =>
-  [...Array(NUM_COLUMNS)].map(() => [
-    sample(keys(COLORS)),
-    sample(keys(COLORS)),
-    sample(keys(COLORS))
-  ]);
+  [...Array(NUM_COLUMNS)].map(() =>
+    [...Array(STARTING_ROWS)].map(() => sample(keys(COLORS)))
+  );
 
 class App extends Component {
   state = {
     position: Math.floor(NUM_COLUMNS / 2),
     holding: [],
-    columns: generateColumns()
+    columns: generateColumns(),
+    lost: false
   };
 
   componentDidMount() {
@@ -153,8 +155,18 @@ class App extends Component {
   addNewRow = () => {
     this.setState(state => ({
       ...state,
-      columns: state.columns.map(column => [sample(keys(COLORS))].concat(column))
-    }))
+      columns: state.columns.map(column =>
+        [sample(keys(COLORS))].concat(column)
+      )
+    }), this.checkLose);
+  };
+
+  checkLose = () => {
+    const { columns } = this.state;
+
+    if (columns.some(column => column.length > MAX_ROWS)) {
+      this.setState({ lost: true });
+    }
   };
 
   handleKeyDown = evt => {
@@ -178,11 +190,14 @@ class App extends Component {
   };
 
   render() {
-    const { position, columns } = this.state;
+    const { position, columns, lost } = this.state;
 
     return (
       <Container>
-        <Timer onAddNewRow={this.addNewRow} />
+        {!lost && (
+          <Timer onAddNewRow={this.addNewRow} interval={NEW_ROW_INTERVAL} />
+        )}
+        {lost && <div>You lost.</div>}
         <Columns>
           {columns.map((column, columnIndex) => (
             <Column key={columnIndex}>
