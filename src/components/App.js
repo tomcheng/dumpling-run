@@ -1,8 +1,9 @@
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 import styled from "styled-components";
 import isEqual from "lodash/isEqual";
 import keys from "lodash/keys";
 import last from "lodash/last";
+import omit from "lodash/omit";
 import sample from "lodash/sample";
 import takeRightWhile from "lodash/takeRightWhile";
 import { getAdjacents } from "../utils/gridUtils";
@@ -13,6 +14,7 @@ import {
   NUM_COLUMNS,
   STARTING_ROWS
 } from "../gameConstants";
+import DimensionsContext from "./DimensionsContext";
 import Timer from "./Timer";
 import Player from "./Player";
 import Block from "./Block";
@@ -32,8 +34,6 @@ const Columns = styled.div`
 `;
 
 const Column = styled.div`
-  flex-grow: 1;
-  flex-shrink: 1;
   background-color: #eee;
   & + & {
     margin-left: ${GUTTER}px;
@@ -58,13 +58,26 @@ const getInitialState = () => ({
   columns: [...Array(NUM_COLUMNS)].map(() =>
     [...Array(STARTING_ROWS)].map(() => sample(keys(COLORS)))
   ),
-  lost: false
+  lost: false,
+  dimensions: { blockWidth: 0 }
 });
 
 class App extends Component {
-  state = getInitialState();
+  constructor() {
+    super();
+
+    this.containerRef = createRef();
+    this.state = getInitialState();
+  }
 
   componentDidMount() {
+    const blockWidth =
+      (this.containerRef.current.offsetWidth - GUTTER * (NUM_COLUMNS - 1)) /
+      NUM_COLUMNS;
+    this.setState(state => ({
+      ...state,
+      dimensions: { ...state.dimensions, blockWidth }
+    }));
     window.addEventListener("keydown", this.handleKeyDown);
   }
 
@@ -166,7 +179,7 @@ class App extends Component {
   };
 
   restart = () => {
-    this.setState(getInitialState());
+    this.setState(omit(getInitialState(), ["dimensions"]));
   };
 
   handleKeyDown = evt => {
@@ -196,39 +209,39 @@ class App extends Component {
   };
 
   render() {
-    const { position, columns, lost, holding } = this.state;
+    const { position, columns, lost, holding, dimensions } = this.state;
 
     return (
-      <Container>
-        {!lost && (
-          <Timer onAddNewRow={this.addNewRow} interval={NEW_ROW_INTERVAL} />
-        )}
-        {lost && (
-          <div>
-            You lost. <button onClick={this.restart}>Restart</button>
-          </div>
-        )}
-        <Columns>
-          {columns.map((column, columnIndex) => (
-            <Column
-              key={columnIndex}
-              onClick={() => this.handleClickColumn(columnIndex)}
-            >
-              {column.map((color, blockIndex) => (
-                <Block
-                  key={blockIndex}
-                  style={{ backgroundColor: COLORS[color].hex }}
-                />
-              ))}
-            </Column>
-          ))}
-        </Columns>
-        <PlayerArea>
-          <PlayerContainer position={position}>
-            <Player holding={holding} />
-          </PlayerContainer>
-        </PlayerArea>
-      </Container>
+      <DimensionsContext.Provider value={dimensions}>
+        <Container innerRef={this.containerRef}>
+          {!lost && (
+            <Timer onAddNewRow={this.addNewRow} interval={NEW_ROW_INTERVAL} />
+          )}
+          {lost && (
+            <div>
+              You lost. <button onClick={this.restart}>Restart</button>
+            </div>
+          )}
+          <Columns>
+            {columns.map((column, columnIndex) => (
+              <Column
+                key={columnIndex}
+                onClick={() => this.handleClickColumn(columnIndex)}
+                style={{ width: dimensions.blockWidth }}
+              >
+                {column.map((color, blockIndex) => (
+                  <Block key={blockIndex} color={color} />
+                ))}
+              </Column>
+            ))}
+          </Columns>
+          <PlayerArea>
+            <PlayerContainer position={position}>
+              <Player holding={holding} />
+            </PlayerContainer>
+          </PlayerArea>
+        </Container>
+      </DimensionsContext.Provider>
     );
   }
 }

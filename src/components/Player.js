@@ -4,12 +4,12 @@ import keys from "lodash/keys";
 import { COLORS } from "../gameConstants";
 import Block from "./Block";
 
-const Player = ({ holding }) => <div>
-  {holding.map((color, index) => (
-    <Block key={index} style={{ backgroundColor: COLORS[color].hex }}/>
-  ))}
-  <div>Player</div>
-</div>;
+const Player = ({ holding }) => (
+  <div>
+    {holding.map((color, index) => <Block key={index} color={color} />)}
+    <div>Player</div>
+  </div>
+);
 
 Player.propTypes = {
   holding: PropTypes.arrayOf(PropTypes.oneOf(keys(COLORS))).isRequired
