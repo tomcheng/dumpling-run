@@ -1,41 +1,50 @@
 import { getAdjacents } from "./gridUtils";
 
 it("gets coordinates of unit block", () => {
-  const grid = [["red"]];
-  const start = [0, 0];
+  const blocks = [{ id: 1, row: 0, column: 0, color: "red" }];
+  const startId = 1;
 
-  const block = getAdjacents(grid, start);
+  const blockIds = getAdjacents(blocks, startId);
 
-  expect(block).toEqual([[0, 0]]);
+  expect(blockIds).toEqual([1]);
 });
 
 it("gets coordinates of two element block", () => {
-  const grid = [["red", "red"]];
-  const start = [0, 1];
+  const blocks = [
+    { id: 1, row: 0, column: 0, color: "red" },
+    { id: 2, row: 1, column: 0, color: "red" }
+  ];
+  const startId = 1;
 
-  const block = getAdjacents(grid, start);
+  const blockIds = getAdjacents(blocks, startId);
 
-  expect(block.length).toBe(2);
-  expect(block).toContainEqual([0, 0]);
-  expect(block).toContainEqual([0, 1]);
+  expect(blockIds.length).toBe(2);
+  expect(blockIds).toContain(1);
+  expect(blockIds).toContain(2);
 });
 
 it("handles a u shape block", () => {
-  const grid = [
-    ["red", "blue", "red"],
-    ["red", "blue", "red"],
-    ["red", "red", "red"]
+  const blocks = [
+    { id: 1, row: 0, column: 0, color: "red" },
+    { id: 2, row: 1, column: 0, color: "blue" },
+    { id: 3, row: 2, column: 0, color: "red" },
+    { id: 4, row: 0, column: 1, color: "red" },
+    { id: 5, row: 1, column: 1, color: "blue" },
+    { id: 6, row: 2, column: 1, color: "red" },
+    { id: 7, row: 0, column: 2, color: "red" },
+    { id: 8, row: 1, column: 2, color: "red" },
+    { id: 9, row: 2, column: 2, color: "red" },
   ];
-  const start = [0, 0];
+  const startId = 1;
 
-  const block = getAdjacents(grid, start);
+  const blockIds = getAdjacents(blocks, startId);
 
-  expect(block.length).toBe(7);
-  expect(block).toContainEqual([0, 0]);
-  expect(block).toContainEqual([0, 2]);
-  expect(block).toContainEqual([1, 0]);
-  expect(block).toContainEqual([1, 2]);
-  expect(block).toContainEqual([2, 0]);
-  expect(block).toContainEqual([2, 1]);
-  expect(block).toContainEqual([2, 2]);
+  expect(blockIds.length).toBe(7);
+  expect(blockIds).toContain(1);
+  expect(blockIds).toContain(3);
+  expect(blockIds).toContain(4);
+  expect(blockIds).toContain(6);
+  expect(blockIds).toContain(7);
+  expect(blockIds).toContain(8);
+  expect(blockIds).toContain(9);
 });

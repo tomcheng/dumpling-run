@@ -1,10 +1,11 @@
 import React, { Component, createRef } from "react";
 import styled from "styled-components";
-import isEqual from "lodash/isEqual";
+import findIndex from "lodash/findIndex";
 import keys from "lodash/keys";
 import last from "lodash/last";
 import omit from "lodash/omit";
 import sample from "lodash/sample";
+import sortBy from "lodash/sortBy";
 import takeRightWhile from "lodash/takeRightWhile";
 import { getAdjacents } from "../utils/gridUtils";
 import {
@@ -20,6 +21,7 @@ import Player from "./Player";
 import Block from "./Block";
 
 const GUTTER = 2;
+const REMOVAL_DELAY = 150;
 
 const Container = styled.div`
   display: flex;
@@ -29,6 +31,7 @@ const Container = styled.div`
 `;
 
 const Columns = styled.div`
+  position: relative;
   flex-grow: 1;
   display: flex;
 `;
@@ -52,14 +55,33 @@ const PlayerContainer = styled.div`
   justify-content: center;
 `;
 
+const generateBlocks = () => {
+  const blocks = [];
+
+  for (let column = 0; column < NUM_COLUMNS; column++) {
+    for (let row = 0; row < STARTING_ROWS; row++) {
+      blocks.push({
+        id: 1 + row + column * STARTING_ROWS,
+        row,
+        column,
+        color: sample(keys(COLORS)),
+        held: false
+      });
+    }
+  }
+
+  return blocks;
+};
+
 const getInitialState = () => ({
   position: Math.floor(NUM_COLUMNS / 2),
   holding: [],
   columns: [...Array(NUM_COLUMNS)].map(() =>
     [...Array(STARTING_ROWS)].map(() => sample(keys(COLORS)))
   ),
+  blocks: generateBlocks(),
   lost: false,
-  dimensions: { blockWidth: 0 }
+  dimensions: { blockWidth: 0, columnHeight: 0 }
 });
 
 class App extends Component {
@@ -67,6 +89,7 @@ class App extends Component {
     super();
 
     this.containerRef = createRef();
+    this.columnsRef = createRef();
     this.state = getInitialState();
   }
 
@@ -74,9 +97,10 @@ class App extends Component {
     const blockWidth =
       (this.containerRef.current.offsetWidth - GUTTER * (NUM_COLUMNS - 1)) /
       NUM_COLUMNS;
+    const columnHeight = this.columnsRef.current.offsetHeight;
     this.setState(state => ({
       ...state,
-      dimensions: { ...state.dimensions, blockWidth }
+      dimensions: { ...state.dimensions, blockWidth, columnHeight }
     }));
     window.addEventListener("keydown", this.handleKeyDown);
   }
@@ -100,7 +124,7 @@ class App extends Component {
   };
 
   toggle = () => {
-    if (this.state.holding.length > 0) {
+    if (this.state.blocks.some(block => block.held)) {
       this.drop();
     } else {
       this.pick();
@@ -109,65 +133,128 @@ class App extends Component {
 
   pick = () => {
     this.setState(state => {
-      const { columns, position } = state;
-      const selectedColumn = columns[position];
-      const newHolding = takeRightWhile(
-        selectedColumn,
-        color => color === last(selectedColumn)
-      );
-      const newColumns = columns.map(
-        (column, index) =>
-          index === position
-            ? column.slice(0, column.length - newHolding.length)
-            : column
+      const { blocks } = state;
+
+      const currentColumn = this.getCurrentColumn(state);
+
+      if (currentColumn.length === 0) {
+        return state;
+      }
+
+      const { color } = last(currentColumn);
+
+      const idsToHold = takeRightWhile(
+        currentColumn,
+        block => block.color === color
+      ).map(block => block.id);
+
+      let holdRow = idsToHold.length - 1;
+
+      const newBlocks = blocks.map(
+        block =>
+          idsToHold.includes(block.id)
+            ? { ...block, held: true, column: null, row: holdRow-- }
+            : block
       );
 
-      return { ...state, columns: newColumns, holding: newHolding };
+      return { ...state, blocks: newBlocks };
     });
   };
 
   drop = () => {
-    this.setState(state => {
-      const { holding, columns, position } = state;
-      const newColumns = columns.map(
-        (column, index) =>
-          index === position ? column.concat(holding) : column
-      );
+    this.setState(
+      state => {
+        const { blocks, position } = state;
 
-      return { ...state, columns: newColumns, holding: [] };
-    }, this.detectBlock);
+        const lastRow = this.getCurrentColumn(state).length - 1;
+        const numHeld = blocks.filter(block => block.held).length;
+
+        const newBlocks = blocks.map(
+          block =>
+            block.held
+              ? {
+                  ...block,
+                  held: false,
+                  column: position,
+                  row: lastRow + numHeld - block.row
+                }
+              : block
+        );
+        return { ...state, blocks: newBlocks };
+      },
+      () => {
+        setTimeout(() => {
+          this.findAdjacentBlocks();
+        }, REMOVAL_DELAY);
+      }
+    );
   };
 
-  detectBlock = () => {
-    const { position, columns } = this.state;
-
-    const coordinates = getAdjacents(columns, [
-      position,
-      columns[position].length - 1
+  getCurrentColumn = (state = this.state) =>
+    sortBy(state.blocks.filter(({ column }) => column === state.position), [
+      "row"
     ]);
 
-    if (coordinates.length >= 4) {
-      const newColumns = columns.map((column, columnIndex) =>
-        column.filter(
-          (block, blockIndex) =>
-            !coordinates.some(c => isEqual(c, [columnIndex, blockIndex]))
-        )
-      );
+  findAdjacentBlocks = () => {
+    const { blocks } = this.state;
+    const adjacentBlockIds = getAdjacents(
+      blocks,
+      last(this.getCurrentColumn()).id
+    );
 
-      this.setState({ columns: newColumns });
+    if (adjacentBlockIds.length >= 4) {
+      this.setState(state => {
+        const newBlocks = state.blocks.filter(
+          block => !adjacentBlockIds.includes(block.id)
+        );
+
+        for (let i = 0; i < NUM_COLUMNS; i++) {
+          const column = sortBy(
+            newBlocks.filter(({ column }) => column === i),
+            ["row"]
+          );
+          column.forEach((block, index) => {
+            if (block.row !== index) {
+              const blockIndex = findIndex(
+                newBlocks,
+                ({ id }) => id === block.id
+              );
+              newBlocks[blockIndex] = { ...block, row: index };
+            }
+          });
+        }
+
+        return {
+          ...state,
+          blocks: newBlocks
+        };
+      });
     }
   };
 
   addNewRow = () => {
-    this.setState(
-      state => ({
+    this.setState(state => {
+      let lastId = state.blocks.length > 0 ? last(state.blocks).id : 0;
+      const newBlocks = state.blocks
+        .map(block => ({
+          ...block,
+          row: block.held ? block.row : block.row + 1
+        }))
+        .concat(
+          [...Array(NUM_COLUMNS)].map((_, index) => ({
+            id: ++lastId,
+            row: 0,
+            column: index,
+            color: sample(keys(COLORS)),
+            held: false
+          }))
+        );
+
+      return {
         ...state,
-        columns: state.columns.map(column =>
-          [sample(keys(COLORS))].concat(column)
-        )
-      }),
-      this.checkLose
-    );
+        blocks: newBlocks
+      };
+    }, this.checkLose);
   };
 
   checkLose = () => {
@@ -209,7 +296,7 @@ class App extends Component {
   };
 
   render() {
-    const { position, columns, lost, holding, dimensions } = this.state;
+    const { position, columns, lost, dimensions, blocks } = this.state;
 
     return (
       <DimensionsContext.Provider value={dimensions}>
@@ -222,22 +309,27 @@ class App extends Component {
               You lost. <button onClick={this.restart}>Restart</button>
             </div>
           )}
-          <Columns>
+          <Columns innerRef={this.columnsRef}>
             {columns.map((column, columnIndex) => (
               <Column
                 key={columnIndex}
                 onClick={() => this.handleClickColumn(columnIndex)}
                 style={{ width: dimensions.blockWidth }}
-              >
-                {column.map((color, blockIndex) => (
-                  <Block key={blockIndex} color={color} />
-                ))}
-              </Column>
+              />
+            ))}
+            {blocks.map(({ id, row, column, color, held }) => (
+              <Block
+                key={id}
+                row={row}
+                column={held ? position : column}
+                color={color}
+                held={held}
+              />
             ))}
           </Columns>
           <PlayerArea>
             <PlayerContainer position={position}>
-              <Player holding={holding} />
+              <Player />
             </PlayerContainer>
           </PlayerArea>
         </Container>

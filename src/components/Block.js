@@ -5,25 +5,38 @@ import keys from "lodash/keys";
 import { COLORS } from "../gameConstants";
 import DimensionsContext from "./DimensionsContext";
 
+const GUTTER = 2;
+
 const StyledBlock = styled.div`
+  position: absolute;
   height: 30px;
-  & + & {
-    margin-top: 2px;
-  }
+  transition: transform 0.1s ease-in-out;
 `;
 
-const Block = ({ color }) => (
+const Block = ({ color, column, row, held }) => (
   <DimensionsContext.Consumer>
-    {({ blockWidth }) => (
+    {({ blockWidth, columnHeight }) => (
       <StyledBlock
-        style={{ backgroundColor: COLORS[color].hex, width: blockWidth }}
+        style={{
+          backgroundColor: COLORS[color].hex,
+          width: blockWidth,
+          left: column * (blockWidth + GUTTER),
+          transform: `translate3d(0, ${
+            held
+              ? columnHeight - (row + 1) * (30 + GUTTER)
+              : row * (30 + GUTTER)
+          }px, 0)`
+        }}
       />
     )}
   </DimensionsContext.Consumer>
 );
 
 Block.propTypes = {
-  color: PropTypes.oneOf(keys(COLORS)).isRequired
+  color: PropTypes.oneOf(keys(COLORS)).isRequired,
+  column: PropTypes.number.isRequired,
+  held: PropTypes.bool.isRequired,
+  row: PropTypes.number.isRequired
 };
 
 export default Block;
