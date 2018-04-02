@@ -100,6 +100,14 @@ class App extends Component {
     }));
   };
 
+  toggle = () => {
+    if (this.state.holding.length > 0) {
+      this.drop();
+    } else {
+      this.pick();
+    }
+  };
+
   pick = () => {
     this.setState(state => {
       const { columns, position } = state;
@@ -152,12 +160,15 @@ class App extends Component {
   };
 
   addNewRow = () => {
-    this.setState(state => ({
-      ...state,
-      columns: state.columns.map(column =>
-        [sample(keys(COLORS))].concat(column)
-      )
-    }), this.checkLose);
+    this.setState(
+      state => ({
+        ...state,
+        columns: state.columns.map(column =>
+          [sample(keys(COLORS))].concat(column)
+        )
+      }),
+      this.checkLose
+    );
   };
 
   checkLose = () => {
@@ -175,11 +186,7 @@ class App extends Component {
   handleKeyDown = evt => {
     switch (evt.code) {
       case "Space":
-        if (this.state.holding.length > 0) {
-          this.drop();
-        } else {
-          this.pick();
-        }
+        this.toggle();
         break;
       case "ArrowLeft":
         this.moveLeft();
@@ -192,6 +199,16 @@ class App extends Component {
     }
   };
 
+  handleClickColumn = position => {
+    this.setState(
+      state => ({
+        ...state,
+        position
+      }),
+      this.toggle
+    );
+  };
+
   render() {
     const { position, columns, lost } = this.state;
 
@@ -200,10 +217,17 @@ class App extends Component {
         {!lost && (
           <Timer onAddNewRow={this.addNewRow} interval={NEW_ROW_INTERVAL} />
         )}
-        {lost && <div>You lost. <button onClick={this.restart}>Restart</button></div>}
+        {lost && (
+          <div>
+            You lost. <button onClick={this.restart}>Restart</button>
+          </div>
+        )}
         <Columns>
           {columns.map((column, columnIndex) => (
-            <Column key={columnIndex}>
+            <Column
+              key={columnIndex}
+              onClick={() => this.handleClickColumn(columnIndex)}
+            >
               {column.map((color, blockIndex) => (
                 <Block
                   key={blockIndex}
