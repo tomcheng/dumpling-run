@@ -76,9 +76,6 @@ const generateBlocks = () => {
 const getInitialState = () => ({
   position: Math.floor(NUM_COLUMNS / 2),
   holding: [],
-  columns: [...Array(NUM_COLUMNS)].map(() =>
-    [...Array(STARTING_ROWS)].map(() => sample(keys(COLORS)))
-  ),
   blocks: generateBlocks(),
   lost: false,
   dimensions: { blockWidth: 0, columnHeight: 0 }
@@ -258,9 +255,9 @@ class App extends Component {
   };
 
   checkLose = () => {
-    const { columns } = this.state;
+    const { blocks } = this.state;
 
-    if (columns.some(column => column.length > MAX_ROWS)) {
+    if (blocks.some(block => block.row + 1 > MAX_ROWS)) {
       this.setState({ lost: true });
     }
   };
@@ -296,7 +293,7 @@ class App extends Component {
   };
 
   render() {
-    const { position, columns, lost, dimensions, blocks } = this.state;
+    const { position, lost, dimensions, blocks } = this.state;
 
     return (
       <DimensionsContext.Provider value={dimensions}>
@@ -310,7 +307,7 @@ class App extends Component {
             </div>
           )}
           <Columns innerRef={this.columnsRef}>
-            {columns.map((column, columnIndex) => (
+            {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
               <Column
                 key={columnIndex}
                 onClick={() => this.handleClickColumn(columnIndex)}
