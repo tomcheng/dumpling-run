@@ -5,20 +5,19 @@ import keys from "lodash/keys";
 import last from "lodash/last";
 import sample from "lodash/sample";
 import takeRightWhile from "lodash/takeRightWhile";
-import { getAdjacents } from "./utils/gridUtils";
-import Timer from "./components/Timer";
+import { getAdjacents } from "../utils/gridUtils";
+import {
+  COLORS,
+  MAX_ROWS,
+  NEW_ROW_INTERVAL,
+  NUM_COLUMNS,
+  STARTING_ROWS
+} from "../gameConstants";
+import Timer from "./Timer";
+import Player from "./Player";
+import Block from "./Block";
 
-const NUM_COLUMNS = 10;
-const STARTING_ROWS = 5;
-const MAX_ROWS = 14;
-const NEW_ROW_INTERVAL = 15000;
 const GUTTER = 2;
-const COLORS = {
-  red: { hex: "#ff0009" },
-  orange: { hex: "#ffa300" },
-  blue: { hex: "#0384e7" },
-  yellow: { hex: "#e8df04" }
-};
 
 const Container = styled.div`
   display: flex;
@@ -41,13 +40,6 @@ const Column = styled.div`
   }
 `;
 
-const Block = styled.div`
-  height: 30px;
-  & + & {
-    margin-top: ${GUTTER}px;
-  }
-`;
-
 const PlayerArea = styled.div`
   flex-shrink: 0;
   padding: 10px 0;
@@ -58,12 +50,6 @@ const PlayerContainer = styled.div`
   transform: translate3d(${props => props.position * 100}%, 0, 0);
   display: flex;
   justify-content: center;
-`;
-
-const Player = styled.div`
-  background-color: red;
-  width: 50px;
-  height: 50px;
 `;
 
 const getInitialState = () => ({
@@ -210,7 +196,7 @@ class App extends Component {
   };
 
   render() {
-    const { position, columns, lost } = this.state;
+    const { position, columns, lost, holding } = this.state;
 
     return (
       <Container>
@@ -239,7 +225,7 @@ class App extends Component {
         </Columns>
         <PlayerArea>
           <PlayerContainer position={position}>
-            <Player />
+            <Player holding={holding} />
           </PlayerContainer>
         </PlayerArea>
       </Container>
