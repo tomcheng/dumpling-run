@@ -66,18 +66,17 @@ const Player = styled.div`
   height: 50px;
 `;
 
-const generateColumns = () =>
-  [...Array(NUM_COLUMNS)].map(() =>
+const getInitialState = () => ({
+  position: Math.floor(NUM_COLUMNS / 2),
+  holding: [],
+  columns: [...Array(NUM_COLUMNS)].map(() =>
     [...Array(STARTING_ROWS)].map(() => sample(keys(COLORS)))
-  );
+  ),
+  lost: false
+});
 
 class App extends Component {
-  state = {
-    position: Math.floor(NUM_COLUMNS / 2),
-    holding: [],
-    columns: generateColumns(),
-    lost: false
-  };
+  state = getInitialState();
 
   componentDidMount() {
     window.addEventListener("keydown", this.handleKeyDown);
@@ -169,6 +168,10 @@ class App extends Component {
     }
   };
 
+  restart = () => {
+    this.setState(getInitialState());
+  };
+
   handleKeyDown = evt => {
     switch (evt.code) {
       case "Space":
@@ -197,7 +200,7 @@ class App extends Component {
         {!lost && (
           <Timer onAddNewRow={this.addNewRow} interval={NEW_ROW_INTERVAL} />
         )}
-        {lost && <div>You lost.</div>}
+        {lost && <div>You lost. <button onClick={this.restart}>Restart</button></div>}
         <Columns>
           {columns.map((column, columnIndex) => (
             <Column key={columnIndex}>
