@@ -6,6 +6,7 @@ import last from "lodash/last";
 import sample from "lodash/sample";
 import takeRightWhile from "lodash/takeRightWhile";
 import { getAdjacents } from "./utils/gridUtils";
+import Timer from "./components/Timer";
 
 const NUM_COLUMNS = 10;
 const GUTTER = 2;
@@ -149,6 +150,13 @@ class App extends Component {
     }
   };
 
+  addNewRow = () => {
+    this.setState(state => ({
+      ...state,
+      columns: state.columns.map(column => [sample(keys(COLORS))].concat(column))
+    }))
+  };
+
   handleKeyDown = evt => {
     switch (evt.code) {
       case "Space":
@@ -174,6 +182,7 @@ class App extends Component {
 
     return (
       <Container>
+        <Timer onAddNewRow={this.addNewRow} />
         <Columns>
           {columns.map((column, columnIndex) => (
             <Column key={columnIndex}>
