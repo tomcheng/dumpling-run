@@ -3,16 +3,16 @@ import React from "react";
 const thinLineStyle = {
   fill: "none",
   stroke: "#000",
-  "stroke-linecap": "round",
-  "stroke-linejoin": "round"
+  strokeLinecap: "round",
+  strokeLinejoin: "round"
 };
 
 const thickLineStyle = {
   fill: "none",
   stroke: "#000",
-  "stroke-linecap": "round",
-  "stroke-linejoin": "round",
-  "stroke-width": "1.5px"
+  strokeLinecap: "round",
+  strokeLinejoin: "round",
+  strokeWidth: "1.5px"
 };
 
 const Dumpling = () => (
