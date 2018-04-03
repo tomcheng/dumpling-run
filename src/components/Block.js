@@ -6,11 +6,13 @@ import { COLORS } from "../gameConstants";
 import DimensionsContext from "./DimensionsContext";
 
 const GUTTER = 2;
+const HOLDING_OFFSET = 43;
 
 const StyledBlock = styled.div`
   position: absolute;
   height: 30px;
   transition: transform 0.1s ease-in-out;
+  z-index: 1;
 `;
 
 const Block = ({ color, column, row, held }) => (
@@ -23,7 +25,7 @@ const Block = ({ color, column, row, held }) => (
           left: column * (blockWidth + GUTTER),
           transform: `translate3d(0, ${
             held
-              ? columnHeight - (row + 1) * (30 + GUTTER)
+              ? columnHeight + HOLDING_OFFSET - (row + 1) * (30 + GUTTER)
               : row * (30 + GUTTER)
           }px, 0)`
         }}

@@ -294,6 +294,7 @@ class App extends Component {
 
   render() {
     const { position, lost, dimensions, blocks } = this.state;
+    const isHolding = blocks.some(block => block.held);
 
     return (
       <DimensionsContext.Provider value={dimensions}>
@@ -326,7 +327,7 @@ class App extends Component {
           </Columns>
           <PlayerArea>
             <PlayerContainer position={position}>
-              <Player />
+              <Player isHolding={isHolding} />
             </PlayerContainer>
           </PlayerArea>
         </Container>
