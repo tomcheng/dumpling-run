@@ -20,7 +20,7 @@ import Timer from "./Timer";
 import Player from "./Player";
 import Block from "./Block";
 
-const GUTTER = 2;
+const GUTTER = 1;
 const REMOVAL_DELAY = 150;
 
 const Container = styled.div`
@@ -28,6 +28,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: stretch;
   height: 100%;
+  background-color: #fbf6ea;
 `;
 
 const Columns = styled.div`
@@ -37,7 +38,6 @@ const Columns = styled.div`
 `;
 
 const Column = styled.div`
-  background-color: #eee;
   & + & {
     margin-left: ${GUTTER}px;
   }

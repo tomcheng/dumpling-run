@@ -3,17 +3,21 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import keys from "lodash/keys";
 import { COLORS } from "../gameConstants";
+import { INK_COLOR } from "../utils/colors";
 import DimensionsContext from "./DimensionsContext";
 
-const GUTTER = 2;
-const HOLDING_OFFSET = 43;
+const BLOCK_HEIGHT = 24;
+const GUTTER = 1;
+const HOLDING_OFFSET = 42;
 
 const StyledBlock = styled.div`
   position: absolute;
-  height: 30px;
+  height: ${BLOCK_HEIGHT}px;
   transition: transform 0.1s ease-in-out;
   z-index: 1;
   pointer-events: none;
+  border: 2px solid ${INK_COLOR};
+  border-radius: 2px;
 `;
 
 const Block = ({ color, column, row, held }) => (
@@ -26,8 +30,8 @@ const Block = ({ color, column, row, held }) => (
           left: column * (blockWidth + GUTTER),
           transform: `translate3d(0, ${
             held
-              ? columnHeight + HOLDING_OFFSET - (row + 1) * (30 + GUTTER)
-              : row * (30 + GUTTER)
+              ? columnHeight + HOLDING_OFFSET - (row + 1) * (BLOCK_HEIGHT + GUTTER)
+              : row * (BLOCK_HEIGHT + GUTTER)
           }px, 0)`
         }}
       />
