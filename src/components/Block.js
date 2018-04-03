@@ -13,6 +13,7 @@ const StyledBlock = styled.div`
   height: 30px;
   transition: transform 0.1s ease-in-out;
   z-index: 1;
+  pointer-events: none;
 `;
 
 const Block = ({ color, column, row, held }) => (
