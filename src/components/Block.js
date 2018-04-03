@@ -8,7 +8,7 @@ import DimensionsContext from "./DimensionsContext";
 
 const BLOCK_HEIGHT = 24;
 const GUTTER = 1;
-const HOLDING_OFFSET = 42;
+const HOLDING_OFFSET = -42;
 
 const StyledBlock = styled.div`
   position: absolute;

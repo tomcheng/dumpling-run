@@ -8,17 +8,9 @@ import sample from "lodash/sample";
 import sortBy from "lodash/sortBy";
 import takeRightWhile from "lodash/takeRightWhile";
 import { getAdjacents } from "../utils/gridUtils";
-import {
-  COLORS,
-  MAX_ROWS,
-  NEW_ROW_INTERVAL,
-  NUM_COLUMNS,
-  STARTING_ROWS
-} from "../gameConstants";
+import { COLORS, MAX_ROWS, NUM_COLUMNS, STARTING_ROWS } from "../gameConstants";
 import DimensionsContext from "./DimensionsContext";
-import Timer from "./Timer";
-import Player from "./Player";
-import Block from "./Block";
+import App from "./App";
 
 const GUTTER = 1;
 const REMOVAL_DELAY = 150;
@@ -29,30 +21,6 @@ const Container = styled.div`
   align-items: stretch;
   height: 100%;
   background-color: #fbf6ea;
-`;
-
-const Columns = styled.div`
-  position: relative;
-  flex-grow: 1;
-  display: flex;
-`;
-
-const Column = styled.div`
-  & + & {
-    margin-left: ${GUTTER}px;
-  }
-`;
-
-const PlayerArea = styled.div`
-  flex-shrink: 0;
-  padding: 10px 0;
-`;
-
-const PlayerContainer = styled.div`
-  width: ${100 / NUM_COLUMNS}%;
-  transform: translate3d(${props => props.position * 100}%, 0, 0);
-  display: flex;
-  justify-content: center;
 `;
 
 const generateBlocks = () => {
@@ -86,7 +54,6 @@ class AppContainer extends Component {
     super();
 
     this.containerRef = createRef();
-    this.columnsRef = createRef();
     this.state = getInitialState();
   }
 
@@ -94,7 +61,7 @@ class AppContainer extends Component {
     const blockWidth =
       (this.containerRef.current.offsetWidth - GUTTER * (NUM_COLUMNS - 1)) /
       NUM_COLUMNS;
-    const columnHeight = this.columnsRef.current.offsetHeight;
+    const columnHeight = this.containerRef.current.offsetHeight;
     this.setState(state => ({
       ...state,
       dimensions: { ...state.dimensions, blockWidth, columnHeight }
@@ -294,42 +261,19 @@ class AppContainer extends Component {
 
   render() {
     const { position, lost, dimensions, blocks } = this.state;
-    const isHolding = blocks.some(block => block.held);
 
     return (
       <DimensionsContext.Provider value={dimensions}>
         <Container innerRef={this.containerRef}>
-          {!lost && (
-            <Timer onAddNewRow={this.addNewRow} interval={NEW_ROW_INTERVAL} />
-          )}
-          {lost && (
-            <div>
-              You lost. <button onClick={this.restart}>Restart</button>
-            </div>
-          )}
-          <Columns innerRef={this.columnsRef}>
-            {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
-              <Column
-                key={columnIndex}
-                onClick={() => this.handleClickColumn(columnIndex)}
-                style={{ width: dimensions.blockWidth }}
-              />
-            ))}
-            {blocks.map(({ id, row, column, color, held }) => (
-              <Block
-                key={id}
-                row={row}
-                column={held ? position : column}
-                color={color}
-                held={held}
-              />
-            ))}
-          </Columns>
-          <PlayerArea>
-            <PlayerContainer position={position}>
-              <Player isHolding={isHolding} />
-            </PlayerContainer>
-          </PlayerArea>
+          <App
+            blocks={blocks}
+            dimensions={dimensions}
+            lost={lost}
+            position={position}
+            onAddNewRow={this.addNewRow}
+            onClickColumn={this.handleClickColumn}
+            onRestart={this.restart}
+          />
         </Container>
       </DimensionsContext.Provider>
     );
