@@ -81,7 +81,7 @@ const getInitialState = () => ({
   dimensions: { blockWidth: 0, columnHeight: 0 }
 });
 
-class App extends Component {
+class AppContainer extends Component {
   constructor() {
     super();
 
@@ -336,4 +336,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default AppContainer;
