@@ -12,7 +12,7 @@ const HOLDING_OFFSET = -44;
 const StyledBlock = styled.div`
   position: absolute;
   height: ${BLOCK_HEIGHT}px;
-  transition: transform 0.1s ease-in-out;
+  transition: transform 0.07s ease-in;
   z-index: 1;
   pointer-events: none;
   border: 2px solid ${INK_COLOR};
