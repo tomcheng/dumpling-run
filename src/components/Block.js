@@ -2,12 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import keys from "lodash/keys";
-import { COLORS } from "../gameConstants";
+import { COLORS, GUTTER } from "../gameConstants";
 import { INK_COLOR } from "../utils/colors";
-import DimensionsContext from "./DimensionsContext";
+import Dimensions from "./DimensionsContext";
 
 const BLOCK_HEIGHT = 24;
-const GUTTER = 1;
 const HOLDING_OFFSET = -42;
 
 const StyledBlock = styled.div`
@@ -21,22 +20,24 @@ const StyledBlock = styled.div`
 `;
 
 const Block = ({ color, column, row, held }) => (
-  <DimensionsContext.Consumer>
-    {({ blockWidth, columnHeight }) => (
+  <Dimensions.Consumer>
+    {({ screenHeight, blockWidth }) => (
       <StyledBlock
         style={{
-          backgroundColor: COLORS[color].hex,
           width: blockWidth,
+          backgroundColor: COLORS[color].hex,
           left: column * (blockWidth + GUTTER),
           transform: `translate3d(0, ${
             held
-              ? columnHeight + HOLDING_OFFSET - (row + 1) * (BLOCK_HEIGHT + GUTTER)
+              ? screenHeight +
+                HOLDING_OFFSET -
+                (row + 1) * (BLOCK_HEIGHT + GUTTER)
               : row * (BLOCK_HEIGHT + GUTTER)
           }px, 0)`
         }}
       />
     )}
-  </DimensionsContext.Consumer>
+  </Dimensions.Consumer>
 );
 
 Block.propTypes = {

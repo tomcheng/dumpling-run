@@ -1,12 +1,18 @@
-import React, { Fragment } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { NEW_ROW_INTERVAL, NUM_COLUMNS } from "../gameConstants";
+import { NEW_ROW_INTERVAL, NUM_COLUMNS, GUTTER } from "../gameConstants";
 import Timer from "./Timer";
 import Player from "./Player";
 import Block from "./Block";
 
-const GUTTER = 1;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+  background-color: #fbf6ea;
+`;
 
 const Columns = styled.div`
   position: relative;
@@ -15,6 +21,7 @@ const Columns = styled.div`
 `;
 
 const Column = styled.div`
+  flex-grow: 1;
   & + & {
     margin-left: ${GUTTER}px;
   }
@@ -44,7 +51,7 @@ const App = ({
   const isHolding = blocks.some(block => block.held);
 
   return (
-    <Fragment>
+    <Container>
       {!lost && <Timer onAddNewRow={onAddNewRow} interval={NEW_ROW_INTERVAL} />}
       {lost && (
         <div>
@@ -56,7 +63,6 @@ const App = ({
           <Column
             key={columnIndex}
             onClick={() => onClickColumn(columnIndex)}
-            style={{ width: dimensions.blockWidth }}
           />
         ))}
         {blocks.map(({ id, row, column, color, held }) => (
@@ -74,7 +80,7 @@ const App = ({
           <Player isHolding={isHolding} />
         </PlayerContainer>
       </PlayerArea>
-    </Fragment>
+    </Container>
   );
 };
 
@@ -88,9 +94,6 @@ App.propTypes = {
       column: PropTypes.number
     })
   ).isRequired,
-  dimensions: PropTypes.shape({
-    blockWidth: PropTypes.number.isRequired
-  }).isRequired,
   lost: PropTypes.bool.isRequired,
   position: PropTypes.number.isRequired,
   onAddNewRow: PropTypes.func.isRequired,

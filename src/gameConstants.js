@@ -11,3 +11,4 @@ export const COLORS = {
   yellow: { hex: "#e7ea08" },
   red: { hex: "#a51d1a" }
 };
+export const GUTTER = 1;

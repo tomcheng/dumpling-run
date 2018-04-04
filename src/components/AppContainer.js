@@ -1,5 +1,4 @@
 import React, { Component, createRef } from "react";
-import styled from "styled-components";
 import findIndex from "lodash/findIndex";
 import keys from "lodash/keys";
 import last from "lodash/last";
@@ -8,20 +7,17 @@ import sample from "lodash/sample";
 import sortBy from "lodash/sortBy";
 import takeRightWhile from "lodash/takeRightWhile";
 import { getAdjacents } from "../utils/gridUtils";
-import { COLORS, MAX_ROWS, NUM_COLUMNS, STARTING_ROWS } from "../gameConstants";
+import {
+  COLORS,
+  MAX_ROWS,
+  NUM_COLUMNS,
+  STARTING_ROWS,
+  GUTTER
+} from "../gameConstants";
 import DimensionsContext from "./DimensionsContext";
 import App from "./App";
 
-const GUTTER = 1;
 const REMOVAL_DELAY = 150;
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  height: 100%;
-  background-color: #fbf6ea;
-`;
 
 const generateBlocks = () => {
   const blocks = [];
@@ -46,7 +42,7 @@ const getInitialState = () => ({
   holding: [],
   blocks: generateBlocks(),
   lost: false,
-  dimensions: { blockWidth: 0, columnHeight: 0 }
+  dimensions: { width: 0, height: 0 }
 });
 
 class AppContainer extends Component {
@@ -58,20 +54,32 @@ class AppContainer extends Component {
   }
 
   componentDidMount() {
-    const blockWidth =
-      (this.containerRef.current.offsetWidth - GUTTER * (NUM_COLUMNS - 1)) /
-      NUM_COLUMNS;
-    const columnHeight = this.containerRef.current.offsetHeight;
-    this.setState(state => ({
-      ...state,
-      dimensions: { ...state.dimensions, blockWidth, columnHeight }
-    }));
+    this.setDimensions();
     window.addEventListener("keydown", this.handleKeyDown);
+    window.addEventListener("resize", this.setDimensions);
   }
 
   componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKeyDown);
+    window.addEventListener("resize", this.setDimensions);
   }
+
+  setDimensions = () => {
+    const {
+      offsetWidth: screenWidth,
+      offsetHeight: screenHeight
+    } = this.containerRef.current;
+    const blockWidth = (screenWidth - (NUM_COLUMNS - 1) * GUTTER) / NUM_COLUMNS;
+
+    this.setState(state => ({
+      ...state,
+      dimensions: {
+        screenWidth,
+        screenHeight,
+        blockWidth
+      }
+    }));
+  };
 
   moveLeft = () => {
     this.setState(state => ({
@@ -263,19 +271,18 @@ class AppContainer extends Component {
     const { position, lost, dimensions, blocks } = this.state;
 
     return (
-      <DimensionsContext.Provider value={dimensions}>
-        <Container innerRef={this.containerRef}>
+      <div ref={this.containerRef} style={{ height: "100vh", width: "100vw" }}>
+        <DimensionsContext.Provider value={dimensions}>
           <App
             blocks={blocks}
-            dimensions={dimensions}
             lost={lost}
             position={position}
             onAddNewRow={this.addNewRow}
             onClickColumn={this.handleClickColumn}
             onRestart={this.restart}
           />
-        </Container>
-      </DimensionsContext.Provider>
+        </DimensionsContext.Provider>
+      </div>
     );
   }
 }

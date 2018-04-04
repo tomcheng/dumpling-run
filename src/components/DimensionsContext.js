@@ -1,5 +1,5 @@
 import { createContext } from "react";
 
-const DimensionsContext = createContext({ blockWidth: 0 });
+const Dimensions = createContext();
 
-export default DimensionsContext;
+export default Dimensions;
