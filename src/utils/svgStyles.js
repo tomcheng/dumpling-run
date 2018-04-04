@@ -13,6 +13,11 @@ export const hairline = {
   strokeWidth: "1px"
 };
 
+export const thick = {
+  ...outline,
+  strokeWidth: "3px"
+};
+
 export const accent = {
   ...outline,
   fill: ACCENT_COLOR

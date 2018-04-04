@@ -7,7 +7,7 @@ import { INK_COLOR } from "../utils/colors";
 import Dimensions from "./DimensionsContext";
 
 const BLOCK_HEIGHT = 24;
-const HOLDING_OFFSET = -42;
+const HOLDING_OFFSET = -44;
 
 const StyledBlock = styled.div`
   position: absolute;
