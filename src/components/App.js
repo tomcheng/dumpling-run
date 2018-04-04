@@ -29,14 +29,7 @@ const Column = styled.div`
 
 const PlayerArea = styled.div`
   flex-shrink: 0;
-  padding: 10px 0;
-`;
-
-const PlayerContainer = styled.div`
-  width: ${100 / NUM_COLUMNS}%;
-  transform: translate3d(${props => props.position * 100}%, 0, 0);
   display: flex;
-  justify-content: center;
 `;
 
 const App = ({
@@ -76,9 +69,7 @@ const App = ({
         ))}
       </Columns>
       <PlayerArea>
-        <PlayerContainer position={position}>
-          <Player isHolding={isHolding} />
-        </PlayerContainer>
+        <Player isHolding={isHolding} position={position} />
       </PlayerArea>
     </Container>
   );
