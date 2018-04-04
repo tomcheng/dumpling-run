@@ -17,7 +17,7 @@ const Player = ({ isHolding, position }) => (
         style={{
           transform: `translate3d(${Math.round(
             position * (blockWidth + GUTTER) + (blockWidth - CHARACTER_SIZE) / 2
-          )}px, 0, 0)`
+          )}px, 10px, 0)`
         }}
       >
         {isHolding ? <DumplingActive /> : <Dumpling />}

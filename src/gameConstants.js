@@ -16,3 +16,5 @@ export const COLORS = {
 
 export const CHARACTER_SIZE = 64;
 export const GUTTER = 1;
+export const MINIMUM_SCREEN_PADDING = 5;
+export const GAME_AREA_BORDER = 2;

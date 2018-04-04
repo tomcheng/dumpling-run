@@ -12,7 +12,9 @@ import {
   MAX_ROWS,
   NUM_COLUMNS,
   STARTING_ROWS,
-  GUTTER
+  GUTTER,
+  GAME_AREA_BORDER,
+  MINIMUM_SCREEN_PADDING
 } from "../gameConstants";
 import DimensionsContext from "./DimensionsContext";
 import App from "./App";
@@ -69,14 +71,26 @@ class AppContainer extends Component {
       offsetWidth: screenWidth,
       offsetHeight: screenHeight
     } = this.containerRef.current;
-    const blockWidth = (screenWidth - (NUM_COLUMNS - 1) * GUTTER) / NUM_COLUMNS;
+    const blockWidth = Math.floor(
+      (screenWidth -
+        2 * (GUTTER + GAME_AREA_BORDER + MINIMUM_SCREEN_PADDING) -
+        (NUM_COLUMNS - 1) * GUTTER) /
+        NUM_COLUMNS
+    );
+    const gameWidth =
+      blockWidth * NUM_COLUMNS +
+      GUTTER * (NUM_COLUMNS - 1) +
+      2 * (GUTTER + GAME_AREA_BORDER);
+    const gameHeight = screenHeight - 2 * MINIMUM_SCREEN_PADDING;
 
     this.setState(state => ({
       ...state,
       dimensions: {
         screenWidth,
         screenHeight,
-        blockWidth
+        blockWidth,
+        gameWidth,
+        gameHeight
       }
     }));
   };
