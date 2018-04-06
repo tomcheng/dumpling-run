@@ -38,10 +38,10 @@ const GameArea = styled.div`
   align-items: stretch;
   border: ${GAME_AREA_BORDER}px solid #4c3d30;
   padding: ${GUTTER}px;
+  position: relative;
 `;
 
 const Columns = styled.div`
-  position: relative;
   flex-grow: 1;
   display: flex;
 `;
@@ -51,11 +51,6 @@ const Column = styled.div`
   & + & {
     margin-left: ${GUTTER}px;
   }
-`;
-
-const PlayerArea = styled.div`
-  flex-shrink: 0;
-  display: flex;
 `;
 
 class App extends Component {
@@ -138,22 +133,20 @@ class App extends Component {
                       onClick={() => onClickColumn(columnIndex)}
                     />
                   ))}
-                  {blocks.map(
-                    ({ id, row, column, color, held, holdPosition }) => (
-                      <Block
-                        key={id}
-                        column={held ? position : column}
-                        color={color}
-                        held={held}
-                        row={row}
-                        holdPosition={holdPosition}
-                      />
-                    )
-                  )}
                 </Columns>
-                <PlayerArea>
-                  <Player isHolding={isHolding} position={position} />
-                </PlayerArea>
+                {blocks.map(
+                  ({ id, row, column, color, held, holdPosition }) => (
+                    <Block
+                      key={id}
+                      column={held ? position : column}
+                      color={color}
+                      held={held}
+                      row={row}
+                      holdPosition={holdPosition}
+                    />
+                  )
+                )}
+                <Player isHolding={isHolding} position={position} />
               </Dimensions.Provider>
             </GameArea>
           </Container>

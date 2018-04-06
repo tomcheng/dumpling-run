@@ -30,7 +30,7 @@ const Block = ({ color, column, row, held, holdPosition }) => (
         style={{
           width: blockWidth,
           backgroundColor: COLORS[color].hex,
-          left: column * (blockWidth + GUTTER),
+          left: GUTTER + column * (blockWidth + GUTTER),
           transform: `translate3d(0, ${
             held
               ? gameHeight -

@@ -7,7 +7,9 @@ import DumplingActive from "./DumplingActive";
 import Dimensions from "./DimensionsContext";
 
 const Container = styled.div`
+  position: absolute;
   transition: transform 0.07s ease-in-out;
+  pointer-events: none;
 `;
 
 const Player = ({ isHolding, position }) => (
@@ -15,9 +17,11 @@ const Player = ({ isHolding, position }) => (
     {({ blockWidth }) => (
       <Container
         style={{
+          left: 0,
+          bottom: -9,
           transform: `translate3d(${Math.round(
-            position * (blockWidth + GUTTER) + (blockWidth - CHARACTER_SIZE) / 2
-          )}px, 10px, 0)`
+            GUTTER + position * (blockWidth + GUTTER) + (blockWidth - CHARACTER_SIZE) / 2
+          )}px, 0, 0)`
         }}
       >
         {isHolding ? <DumplingActive /> : <Dumpling />}
