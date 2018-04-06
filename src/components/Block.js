@@ -2,12 +2,16 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import keys from "lodash/keys";
-import { COLORS, GUTTER } from "../gameConstants";
-import { INK_COLOR } from "../utils/colors";
+import {
+  COLORS,
+  GUTTER,
+  BLOCK_BORDER_WIDTH,
+  GAME_AREA_BORDER
+} from "../gameConstants";
 import Dimensions from "./DimensionsContext";
 
 const BLOCK_HEIGHT = 24;
-const HOLDING_OFFSET = -34;
+const CHARACTER_HOLD_POSITION = 29;
 
 const StyledBlock = styled.div`
   position: absolute;
@@ -15,11 +19,11 @@ const StyledBlock = styled.div`
   transition: transform 0.07s ease-in;
   z-index: 1;
   pointer-events: none;
-  border: 2px solid ${INK_COLOR};
+  border: ${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown.hex};
   border-radius: 2px;
 `;
 
-const Block = ({ color, column, row, held }) => (
+const Block = ({ color, column, row, held, holdPosition }) => (
   <Dimensions.Consumer>
     {({ gameHeight, blockWidth }) => (
       <StyledBlock
@@ -29,9 +33,11 @@ const Block = ({ color, column, row, held }) => (
           left: column * (blockWidth + GUTTER),
           transform: `translate3d(0, ${
             held
-              ? gameHeight +
-                HOLDING_OFFSET -
-                (row + 1) * (BLOCK_HEIGHT + GUTTER)
+              ? gameHeight -
+                2 * GAME_AREA_BORDER -
+                2 * GUTTER -
+                CHARACTER_HOLD_POSITION -
+                (holdPosition + 1) * (BLOCK_HEIGHT + GUTTER)
               : row * (BLOCK_HEIGHT + GUTTER)
           }px, 0)`
         }}
@@ -44,7 +50,8 @@ Block.propTypes = {
   color: PropTypes.oneOf(keys(COLORS)).isRequired,
   column: PropTypes.number.isRequired,
   held: PropTypes.bool.isRequired,
-  row: PropTypes.number.isRequired
+  holdPosition: PropTypes.number,
+  row: PropTypes.number
 };
 
 export default Block;

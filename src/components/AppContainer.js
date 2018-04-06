@@ -45,11 +45,7 @@ const getInitialState = () => ({
   blocks: generateBlocks(),
   lost: false,
   dimensions: {
-    screenWidth: 0,
-    screenHeight: 0,
-    blockWidth: 0,
-    gameWidth: 0,
-    gameHeight: 0
+    blockWidth: 0
   },
   points: 0
 });
@@ -70,10 +66,7 @@ class AppContainer extends Component {
   }
 
   setDimensions = () => {
-    const {
-      offsetWidth: screenWidth,
-      offsetHeight: screenHeight
-    } = this.containerRef.current;
+    const { offsetWidth: screenWidth } = this.containerRef.current;
     const blockWidth = Math.floor(
       (screenWidth -
         2 * (GUTTER + GAME_AREA_BORDER + MINIMUM_SCREEN_PADDING) -
@@ -88,8 +81,6 @@ class AppContainer extends Component {
     this.setState(state => ({
       ...state,
       dimensions: {
-        screenWidth,
-        screenHeight,
         blockWidth,
         gameWidth
       }
@@ -135,12 +126,18 @@ class AppContainer extends Component {
         block => block.color === color
       ).map(block => block.id);
 
-      let holdRow = idsToHold.length - 1;
+      let holdPosition = 0;
 
       const newBlocks = blocks.map(
         block =>
           idsToHold.includes(block.id)
-            ? { ...block, held: true, column: null, row: holdRow-- }
+            ? {
+                ...block,
+                held: true,
+                column: null,
+                row: null,
+                holdPosition: holdPosition++
+              }
             : block
       );
 
@@ -162,8 +159,9 @@ class AppContainer extends Component {
               ? {
                   ...block,
                   held: false,
+                  holdPosition: null,
                   column: position,
-                  row: lastRow + numHeld - block.row
+                  row: lastRow + numHeld - block.holdPosition
                 }
               : block
         );

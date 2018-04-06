@@ -63,10 +63,11 @@ class App extends Component {
     blocks: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number.isRequired,
-        row: PropTypes.number.isRequired,
         color: PropTypes.string.isRequired,
         held: PropTypes.bool.isRequired,
-        column: PropTypes.number
+        column: PropTypes.number,
+        holdPosition: PropTypes.number,
+        row: PropTypes.number
       })
     ).isRequired,
     lost: PropTypes.bool.isRequired,
@@ -137,15 +138,18 @@ class App extends Component {
                       onClick={() => onClickColumn(columnIndex)}
                     />
                   ))}
-                  {blocks.map(({ id, row, column, color, held }) => (
-                    <Block
-                      key={id}
-                      row={row}
-                      column={held ? position : column}
-                      color={color}
-                      held={held}
-                    />
-                  ))}
+                  {blocks.map(
+                    ({ id, row, column, color, held, holdPosition }) => (
+                      <Block
+                        key={id}
+                        column={held ? position : column}
+                        color={color}
+                        held={held}
+                        row={row}
+                        holdPosition={holdPosition}
+                      />
+                    )
+                  )}
                 </Columns>
                 <PlayerArea>
                   <Player isHolding={isHolding} position={position} />

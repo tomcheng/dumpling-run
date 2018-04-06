@@ -21,3 +21,4 @@ export const CHARACTER_SIZE = 64;
 export const GUTTER = 1;
 export const MINIMUM_SCREEN_PADDING = 8;
 export const GAME_AREA_BORDER = 2;
+export const BLOCK_BORDER_WIDTH = 2;
