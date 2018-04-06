@@ -1,12 +1,12 @@
 import React from "react";
 import { filled, accent, hairline, outline, thick } from "../utils/svgStyles";
 
-const DumplingActive = () => (
+const DumplingActive = ({ width }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 64 64"
-    width={64}
-    height={64}
+    width={width}
+    style={{ display: "block" }}
   >
     <g>
       <path d="M41,41c-.17.81,0,4.22-.17,4.54" style={hairline} />

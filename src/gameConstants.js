@@ -17,8 +17,11 @@ export const COLORS = {
   red: { hex: "#a51d1a" }
 };
 
-export const CHARACTER_SIZE = 64;
 export const GUTTER = 1;
 export const MINIMUM_SCREEN_PADDING = 8;
 export const GAME_AREA_BORDER = 2;
 export const BLOCK_BORDER_WIDTH = 2;
+
+export const CHARACTER_SIZE = 64;
+export const CHARACTER_VERTICAL_OFFSET = -Math.round(5 / 64 * CHARACTER_SIZE);
+export const CHARACTER_HOLD_POSITION = Math.round(34 / 64 * CHARACTER_SIZE) + CHARACTER_VERTICAL_OFFSET;

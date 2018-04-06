@@ -1,7 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { GUTTER, CHARACTER_SIZE } from "../gameConstants";
+import {
+  GUTTER,
+  CHARACTER_SIZE,
+  CHARACTER_VERTICAL_OFFSET
+} from "../gameConstants";
 import Dumpling from "./Dumpling";
 import DumplingActive from "./DumplingActive";
 import Dimensions from "./DimensionsContext";
@@ -18,13 +22,19 @@ const Player = ({ isHolding, position }) => (
       <Container
         style={{
           left: 0,
-          bottom: -9,
+          bottom: CHARACTER_VERTICAL_OFFSET + GUTTER,
           transform: `translate3d(${Math.round(
-            GUTTER + position * (blockWidth + GUTTER) + (blockWidth - CHARACTER_SIZE) / 2
+            GUTTER +
+              position * (blockWidth + GUTTER) +
+              (blockWidth - CHARACTER_SIZE) / 2
           )}px, 0, 0)`
         }}
       >
-        {isHolding ? <DumplingActive /> : <Dumpling />}
+        {isHolding ? (
+          <DumplingActive width={CHARACTER_SIZE} />
+        ) : (
+          <Dumpling width={CHARACTER_SIZE} />
+        )}
       </Container>
     )}
   </Dimensions.Consumer>

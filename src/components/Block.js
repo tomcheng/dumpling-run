@@ -6,12 +6,12 @@ import {
   COLORS,
   GUTTER,
   BLOCK_BORDER_WIDTH,
-  GAME_AREA_BORDER
+  GAME_AREA_BORDER,
+  CHARACTER_HOLD_POSITION
 } from "../gameConstants";
 import Dimensions from "./DimensionsContext";
 
 const BLOCK_HEIGHT = 24;
-const CHARACTER_HOLD_POSITION = 29;
 
 const StyledBlock = styled.div`
   position: absolute;
