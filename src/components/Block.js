@@ -7,7 +7,7 @@ import { INK_COLOR } from "../utils/colors";
 import Dimensions from "./DimensionsContext";
 
 const BLOCK_HEIGHT = 24;
-const HOLDING_OFFSET = -44;
+const HOLDING_OFFSET = -34;
 
 const StyledBlock = styled.div`
   position: absolute;
@@ -21,7 +21,7 @@ const StyledBlock = styled.div`
 
 const Block = ({ color, column, row, held }) => (
   <Dimensions.Consumer>
-    {({ screenHeight, blockWidth }) => (
+    {({ gameHeight, blockWidth }) => (
       <StyledBlock
         style={{
           width: blockWidth,
@@ -29,7 +29,7 @@ const Block = ({ color, column, row, held }) => (
           left: column * (blockWidth + GUTTER),
           transform: `translate3d(0, ${
             held
-              ? screenHeight +
+              ? gameHeight +
                 HOLDING_OFFSET -
                 (row + 1) * (BLOCK_HEIGHT + GUTTER)
               : row * (BLOCK_HEIGHT + GUTTER)

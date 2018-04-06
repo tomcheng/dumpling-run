@@ -14,12 +14,12 @@ import {
   STARTING_ROWS,
   GUTTER,
   GAME_AREA_BORDER,
-  MINIMUM_SCREEN_PADDING
+  MINIMUM_SCREEN_PADDING,
+  REMOVAL_DELAY,
+  POINTS_PER_BLOCK
 } from "../gameConstants";
 import DimensionsContext from "./DimensionsContext";
 import App from "./App";
-
-const REMOVAL_DELAY = 150;
 
 const generateBlocks = () => {
   const blocks = [];
@@ -44,16 +44,19 @@ const getInitialState = () => ({
   holding: [],
   blocks: generateBlocks(),
   lost: false,
-  dimensions: { width: 0, height: 0 }
+  dimensions: {
+    screenWidth: 0,
+    screenHeight: 0,
+    blockWidth: 0,
+    gameWidth: 0,
+    gameHeight: 0
+  },
+  points: 0
 });
 
 class AppContainer extends Component {
-  constructor() {
-    super();
-
-    this.containerRef = createRef();
-    this.state = getInitialState();
-  }
+  containerRef = createRef();
+  state = getInitialState();
 
   componentDidMount() {
     this.setDimensions();
@@ -81,7 +84,6 @@ class AppContainer extends Component {
       blockWidth * NUM_COLUMNS +
       GUTTER * (NUM_COLUMNS - 1) +
       2 * (GUTTER + GAME_AREA_BORDER);
-    const gameHeight = screenHeight - 2 * MINIMUM_SCREEN_PADDING;
 
     this.setState(state => ({
       ...state,
@@ -89,8 +91,7 @@ class AppContainer extends Component {
         screenWidth,
         screenHeight,
         blockWidth,
-        gameWidth,
-        gameHeight
+        gameWidth
       }
     }));
   };
@@ -212,6 +213,7 @@ class AppContainer extends Component {
 
         return {
           ...state,
+          points: state.points + adjacentBlockIds.length * POINTS_PER_BLOCK,
           blocks: newBlocks
         };
       });
@@ -282,12 +284,22 @@ class AppContainer extends Component {
   };
 
   render() {
-    const { position, lost, dimensions, blocks } = this.state;
+    const { position, lost, dimensions, blocks, points } = this.state;
 
     return (
-      <div ref={this.containerRef} style={{ height: "100vh", width: "100vw" }}>
+      <div
+        ref={this.containerRef}
+        style={{
+          height: "100vh",
+          width: "100vw",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden"
+        }}
+      >
         <DimensionsContext.Provider value={dimensions}>
           <App
+            points={points}
             blocks={blocks}
             lost={lost}
             position={position}
