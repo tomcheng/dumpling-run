@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled, { keyframes } from "styled-components";
-import keys from "lodash/keys";
 import {
+  BLOCK_COLORS,
   COLORS,
   GUTTER,
   BLOCK_BORDER_WIDTH,
@@ -124,13 +124,13 @@ const Block = ({
 };
 
 Block.propTypes = {
-  color: PropTypes.oneOf(keys(COLORS)).isRequired,
   column: PropTypes.number.isRequired,
   held: PropTypes.bool.isRequired,
   isChili: PropTypes.bool.isRequired,
   isWall: PropTypes.bool.isRequired,
   toRemove: PropTypes.bool.isRequired,
   onRemoved: PropTypes.func.isRequired,
+  color: PropTypes.oneOf(BLOCK_COLORS),
   holdPosition: PropTypes.number,
   row: PropTypes.number
 };

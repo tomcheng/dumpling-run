@@ -14,6 +14,7 @@ import Dimensions from "./DimensionsContext";
 import Timer from "./Timer";
 import Player from "./Player";
 import Block from "./Block";
+import GameOver from "./GameOver";
 
 const Container = styled.div`
   flex-grow: 1;
@@ -58,10 +59,10 @@ class App extends Component {
   static propTypes = {
     blocks: PropTypes.arrayOf(
       PropTypes.shape({
-        color: PropTypes.string.isRequired,
         id: PropTypes.number.isRequired,
         isChili: PropTypes.bool.isRequired,
         isWall: PropTypes.bool.isRequired,
+        color: PropTypes.string,
         column: PropTypes.number,
         row: PropTypes.number
       })
@@ -134,11 +135,6 @@ class App extends Component {
                     interval={NEW_ROW_INTERVAL}
                   />
                 )}
-                {lost && (
-                  <div>
-                    You lost. <button onClick={onRestart}>Restart</button>
-                  </div>
-                )}
                 <Columns>
                   {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
                     <Column
@@ -164,6 +160,7 @@ class App extends Component {
                 <Player isHolding={isHolding} position={position} />
               </Dimensions.Provider>
             </GameArea>
+            <GameOver lost={lost} onRestart={onRestart} finalScore={points} />
           </Container>
         )}
       </Dimensions.Consumer>

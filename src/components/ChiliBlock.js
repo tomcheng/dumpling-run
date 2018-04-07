@@ -22,7 +22,6 @@ const ChiliBlock = ({ className, style }) => (
 );
 
 ChiliBlock.propTypes = {
-  blockWidth: PropTypes.number.isRequired,
   className: PropTypes.string,
   style: PropTypes.object
 };
