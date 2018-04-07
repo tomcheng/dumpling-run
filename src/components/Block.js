@@ -8,6 +8,7 @@ import {
   BLOCK_BORDER_WIDTH,
   GAME_AREA_BORDER,
   BLOCK_MOVE_DURATION,
+  BLOCK_APPEAR_DURATION,
   BLOCK_DISAPPEAR_DURATION,
   BLOCK_DISAPPEAR_BLINK_COUNT,
   getCharacterHoldPosition
@@ -27,29 +28,43 @@ const blink = keyframes`
 `;
 
 const StyledBlock = styled.div`
+  transition: transform ${BLOCK_MOVE_DURATION}ms ease-out,
+    opacity ${BLOCK_APPEAR_DURATION}ms ease-in-out ${BLOCK_MOVE_DURATION}ms;
+  opacity: ${props => (props.state === "entering" ? 0 : 1)};
+  ${props =>
+    props.state === "exited"
+      ? `animation: ${BLOCK_DISAPPEAR_DURATION /
+          BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
+      : ""};
   pointer-events: none;
   border: ${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown};
   border-radius: 2px;
-  ${props =>
-    props.exiting
-      ? `animation: ${BLOCK_DISAPPEAR_DURATION /
-          BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
-      : ""};
 `;
 
 const StyledWall = styled(Wall)`
-  pointer-events: none;
+  transition: transform ${BLOCK_MOVE_DURATION}ms ease-out,
+    opacity ${BLOCK_APPEAR_DURATION}ms ease-in-out ${BLOCK_MOVE_DURATION}ms;
+  opacity: ${props => (props.state === "entering" ? 0 : 1)};
   ${props =>
-    props.exiting
+    props.state === "exited"
       ? `animation: ${BLOCK_DISAPPEAR_DURATION /
           BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
       : ""};
+  pointer-events: none;
 `;
 
 const StyledChili = styled(ChiliBlock)`
+  transition: transform ${BLOCK_MOVE_DURATION}ms ease-out,
+    opacity ${BLOCK_APPEAR_DURATION}ms ease-in-out ${BLOCK_MOVE_DURATION}ms;
+  opacity: ${props => (props.state === "entering" ? 0 : 1)};
+  ${props =>
+    props.state === "exited"
+      ? `animation: ${BLOCK_DISAPPEAR_DURATION /
+          BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
+      : ""};
   pointer-events: none;
   ${props =>
-    props.exiting
+    props.state === "exited"
       ? `animation: ${BLOCK_DISAPPEAR_DURATION /
           BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
       : ""};
@@ -71,7 +86,6 @@ const Block = ({
       {({ gameHeight, blockWidth, blockHeight }) => {
         const positionStyles = {
           position: "absolute",
-          transition: `transform ${BLOCK_MOVE_DURATION}ms ease-out`,
           zIndex: 1,
           width: blockWidth,
           height: blockHeight,
@@ -91,24 +105,23 @@ const Block = ({
           <Transition
             timeout={0}
             in={!toRemove}
+            appear
             addEndListener={node => {
               node.addEventListener("animationend", onRemoved);
             }}
           >
             {state => {
-              const exiting = state === "exited";
-
               if (isChili) {
-                return <StyledChili exiting={exiting} style={positionStyles} />;
+                return <StyledChili state={state} style={positionStyles} />;
               }
 
               if (isWall) {
-                return <StyledWall exiting={exiting} style={positionStyles} />;
+                return <StyledWall state={state} style={positionStyles} />;
               }
 
               return (
                 <StyledBlock
-                  exiting={exiting}
+                  state={state}
                   style={{
                     ...positionStyles,
                     backgroundColor: COLORS[color]
