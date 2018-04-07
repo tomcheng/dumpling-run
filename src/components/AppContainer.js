@@ -126,7 +126,12 @@ class AppContainer extends Component {
       return;
     }
 
-    const { color } = last(currentColumn);
+    const { blockIdsToRemove } = this.state;
+    const { color, id } = last(currentColumn);
+
+    if (blockIdsToRemove.includes(id)) {
+      return;
+    }
 
     this.setState({
       heldBlockIds: takeRightWhile(
