@@ -35,7 +35,7 @@ const generateBlocks = ({ rows = STARTING_ROWS, lastId = 0 } = {}) => {
         id: lastId + 1 + row + column * rows,
         row,
         column,
-        color: isWall ? null : sample(keys(COLORS)),
+        color: isWall || isChili ? null : sample(keys(COLORS)),
         isWall,
         isChili
       });
@@ -134,19 +134,18 @@ class AppContainer extends Component {
     }
 
     const { blockIdsToRemove } = this.state;
-    const { color, id, isWall } = last(currentColumn);
+    const { color, id, isWall, isChili } = last(currentColumn);
 
     if (blockIdsToRemove.includes(id) || isWall) {
       return;
     }
 
     this.setState({
-      heldBlockIds: takeRightWhile(
-        currentColumn,
-        block => block.color === color
-      )
-        .map(block => block.id)
-        .reverse()
+      heldBlockIds: isChili
+        ? [id]
+        : takeRightWhile(currentColumn, block => block.color === color)
+            .map(block => block.id)
+            .reverse()
     });
   };
 
@@ -175,10 +174,19 @@ class AppContainer extends Component {
 
   removeMatchedBlocks = () => {
     const { blocks } = this.state;
-    const adjacentBlockIds = getAdjacents(
-      blocks,
-      last(this.getCurrentColumn()).id
-    );
+    const lastBlock = last(this.getCurrentColumn());
+
+    if (lastBlock.isChili) {
+      this.setState(state => ({
+        ...state,
+        blockIdsToRemove: state.blockIdsToRemove.concat(
+          this.getCurrentColumn().map(b => b.id)
+        )
+      }));
+      return;
+    }
+
+    const adjacentBlockIds = getAdjacents(blocks, lastBlock.id);
 
     if (adjacentBlockIds.length >= 4) {
       this.setState(state => ({
