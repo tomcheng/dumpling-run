@@ -1,8 +1,8 @@
-import { INK_COLOR, ACCENT_COLOR } from "./colors";
+import { COLORS } from "../gameConstants";
 
 export const outline = {
   fill: "none",
-  stroke: INK_COLOR,
+  stroke: COLORS.brown.hex,
   strokeLinecap: "round",
   strokeLinejoin: "round",
   strokeWidth: "1.5px"
@@ -20,9 +20,9 @@ export const thick = {
 
 export const accent = {
   ...outline,
-  fill: ACCENT_COLOR
+  fill: COLORS.orange.hex
 };
 
 export const filled = {
-  fill: INK_COLOR
+  fill: COLORS.brown.hex
 };
