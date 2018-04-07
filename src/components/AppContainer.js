@@ -30,8 +30,7 @@ const generateBlocks = () => {
         id: 1 + row + column * STARTING_ROWS,
         row,
         column,
-        color: sample(keys(COLORS)),
-        held: false
+        color: sample(keys(COLORS))
       });
     }
   }
@@ -43,6 +42,7 @@ const getInitialState = () => ({
   position: Math.floor(NUM_COLUMNS / 2),
   blocks: generateBlocks(),
   blockIdsToRemove: [],
+  heldBlockIds: [],
   lost: false,
   dimensions: {
     blockWidth: 0
@@ -101,13 +101,18 @@ class AppContainer extends Component {
     }));
   };
 
-  getCurrentColumn = (state = this.state) =>
-    sortBy(state.blocks.filter(({ column }) => column === state.position), [
-      "row"
-    ]);
+  getCurrentColumn = (state = this.state) => {
+    const { blocks, position, heldBlockIds } = state;
+    return sortBy(
+      blocks.filter(
+        ({ column, id }) => column === position && !heldBlockIds.includes(id)
+      ),
+      ["row"]
+    );
+  };
 
   toggle = () => {
-    if (this.state.blocks.some(block => block.held)) {
+    if (this.state.heldBlockIds.length > 0) {
       this.drop();
     } else {
       this.pick();
@@ -115,7 +120,6 @@ class AppContainer extends Component {
   };
 
   pick = () => {
-    const { blocks } = this.state;
     const currentColumn = this.getCurrentColumn();
 
     if (currentColumn.length === 0) {
@@ -123,47 +127,32 @@ class AppContainer extends Component {
     }
 
     const { color } = last(currentColumn);
-    const idsToHold = takeRightWhile(
-      currentColumn,
-      block => block.color === color
-    ).map(block => block.id);
-    let holdPosition = 0;
 
-    const newBlocks = blocks.map(
-      block =>
-        idsToHold.includes(block.id)
-          ? {
-              ...block,
-              held: true,
-              column: null,
-              row: null,
-              holdPosition: holdPosition++
-            }
-          : block
-    );
-
-    this.setState({ blocks: newBlocks });
+    this.setState({
+      heldBlockIds: takeRightWhile(
+        currentColumn,
+        block => block.color === color
+      ).map(block => block.id)
+    });
   };
 
   drop = () => {
-    const { blocks, position } = this.state;
+    const { blocks, position, heldBlockIds } = this.state;
     const lastRow = this.getCurrentColumn().length - 1;
-    const numHeld = blocks.filter(block => block.held).length;
+    const numHeld = heldBlockIds.length;
 
     const newBlocks = blocks.map(
       block =>
-        block.held
+        heldBlockIds.includes(block.id)
           ? {
               ...block,
-              held: false,
-              holdPosition: null,
               column: position,
-              row: lastRow + numHeld - block.holdPosition
+              row: lastRow + numHeld - heldBlockIds.indexOf(block.id)
             }
           : block
     );
 
-    this.setState({ blocks: newBlocks }, () => {
+    this.setState({ blocks: newBlocks, heldBlockIds: [] }, () => {
       setTimeout(() => {
         this.removeMatchedBlocks();
       }, REMOVAL_DELAY);
@@ -198,8 +187,7 @@ class AppContainer extends Component {
           id: ++lastId,
           row: 0,
           column: index,
-          color: sample(keys(COLORS)),
-          held: false
+          color: sample(keys(COLORS))
         }))
       );
 
@@ -282,7 +270,8 @@ class AppContainer extends Component {
       dimensions,
       blocks,
       points,
-      blockIdsToRemove
+      blockIdsToRemove,
+      heldBlockIds
     } = this.state;
 
     return (
@@ -303,6 +292,7 @@ class AppContainer extends Component {
             lost={lost}
             position={position}
             blockIdsToRemove={blockIdsToRemove}
+            heldBlockIds={heldBlockIds}
             onAddNewRow={this.addNewRow}
             onClickColumn={this.handleClickColumn}
             onRestart={this.restart}

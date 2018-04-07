@@ -59,14 +59,12 @@ class App extends Component {
       PropTypes.shape({
         id: PropTypes.number.isRequired,
         color: PropTypes.string.isRequired,
-        held: PropTypes.bool.isRequired,
-        removed: PropTypes.isRequired,
         column: PropTypes.number,
-        holdPosition: PropTypes.number,
         row: PropTypes.number
       })
     ).isRequired,
     blockIdsToRemove: PropTypes.arrayOf(PropTypes.number).isRequired,
+    heldBlockIds: PropTypes.arrayOf(PropTypes.number).isRequired,
     lost: PropTypes.bool.isRequired,
     points: PropTypes.number.isRequired,
     position: PropTypes.number.isRequired,
@@ -98,16 +96,17 @@ class App extends Component {
       blocks,
       lost,
       position,
+      points,
+      blockIdsToRemove,
+      heldBlockIds,
       onAddNewRow,
       onClickColumn,
       onRemovedBlock,
-      onRestart,
-      points,
-      blockIdsToRemove
+      onRestart
     } = this.props;
     const { gameHeight } = this.state;
 
-    const isHolding = blocks.some(block => block.held);
+    const isHolding = heldBlockIds.length > 0;
 
     return (
       <Dimensions.Consumer>
@@ -140,14 +139,14 @@ class App extends Component {
                   ))}
                 </Columns>
                 {blocks.map(
-                  ({ id, row, column, color, held, holdPosition, removed }) => (
+                  ({ id, row, column, color }) => (
                     <Block
                       key={id}
-                      column={held ? position : column}
+                      column={heldBlockIds.includes(id) ? position : column}
                       color={color}
                       row={row}
-                      holdPosition={holdPosition}
-                      held={held}
+                      holdPosition={heldBlockIds.indexOf(id)}
+                      held={heldBlockIds.includes(id)}
                       toRemove={blockIdsToRemove.includes(id)}
                       onRemoved={onRemovedBlock}
                     />
