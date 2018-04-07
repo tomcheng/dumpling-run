@@ -7,8 +7,11 @@ import {
   GUTTER,
   BLOCK_BORDER_WIDTH,
   GAME_AREA_BORDER,
-  CHARACTER_HOLD_POSITION
+  CHARACTER_HOLD_POSITION,
+  BLOCK_MOVE_DURATION,
+  BLOCK_DISAPPEAR_DURATION
 } from "../gameConstants";
+import Transition from "react-transition-group/Transition";
 import Dimensions from "./DimensionsContext";
 
 const BLOCK_HEIGHT = 24;
@@ -16,32 +19,44 @@ const BLOCK_HEIGHT = 24;
 const StyledBlock = styled.div`
   position: absolute;
   height: ${BLOCK_HEIGHT}px;
-  transition: transform 0.07s ease-in;
+  transition: transform ${BLOCK_MOVE_DURATION}ms ease-in,
+    opacity ${BLOCK_DISAPPEAR_DURATION}ms ease-in-out;
   z-index: 1;
   pointer-events: none;
   border: ${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown.hex};
   border-radius: 2px;
 `;
 
-const Block = ({ color, column, row, held, holdPosition }) => (
+const Block = ({ color, column, row, held, holdPosition, toRemove, onRemoved }) => (
   <Dimensions.Consumer>
     {({ gameHeight, blockWidth }) => (
-      <StyledBlock
-        style={{
-          width: blockWidth,
-          backgroundColor: COLORS[color].hex,
-          left: GUTTER + column * (blockWidth + GUTTER),
-          transform: `translate3d(0, ${
-            held
-              ? gameHeight -
-                2 * GAME_AREA_BORDER -
-                2 * GUTTER -
-                CHARACTER_HOLD_POSITION -
-                (holdPosition + 1) * (BLOCK_HEIGHT + GUTTER)
-              : row * (BLOCK_HEIGHT + GUTTER)
-          }px, 0)`
+      <Transition
+        timeout={0}
+        in={!toRemove}
+        addEndListener={node => {
+          node.addEventListener("transitionend", onRemoved);
         }}
-      />
+      >
+        {state => (
+          <StyledBlock
+            style={{
+              opacity: state === "exited" ? 0 : 1,
+              width: blockWidth,
+              backgroundColor: COLORS[color].hex,
+              left: GUTTER + column * (blockWidth + GUTTER),
+              transform: `translate3d(0, ${
+                held
+                  ? gameHeight -
+                    2 * GAME_AREA_BORDER -
+                    2 * GUTTER -
+                    CHARACTER_HOLD_POSITION -
+                    (holdPosition + 1) * (BLOCK_HEIGHT + GUTTER)
+                  : row * (BLOCK_HEIGHT + GUTTER)
+              }px, 0)`
+            }}
+          />
+        )}
+      </Transition>
     )}
   </Dimensions.Consumer>
 );
@@ -50,6 +65,8 @@ Block.propTypes = {
   color: PropTypes.oneOf(keys(COLORS)).isRequired,
   column: PropTypes.number.isRequired,
   held: PropTypes.bool.isRequired,
+  toRemove: PropTypes.bool.isRequired,
+  onRemoved: PropTypes.func.isRequired,
   holdPosition: PropTypes.number,
   row: PropTypes.number
 };

@@ -5,7 +5,9 @@ export const POINTS_PER_BLOCK = 100;
 export const POINTS_TO_ADVANCE = 3000;
 
 export const NEW_ROW_INTERVAL = 15000;
-export const REMOVAL_DELAY = 150;
+export const BLOCK_MOVE_DURATION = 70;
+export const REMOVAL_DELAY = BLOCK_MOVE_DURATION + 10;
+export const BLOCK_DISAPPEAR_DURATION = 100;
 
 export const COLORS = {
   brown: { hex: "#4d3d2f" },
@@ -22,4 +24,5 @@ export const BLOCK_BORDER_WIDTH = 2;
 
 export const CHARACTER_SIZE = 64;
 export const CHARACTER_VERTICAL_OFFSET = -Math.round(5 / 64 * CHARACTER_SIZE);
-export const CHARACTER_HOLD_POSITION = Math.round(34 / 64 * CHARACTER_SIZE) + CHARACTER_VERTICAL_OFFSET;
+export const CHARACTER_HOLD_POSITION =
+  Math.round(34 / 64 * CHARACTER_SIZE) + CHARACTER_VERTICAL_OFFSET;

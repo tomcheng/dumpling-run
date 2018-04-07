@@ -41,8 +41,8 @@ const generateBlocks = () => {
 
 const getInitialState = () => ({
   position: Math.floor(NUM_COLUMNS / 2),
-  holding: [],
   blocks: generateBlocks(),
+  blockIdsToRemove: [],
   lost: false,
   dimensions: {
     blockWidth: 0
@@ -100,6 +100,11 @@ class AppContainer extends Component {
       position: Math.min(state.position + 1, NUM_COLUMNS - 1)
     }));
   };
+
+  getCurrentColumn = (state = this.state) =>
+    sortBy(state.blocks.filter(({ column }) => column === state.position), [
+      "row"
+    ]);
 
   toggle = () => {
     if (this.state.blocks.some(block => block.held)) {
@@ -165,42 +170,19 @@ class AppContainer extends Component {
     });
   };
 
-  getCurrentColumn = (state = this.state) =>
-    sortBy(state.blocks.filter(({ column }) => column === state.position), [
-      "row"
-    ]);
-
   removeMatchedBlocks = () => {
-    const { blocks, points } = this.state;
+    const { blocks } = this.state;
     const adjacentBlockIds = getAdjacents(
       blocks,
       last(this.getCurrentColumn()).id
     );
 
-    if (adjacentBlockIds.length < 4) {
-      return;
+    if (adjacentBlockIds.length >= 4) {
+      this.setState(state => ({
+        ...state,
+        blockIdsToRemove: state.blockIdsToRemove.concat(adjacentBlockIds)
+      }));
     }
-
-    const newBlocks = blocks.filter(
-      block => !adjacentBlockIds.includes(block.id)
-    );
-
-    for (let i = 0; i < NUM_COLUMNS; i++) {
-      const column = sortBy(newBlocks.filter(({ column }) => column === i), [
-        "row"
-      ]);
-      column.forEach((block, index) => {
-        if (block.row !== index) {
-          const blockIndex = findIndex(newBlocks, ({ id }) => id === block.id);
-          newBlocks[blockIndex] = { ...block, row: index };
-        }
-      });
-    }
-
-    this.setState({
-      points: points + adjacentBlockIds.length * POINTS_PER_BLOCK,
-      blocks: newBlocks
-    });
   };
 
   addNewRow = () => {
@@ -222,6 +204,37 @@ class AppContainer extends Component {
       );
 
     this.setState({ blocks: newBlocks }, this.checkLose);
+  };
+
+  handleRemovedBlock = () => {
+    const { blocks, blockIdsToRemove } = this.state;
+
+    if (blockIdsToRemove.length === 0) {
+      return;
+    }
+
+    const newBlocks = blocks.filter(
+      block => !blockIdsToRemove.includes(block.id)
+    );
+
+    for (let i = 0; i < NUM_COLUMNS; i++) {
+      const column = sortBy(newBlocks.filter(({ column }) => column === i), [
+        "row"
+      ]);
+      column.forEach((block, index) => {
+        if (block.row !== index) {
+          const blockIndex = findIndex(newBlocks, ({ id }) => id === block.id);
+          newBlocks[blockIndex] = { ...block, row: index };
+        }
+      });
+    }
+
+    this.setState(state => ({
+      ...state,
+      blocks: newBlocks,
+      blockIdsToRemove: [],
+      points: state.points + blockIdsToRemove.length * POINTS_PER_BLOCK
+    }));
   };
 
   checkLose = () => {
@@ -263,7 +276,14 @@ class AppContainer extends Component {
   };
 
   render() {
-    const { position, lost, dimensions, blocks, points } = this.state;
+    const {
+      position,
+      lost,
+      dimensions,
+      blocks,
+      points,
+      blockIdsToRemove
+    } = this.state;
 
     return (
       <div
@@ -282,9 +302,11 @@ class AppContainer extends Component {
             blocks={blocks}
             lost={lost}
             position={position}
+            blockIdsToRemove={blockIdsToRemove}
             onAddNewRow={this.addNewRow}
             onClickColumn={this.handleClickColumn}
             onRestart={this.restart}
+            onRemovedBlock={this.handleRemovedBlock}
           />
         </DimensionsContext.Provider>
       </div>

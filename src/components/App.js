@@ -60,16 +60,19 @@ class App extends Component {
         id: PropTypes.number.isRequired,
         color: PropTypes.string.isRequired,
         held: PropTypes.bool.isRequired,
+        removed: PropTypes.isRequired,
         column: PropTypes.number,
         holdPosition: PropTypes.number,
         row: PropTypes.number
       })
     ).isRequired,
+    blockIdsToRemove: PropTypes.arrayOf(PropTypes.number).isRequired,
     lost: PropTypes.bool.isRequired,
     points: PropTypes.number.isRequired,
     position: PropTypes.number.isRequired,
     onAddNewRow: PropTypes.func.isRequired,
     onClickColumn: PropTypes.func.isRequired,
+    onRemovedBlock: PropTypes.func.isRequired,
     onRestart: PropTypes.func.isRequired
   };
 
@@ -97,8 +100,10 @@ class App extends Component {
       position,
       onAddNewRow,
       onClickColumn,
+      onRemovedBlock,
       onRestart,
-      points
+      points,
+      blockIdsToRemove
     } = this.props;
     const { gameHeight } = this.state;
 
@@ -135,14 +140,16 @@ class App extends Component {
                   ))}
                 </Columns>
                 {blocks.map(
-                  ({ id, row, column, color, held, holdPosition }) => (
+                  ({ id, row, column, color, held, holdPosition, removed }) => (
                     <Block
                       key={id}
                       column={held ? position : column}
                       color={color}
-                      held={held}
                       row={row}
                       holdPosition={holdPosition}
+                      held={held}
+                      toRemove={blockIdsToRemove.includes(id)}
+                      onRemoved={onRemovedBlock}
                     />
                   )
                 )}
