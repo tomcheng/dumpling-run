@@ -58,8 +58,9 @@ class App extends Component {
   static propTypes = {
     blocks: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.number.isRequired,
         color: PropTypes.string.isRequired,
+        id: PropTypes.number.isRequired,
+        isWall: PropTypes.bool.isRequired,
         column: PropTypes.number,
         row: PropTypes.number
       })
@@ -145,7 +146,7 @@ class App extends Component {
                     />
                   ))}
                 </Columns>
-                {blocks.map(({ id, row, column, color }) => (
+                {blocks.map(({ id, row, column, color, isWall }) => (
                   <Block
                     key={id}
                     column={heldBlockIds.includes(id) ? position : column}
@@ -154,6 +155,7 @@ class App extends Component {
                     holdPosition={heldBlockIds.indexOf(id)}
                     held={heldBlockIds.includes(id)}
                     toRemove={blockIdsToRemove.includes(id)}
+                    isWall={isWall}
                     onRemoved={onRemovedBlock}
                   />
                 ))}

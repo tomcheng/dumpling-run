@@ -43,6 +43,7 @@ const Block = ({
   column,
   row,
   held,
+  isWall,
   holdPosition,
   toRemove,
   onRemoved
@@ -62,7 +63,7 @@ const Block = ({
             style={{
               width: blockWidth,
               height: blockHeight,
-              backgroundColor: COLORS[color].hex,
+              backgroundColor: isWall ? "grey" : COLORS[color].hex,
               left: GUTTER + column * (blockWidth + GUTTER),
               transform: `translate3d(0, ${
                 held
@@ -85,6 +86,7 @@ Block.propTypes = {
   color: PropTypes.oneOf(keys(COLORS)).isRequired,
   column: PropTypes.number.isRequired,
   held: PropTypes.bool.isRequired,
+  isWall: PropTypes.bool.isRequired,
   toRemove: PropTypes.bool.isRequired,
   onRemoved: PropTypes.func.isRequired,
   holdPosition: PropTypes.number,

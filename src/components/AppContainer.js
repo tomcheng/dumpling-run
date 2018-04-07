@@ -16,21 +16,24 @@ import {
   GAME_AREA_BORDER,
   MINIMUM_SCREEN_PADDING,
   REMOVAL_DELAY,
-  POINTS_PER_BLOCK
+  POINTS_PER_BLOCK,
+  CHANCE_OF_WALL
 } from "../gameConstants";
 import DimensionsContext from "./DimensionsContext";
 import App from "./App";
 
-const generateBlocks = () => {
+const generateBlocks = ({ rows = STARTING_ROWS, lastId = 0 } = {}) => {
   const blocks = [];
 
   for (let column = 0; column < NUM_COLUMNS; column++) {
-    for (let row = 0; row < STARTING_ROWS; row++) {
+    for (let row = 0; row < rows; row++) {
+      const isWall = Math.random() < CHANCE_OF_WALL;
       blocks.push({
-        id: 1 + row + column * STARTING_ROWS,
+        id: lastId + 1 + row + column * rows,
         row,
         column,
-        color: sample(keys(COLORS))
+        color: isWall ? null : sample(keys(COLORS)),
+        isWall
       });
     }
   }
@@ -127,9 +130,9 @@ class AppContainer extends Component {
     }
 
     const { blockIdsToRemove } = this.state;
-    const { color, id } = last(currentColumn);
+    const { color, id, isWall } = last(currentColumn);
 
-    if (blockIdsToRemove.includes(id)) {
+    if (blockIdsToRemove.includes(id) || isWall) {
       return;
     }
 
@@ -137,7 +140,9 @@ class AppContainer extends Component {
       heldBlockIds: takeRightWhile(
         currentColumn,
         block => block.color === color
-      ).map(block => block.id).reverse()
+      )
+        .map(block => block.id)
+        .reverse()
     });
   };
 
@@ -181,20 +186,13 @@ class AppContainer extends Component {
 
   addNewRow = () => {
     const { blocks } = this.state;
-    let lastId = blocks.length > 0 ? last(blocks).id : 0;
+    const lastId = blocks.length > 0 ? last(blocks).id : 0;
     const newBlocks = blocks
       .map(block => ({
         ...block,
-        row: block.held ? block.row : block.row + 1
+        row: block.row + 1
       }))
-      .concat(
-        [...Array(NUM_COLUMNS)].map((_, index) => ({
-          id: ++lastId,
-          row: 0,
-          column: index,
-          color: sample(keys(COLORS))
-        }))
-      );
+      .concat(generateBlocks({ rows: 1, lastId }));
 
     this.setState({ blocks: newBlocks }, this.checkLose);
   };

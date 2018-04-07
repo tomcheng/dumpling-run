@@ -7,12 +7,13 @@ export const STARTING_ROWS = 5;
 export const MAX_ROWS = 14;
 export const POINTS_PER_BLOCK = 100;
 export const POINTS_TO_ADVANCE = 3000;
+export const CHANCE_OF_WALL = 0.04;
 
 // TIMING
 export const NEW_ROW_INTERVAL = 15000;
 export const BLOCK_MOVE_DURATION = 70;
 export const REMOVAL_DELAY = BLOCK_MOVE_DURATION + 10;
-export const BLOCK_DISAPPEAR_DURATION = 450;
+export const BLOCK_DISAPPEAR_DURATION = 500;
 export const BLOCK_DISAPPEAR_BLINK_COUNT = 2;
 
 // COLORS
