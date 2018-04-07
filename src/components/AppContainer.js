@@ -17,7 +17,8 @@ import {
   MINIMUM_SCREEN_PADDING,
   REMOVAL_DELAY,
   POINTS_PER_BLOCK,
-  CHANCE_OF_WALL
+  CHANCE_OF_WALL,
+  CHANCE_OF_CHILI
 } from "../gameConstants";
 import DimensionsContext from "./DimensionsContext";
 import App from "./App";
@@ -27,13 +28,16 @@ const generateBlocks = ({ rows = STARTING_ROWS, lastId = 0 } = {}) => {
 
   for (let column = 0; column < NUM_COLUMNS; column++) {
     for (let row = 0; row < rows; row++) {
-      const isWall = Math.random() < CHANCE_OF_WALL;
+      const rand = Math.random();
+      const isWall = rand < CHANCE_OF_WALL;
+      const isChili = !isWall && rand - CHANCE_OF_WALL < CHANCE_OF_CHILI;
       blocks.push({
         id: lastId + 1 + row + column * rows,
         row,
         column,
         color: isWall ? null : sample(keys(COLORS)),
-        isWall
+        isWall,
+        isChili
       });
     }
   }

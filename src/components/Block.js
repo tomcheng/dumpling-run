@@ -14,6 +14,7 @@ import {
 } from "../gameConstants";
 import Transition from "react-transition-group/Transition";
 import Dimensions from "./DimensionsContext";
+import ChiliBlock from "./ChiliBlock";
 import Wall from "./Wall";
 
 const blink = keyframes`
@@ -26,6 +27,7 @@ const blink = keyframes`
 `;
 
 const StyledBlock = styled.div`
+  pointer-events: none;
   border: ${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown.hex};
   border-radius: 2px;
   ${props =>
@@ -36,6 +38,15 @@ const StyledBlock = styled.div`
 `;
 
 const StyledWall = styled(Wall)`
+  pointer-events: none;
+  ${props =>
+    props.exiting
+      ? `animation: ${BLOCK_DISAPPEAR_DURATION /
+          BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
+      : ""};
+`;
+
+const StyledChili = styled(ChiliBlock)`
   pointer-events: none;
   ${props =>
     props.exiting
@@ -75,6 +86,7 @@ const Block = ({
   column,
   row,
   held,
+  isChili,
   isWall,
   holdPosition,
   toRemove,
@@ -91,7 +103,23 @@ const Block = ({
           }}
         >
           {state =>
-            isWall ? (
+            isChili ? (
+              <StyledChili
+                exiting={state === "exited"}
+                blockWidth={blockWidth}
+                style={{
+                  ...getPositionStyles({
+                    blockWidth,
+                    blockHeight,
+                    column,
+                    gameHeight,
+                    held,
+                    holdPosition,
+                    row
+                  })
+                }}
+              />
+            ) : isWall ? (
               <StyledWall
                 exiting={state === "exited"}
                 style={{
@@ -134,6 +162,7 @@ Block.propTypes = {
   color: PropTypes.oneOf(keys(COLORS)).isRequired,
   column: PropTypes.number.isRequired,
   held: PropTypes.bool.isRequired,
+  isChili: PropTypes.bool.isRequired,
   isWall: PropTypes.bool.isRequired,
   toRemove: PropTypes.bool.isRequired,
   onRemoved: PropTypes.func.isRequired,
