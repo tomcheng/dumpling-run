@@ -132,7 +132,7 @@ class AppContainer extends Component {
       heldBlockIds: takeRightWhile(
         currentColumn,
         block => block.color === color
-      ).map(block => block.id)
+      ).map(block => block.id).reverse()
     });
   };
 
