@@ -14,11 +14,8 @@ import {
 import Transition from "react-transition-group/Transition";
 import Dimensions from "./DimensionsContext";
 
-const BLOCK_HEIGHT = 24;
-
 const StyledBlock = styled.div`
   position: absolute;
-  height: ${BLOCK_HEIGHT}px;
   transition: transform ${BLOCK_MOVE_DURATION}ms ease-in,
     opacity ${BLOCK_DISAPPEAR_DURATION}ms ease-in-out;
   z-index: 1;
@@ -29,7 +26,7 @@ const StyledBlock = styled.div`
 
 const Block = ({ color, column, row, held, holdPosition, toRemove, onRemoved }) => (
   <Dimensions.Consumer>
-    {({ gameHeight, blockWidth }) => (
+    {({ gameHeight, blockWidth, blockHeight }) => (
       <Transition
         timeout={0}
         in={!toRemove}
@@ -42,6 +39,7 @@ const Block = ({ color, column, row, held, holdPosition, toRemove, onRemoved }) 
             style={{
               opacity: state === "exited" ? 0 : 1,
               width: blockWidth,
+              height: blockHeight,
               backgroundColor: COLORS[color].hex,
               left: GUTTER + column * (blockWidth + GUTTER),
               transform: `translate3d(0, ${
@@ -50,8 +48,8 @@ const Block = ({ color, column, row, held, holdPosition, toRemove, onRemoved }) 
                     2 * GAME_AREA_BORDER -
                     2 * GUTTER -
                     CHARACTER_HOLD_POSITION -
-                    (holdPosition + 1) * (BLOCK_HEIGHT + GUTTER)
-                  : row * (BLOCK_HEIGHT + GUTTER)
+                    (holdPosition + 1) * (blockHeight + GUTTER)
+                  : row * (blockHeight + GUTTER)
               }px, 0)`
             }}
           />

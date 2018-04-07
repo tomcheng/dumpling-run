@@ -1,14 +1,17 @@
+// GAME LOGIC
 export const NUM_COLUMNS = 10;
 export const STARTING_ROWS = 5;
 export const MAX_ROWS = 14;
 export const POINTS_PER_BLOCK = 100;
 export const POINTS_TO_ADVANCE = 3000;
 
+// TIMING
 export const NEW_ROW_INTERVAL = 15000;
 export const BLOCK_MOVE_DURATION = 70;
 export const REMOVAL_DELAY = BLOCK_MOVE_DURATION + 10;
 export const BLOCK_DISAPPEAR_DURATION = 100;
 
+// COLORS
 export const COLORS = {
   brown: { hex: "#4d3d2f" },
   orange: { hex: "#ee6a29" },
@@ -17,11 +20,13 @@ export const COLORS = {
   red: { hex: "#a51d1a" }
 };
 
+// GAME DIMENSIONS
 export const GUTTER = 1;
 export const MINIMUM_SCREEN_PADDING = 8;
 export const GAME_AREA_BORDER = 2;
 export const BLOCK_BORDER_WIDTH = 2;
 
+// CHARACTER DIMENSIONS
 export const CHARACTER_SIZE = 64;
 export const CHARACTER_VERTICAL_OFFSET = -Math.round(5 / 64 * CHARACTER_SIZE);
 export const CHARACTER_HOLD_POSITION =

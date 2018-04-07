@@ -7,7 +7,9 @@ import {
   GUTTER,
   GAME_AREA_BORDER,
   MINIMUM_SCREEN_PADDING,
-  COLORS
+  COLORS,
+  CHARACTER_HOLD_POSITION,
+  MAX_ROWS
 } from "../gameConstants";
 import Dimensions from "./DimensionsContext";
 import Timer from "./Timer";
@@ -88,7 +90,16 @@ class App extends Component {
   }
 
   setDimensions = () => {
-    this.setState({ gameHeight: this.gameAreaRef.current.offsetHeight });
+    const gameHeight = this.gameAreaRef.current.offsetHeight;
+    const blockHeight =
+      Math.floor(
+        (gameHeight -
+          2 * GAME_AREA_BORDER -
+          2 * GUTTER -
+          CHARACTER_HOLD_POSITION) /
+          (MAX_ROWS + 0.5)
+      ) - GUTTER;
+    this.setState({ gameHeight, blockHeight });
   };
 
   render() {
@@ -104,7 +115,7 @@ class App extends Component {
       onRemovedBlock,
       onRestart
     } = this.props;
-    const { gameHeight } = this.state;
+    const { gameHeight, blockHeight } = this.state;
 
     const isHolding = heldBlockIds.length > 0;
 
@@ -117,7 +128,12 @@ class App extends Component {
             </Header>
             <GameArea style={{ width: gameWidth }} innerRef={this.gameAreaRef}>
               <Dimensions.Provider
-                value={{ ...otherDimensions, gameWidth, gameHeight }}
+                value={{
+                  ...otherDimensions,
+                  gameWidth,
+                  gameHeight,
+                  blockHeight
+                }}
               >
                 {!lost && (
                   <Timer
@@ -138,20 +154,18 @@ class App extends Component {
                     />
                   ))}
                 </Columns>
-                {blocks.map(
-                  ({ id, row, column, color }) => (
-                    <Block
-                      key={id}
-                      column={heldBlockIds.includes(id) ? position : column}
-                      color={color}
-                      row={row}
-                      holdPosition={heldBlockIds.indexOf(id)}
-                      held={heldBlockIds.includes(id)}
-                      toRemove={blockIdsToRemove.includes(id)}
-                      onRemoved={onRemovedBlock}
-                    />
-                  )
-                )}
+                {blocks.map(({ id, row, column, color }) => (
+                  <Block
+                    key={id}
+                    column={heldBlockIds.includes(id) ? position : column}
+                    color={color}
+                    row={row}
+                    holdPosition={heldBlockIds.indexOf(id)}
+                    held={heldBlockIds.includes(id)}
+                    toRemove={blockIdsToRemove.includes(id)}
+                    onRemoved={onRemovedBlock}
+                  />
+                ))}
                 <Player isHolding={isHolding} position={position} />
               </Dimensions.Provider>
             </GameArea>
