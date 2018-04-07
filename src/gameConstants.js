@@ -1,3 +1,6 @@
+import clamp from "lodash/clamp";
+import { simpleMemoize } from "./utils/generalUtils";
+
 // GAME LOGIC
 export const NUM_COLUMNS = 10;
 export const STARTING_ROWS = 5;
@@ -20,14 +23,31 @@ export const COLORS = {
   red: { hex: "#a51d1a" }
 };
 
+// CHARACTER DIMENSIONS
+export const getCharacterSize = simpleMemoize(blockWidth =>
+  clamp(blockWidth, 50, 140)
+);
+export const getCharacterVerticalOffset = simpleMemoize(
+  blockWidth => -Math.round(5 / 64 * getCharacterSize(blockWidth))
+);
+export const getCharacterHoldPosition = simpleMemoize(
+  blockWidth =>
+    Math.round(34 / 64 * getCharacterSize(blockWidth)) +
+    getCharacterVerticalOffset(blockWidth)
+);
+
 // GAME DIMENSIONS
 export const GUTTER = 1;
 export const MINIMUM_SCREEN_PADDING = 8;
 export const GAME_AREA_BORDER = 2;
 export const BLOCK_BORDER_WIDTH = 2;
-
-// CHARACTER DIMENSIONS
-export const CHARACTER_SIZE = 64;
-export const CHARACTER_VERTICAL_OFFSET = -Math.round(5 / 64 * CHARACTER_SIZE);
-export const CHARACTER_HOLD_POSITION =
-  Math.round(34 / 64 * CHARACTER_SIZE) + CHARACTER_VERTICAL_OFFSET;
+export const getBlockHeight = simpleMemoize(
+  (blockWidth, gameHeight) =>
+    Math.floor(
+      (gameHeight -
+        2 * GAME_AREA_BORDER -
+        2 * GUTTER -
+        getCharacterHoldPosition(blockWidth)) /
+        (MAX_ROWS + 0.5)
+    ) - GUTTER
+);

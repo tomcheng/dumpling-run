@@ -7,16 +7,16 @@ import {
   GUTTER,
   BLOCK_BORDER_WIDTH,
   GAME_AREA_BORDER,
-  CHARACTER_HOLD_POSITION,
   BLOCK_MOVE_DURATION,
-  BLOCK_DISAPPEAR_DURATION
+  BLOCK_DISAPPEAR_DURATION,
+  getCharacterHoldPosition
 } from "../gameConstants";
 import Transition from "react-transition-group/Transition";
 import Dimensions from "./DimensionsContext";
 
 const StyledBlock = styled.div`
   position: absolute;
-  transition: transform ${BLOCK_MOVE_DURATION}ms ease-in,
+  transition: transform ${BLOCK_MOVE_DURATION}ms ease-out,
     opacity ${BLOCK_DISAPPEAR_DURATION}ms ease-in-out;
   z-index: 1;
   pointer-events: none;
@@ -24,7 +24,15 @@ const StyledBlock = styled.div`
   border-radius: 2px;
 `;
 
-const Block = ({ color, column, row, held, holdPosition, toRemove, onRemoved }) => (
+const Block = ({
+  color,
+  column,
+  row,
+  held,
+  holdPosition,
+  toRemove,
+  onRemoved
+}) => (
   <Dimensions.Consumer>
     {({ gameHeight, blockWidth, blockHeight }) => (
       <Transition
@@ -47,7 +55,7 @@ const Block = ({ color, column, row, held, holdPosition, toRemove, onRemoved }) 
                   ? gameHeight -
                     2 * GAME_AREA_BORDER -
                     2 * GUTTER -
-                    CHARACTER_HOLD_POSITION -
+                    getCharacterHoldPosition(blockWidth) -
                     (holdPosition + 1) * (blockHeight + GUTTER)
                   : row * (blockHeight + GUTTER)
               }px, 0)`

@@ -8,8 +8,7 @@ import {
   GAME_AREA_BORDER,
   MINIMUM_SCREEN_PADDING,
   COLORS,
-  CHARACTER_HOLD_POSITION,
-  MAX_ROWS
+  getBlockHeight
 } from "../gameConstants";
 import Dimensions from "./DimensionsContext";
 import Timer from "./Timer";
@@ -90,16 +89,7 @@ class App extends Component {
   }
 
   setDimensions = () => {
-    const gameHeight = this.gameAreaRef.current.offsetHeight;
-    const blockHeight =
-      Math.floor(
-        (gameHeight -
-          2 * GAME_AREA_BORDER -
-          2 * GUTTER -
-          CHARACTER_HOLD_POSITION) /
-          (MAX_ROWS + 0.5)
-      ) - GUTTER;
-    this.setState({ gameHeight, blockHeight });
+    this.setState({ gameHeight: this.gameAreaRef.current.offsetHeight });
   };
 
   render() {
@@ -115,13 +105,13 @@ class App extends Component {
       onRemovedBlock,
       onRestart
     } = this.props;
-    const { gameHeight, blockHeight } = this.state;
+    const { gameHeight } = this.state;
 
     const isHolding = heldBlockIds.length > 0;
 
     return (
       <Dimensions.Consumer>
-        {({ gameWidth, ...otherDimensions }) => (
+        {({ gameWidth, blockWidth, ...otherDimensions }) => (
           <Container>
             <Header style={{ width: gameWidth }}>
               Score: <strong>{points}</strong>
@@ -131,8 +121,9 @@ class App extends Component {
                 value={{
                   ...otherDimensions,
                   gameWidth,
+                  blockWidth,
                   gameHeight,
-                  blockHeight
+                  blockHeight: getBlockHeight(blockWidth, gameHeight)
                 }}
               >
                 {!lost && (
