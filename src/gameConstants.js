@@ -12,7 +12,8 @@ export const POINTS_TO_ADVANCE = 3000;
 export const NEW_ROW_INTERVAL = 15000;
 export const BLOCK_MOVE_DURATION = 70;
 export const REMOVAL_DELAY = BLOCK_MOVE_DURATION + 10;
-export const BLOCK_DISAPPEAR_DURATION = 100;
+export const BLOCK_DISAPPEAR_DURATION = 450;
+export const BLOCK_DISAPPEAR_BLINK_COUNT = 2;
 
 // COLORS
 export const COLORS = {
