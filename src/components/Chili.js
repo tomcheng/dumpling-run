@@ -1,10 +1,13 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { accent } from "../utils/svgStyles";
 import { COLORS } from "../gameConstants";
 
-const Chili = ({ width }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 26" width={width}>
+const Chili = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 80 26"
+    style={{ display: "block" }}
+  >
     <path
       d="M16.73,17.56c1.15,2.08,2.84,2.77,5.06,3.38S30,23,34.5,23.67a54.44,54.44,0,0,0,15.43-.08c3.84-.77,9.64-3.53,12.36-5.18a41.56,41.56,0,0,0,7.56-6.11C71.35,10.69,73,9,74.34,8.5s3.53-.15,4.11-.34a1.46,1.46,0,0,0,1-1.19c0-.38-1-1.42-2.15-2A8.09,8.09,0,0,0,73,4.17a20.1,20.1,0,0,0-6.18,2.38c-2.11,1.23-5.41,2.68-8.56,4.22a31.32,31.32,0,0,1-13.63,2.76A40.11,40.11,0,0,1,30,10.58c-4.91-2-6-3.34-8.1-3.3s-2.69,1-2.69,1l-1.19,2L16.88,12.5l-.42,2.18Z"
       style={{ ...accent, fill: COLORS.red.hex }}
@@ -15,9 +18,5 @@ const Chili = ({ width }) => (
     />
   </svg>
 );
-
-Chili.propTypes = { width: PropTypes.number };
-
-Chili.defaultProps = { width: 80 };
 
 export default Chili;

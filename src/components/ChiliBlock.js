@@ -9,9 +9,15 @@ const Container = styled.div`
   justify-content: center;
 `;
 
-const ChiliBlock = ({ className, style, blockWidth }) => (
+const ChiliWrapper = styled.div`
+  width: 90%;
+`;
+
+const ChiliBlock = ({ className, style }) => (
   <Container className={className} style={style}>
-    <Chili width={Math.round(blockWidth * 0.9)} />
+    <ChiliWrapper>
+      <Chili />
+    </ChiliWrapper>
   </Container>
 );
 

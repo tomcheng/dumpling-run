@@ -55,32 +55,6 @@ const StyledChili = styled(ChiliBlock)`
       : ""};
 `;
 
-const getPositionStyles = ({
-  blockWidth,
-  blockHeight,
-  column,
-  gameHeight,
-  held,
-  holdPosition,
-  row
-}) => ({
-  position: "absolute",
-  transition: `transform ${BLOCK_MOVE_DURATION}ms ease-out`,
-  zIndex: 1,
-  width: blockWidth,
-  height: blockHeight,
-  left: GUTTER + column * (blockWidth + GUTTER),
-  transform: `translate3d(0, ${
-    held
-      ? gameHeight -
-        2 * GAME_AREA_BORDER -
-        2 * GUTTER -
-        getCharacterHoldPosition(blockWidth) -
-        (holdPosition + 1) * (blockHeight + GUTTER)
-      : row * (blockHeight + GUTTER)
-  }px, 0)`
-});
-
 const Block = ({
   color,
   column,
@@ -94,66 +68,57 @@ const Block = ({
 }) => {
   return (
     <Dimensions.Consumer>
-      {({ gameHeight, blockWidth, blockHeight }) => (
-        <Transition
-          timeout={0}
-          in={!toRemove}
-          addEndListener={node => {
-            node.addEventListener("animationend", onRemoved);
-          }}
-        >
-          {state =>
-            isChili ? (
-              <StyledChili
-                exiting={state === "exited"}
-                blockWidth={blockWidth}
-                style={{
-                  ...getPositionStyles({
-                    blockWidth,
-                    blockHeight,
-                    column,
-                    gameHeight,
-                    held,
-                    holdPosition,
-                    row
-                  })
-                }}
-              />
-            ) : isWall ? (
-              <StyledWall
-                exiting={state === "exited"}
-                style={{
-                  ...getPositionStyles({
-                    blockWidth,
-                    blockHeight,
-                    column,
-                    gameHeight,
-                    held,
-                    holdPosition,
-                    row
-                  })
-                }}
-              />
-            ) : (
-              <StyledBlock
-                exiting={state === "exited"}
-                style={{
-                  ...getPositionStyles({
-                    blockWidth,
-                    blockHeight,
-                    column,
-                    gameHeight,
-                    held,
-                    holdPosition,
-                    row
-                  }),
-                  backgroundColor: COLORS[color].hex
-                }}
-              />
-            )
-          }
-        </Transition>
-      )}
+      {({ gameHeight, blockWidth, blockHeight }) => {
+        const positionStyles = {
+          position: "absolute",
+          transition: `transform ${BLOCK_MOVE_DURATION}ms ease-out`,
+          zIndex: 1,
+          width: blockWidth,
+          height: blockHeight,
+          left: GUTTER + column * (blockWidth + GUTTER),
+          transform: `translate3d(0, ${
+            held
+              ? gameHeight -
+                2 * GAME_AREA_BORDER -
+                2 * GUTTER -
+                getCharacterHoldPosition(blockWidth) -
+                (holdPosition + 1) * (blockHeight + GUTTER)
+              : row * (blockHeight + GUTTER)
+          }px, 0)`
+        };
+
+        return (
+          <Transition
+            timeout={0}
+            in={!toRemove}
+            addEndListener={node => {
+              node.addEventListener("animationend", onRemoved);
+            }}
+          >
+            {state => {
+              const exiting = state === "exited";
+
+              if (isChili) {
+                return <StyledChili exiting={exiting} style={positionStyles} />;
+              }
+
+              if (isWall) {
+                return <StyledWall exiting={exiting} style={positionStyles} />;
+              }
+
+              return (
+                <StyledBlock
+                  exiting={exiting}
+                  style={{
+                    ...positionStyles,
+                    backgroundColor: COLORS[color].hex
+                  }}
+                />
+              );
+            }}
+          </Transition>
+        );
+      }}
     </Dimensions.Consumer>
   );
 };
