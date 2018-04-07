@@ -20,12 +20,12 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #fbf6ea;
+  background-color: ${COLORS.background};
   padding: ${MINIMUM_SCREEN_PADDING}px 0;
   font-size: 14px;
   line-height: 20px;
   font-family: Roboto, Arial, "Helvetica Neue", Helvetica, sans-serif;
-  color: ${COLORS.brown.hex};
+  color: ${COLORS.brown};
 `;
 
 const Header = styled.div`

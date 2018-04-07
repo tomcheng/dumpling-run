@@ -2,7 +2,7 @@ import { COLORS } from "../gameConstants";
 
 export const outline = {
   fill: "none",
-  stroke: COLORS.brown.hex,
+  stroke: COLORS.brown,
   strokeLinecap: "round",
   strokeLinejoin: "round",
   strokeWidth: "1.5px"
@@ -20,9 +20,9 @@ export const thick = {
 
 export const accent = {
   ...outline,
-  fill: COLORS.orange.hex
+  fill: COLORS.orange
 };
 
 export const filled = {
-  fill: COLORS.brown.hex
+  fill: COLORS.brown
 };

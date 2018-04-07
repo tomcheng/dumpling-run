@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { BLOCK_BORDER_WIDTH, COLORS } from "../gameConstants";
 
-const borderStyle = `${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown.hex}`;
+const borderStyle = `${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown}`;
 
 const Container = styled.div`
   border: ${borderStyle};

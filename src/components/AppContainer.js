@@ -1,6 +1,5 @@
 import React, { Component, createRef } from "react";
 import findIndex from "lodash/findIndex";
-import keys from "lodash/keys";
 import last from "lodash/last";
 import omit from "lodash/omit";
 import sample from "lodash/sample";
@@ -8,7 +7,7 @@ import sortBy from "lodash/sortBy";
 import takeRightWhile from "lodash/takeRightWhile";
 import { getAdjacents } from "../utils/gridUtils";
 import {
-  COLORS,
+  BLOCK_COLORS,
   MAX_ROWS,
   NUM_COLUMNS,
   STARTING_ROWS,
@@ -35,7 +34,7 @@ const generateBlocks = ({ rows = STARTING_ROWS, lastId = 0 } = {}) => {
         id: lastId + 1 + row + column * rows,
         row,
         column,
-        color: isWall || isChili ? null : sample(keys(COLORS)),
+        color: isWall || isChili ? null : sample(BLOCK_COLORS),
         isWall,
         isChili
       });

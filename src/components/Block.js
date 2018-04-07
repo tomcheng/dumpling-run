@@ -28,7 +28,7 @@ const blink = keyframes`
 
 const StyledBlock = styled.div`
   pointer-events: none;
-  border: ${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown.hex};
+  border: ${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown};
   border-radius: 2px;
   ${props =>
     props.exiting
@@ -111,7 +111,7 @@ const Block = ({
                   exiting={exiting}
                   style={{
                     ...positionStyles,
-                    backgroundColor: COLORS[color].hex
+                    backgroundColor: COLORS[color]
                   }}
                 />
               );

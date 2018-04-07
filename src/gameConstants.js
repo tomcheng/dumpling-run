@@ -1,4 +1,6 @@
 import clamp from "lodash/clamp";
+import keys from "lodash/keys";
+import omit from "lodash/omit";
 import { simpleMemoize } from "./utils/generalUtils";
 
 // GAME LOGIC
@@ -19,12 +21,15 @@ export const BLOCK_DISAPPEAR_BLINK_COUNT = 2;
 
 // COLORS
 export const COLORS = {
-  brown: { hex: "#4d3d2f" },
-  orange: { hex: "#ee6a29" },
-  green: { hex: "#26632d" },
-  yellow: { hex: "#e7ea08" },
-  red: { hex: "#a51d1a" }
+  brown: "#4d3d2f",
+  orange: "#ee6a29",
+  green: "#26632d",
+  yellow: "#e7ea08",
+  red: "#a51d1a",
+  background: "#fbf6ea"
 };
+
+export const BLOCK_COLORS = keys(omit(COLORS, ["background"]));
 
 // CHARACTER DIMENSIONS
 export const getCharacterSize = simpleMemoize(blockWidth =>
