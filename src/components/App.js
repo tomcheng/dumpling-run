@@ -33,13 +33,20 @@ const Header = styled.div`
   padding-bottom: ${MINIMUM_SCREEN_PADDING}px;
 `;
 
+const GameContainer = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: content-box;
+  border: ${GAME_AREA_BORDER}px solid #4c3d30;
+  padding: ${GUTTER}px;
+`;
+
 const GameArea = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  border: ${GAME_AREA_BORDER}px solid #4c3d30;
-  padding: ${GUTTER}px;
   position: relative;
 `;
 
@@ -119,7 +126,7 @@ class App extends Component {
             <Header style={{ width: gameWidth }}>
               Score: <strong>{points}</strong>
             </Header>
-            <GameArea style={{ width: gameWidth }} innerRef={this.gameAreaRef}>
+            <GameContainer style={{ width: gameWidth }}>
               <Dimensions.Provider
                 value={{
                   ...otherDimensions,
@@ -129,37 +136,38 @@ class App extends Component {
                   blockHeight: getBlockHeight(blockWidth, gameHeight)
                 }}
               >
-                {!lost && (
-                  <Timer
-                    onAddNewRow={onAddNewRow}
-                    interval={NEW_ROW_INTERVAL}
-                  />
-                )}
-                <Columns>
-                  {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
-                    <Column
-                      key={columnIndex}
-                      onClick={() => onClickColumn(columnIndex)}
+                <Timer
+                  onAddNewRow={onAddNewRow}
+                  interval={NEW_ROW_INTERVAL}
+                  lost={lost}
+                />
+                <GameArea innerRef={this.gameAreaRef}>
+                  <Columns>
+                    {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
+                      <Column
+                        key={columnIndex}
+                        onClick={() => onClickColumn(columnIndex)}
+                      />
+                    ))}
+                  </Columns>
+                  {blocks.map(({ id, row, column, color, isChili, isWall }) => (
+                    <Block
+                      key={id}
+                      column={heldBlockIds.includes(id) ? position : column}
+                      color={color}
+                      row={row}
+                      holdPosition={heldBlockIds.indexOf(id)}
+                      held={heldBlockIds.includes(id)}
+                      toRemove={blockIdsToRemove.includes(id)}
+                      isChili={isChili}
+                      isWall={isWall}
+                      onRemoved={onRemovedBlock}
                     />
                   ))}
-                </Columns>
-                {blocks.map(({ id, row, column, color, isChili, isWall }) => (
-                  <Block
-                    key={id}
-                    column={heldBlockIds.includes(id) ? position : column}
-                    color={color}
-                    row={row}
-                    holdPosition={heldBlockIds.indexOf(id)}
-                    held={heldBlockIds.includes(id)}
-                    toRemove={blockIdsToRemove.includes(id)}
-                    isChili={isChili}
-                    isWall={isWall}
-                    onRemoved={onRemovedBlock}
-                  />
-                ))}
-                <Player isHolding={isHolding} position={position} />
+                  <Player isHolding={isHolding} position={position} />
+                </GameArea>
               </Dimensions.Provider>
-            </GameArea>
+            </GameContainer>
             <GameOver lost={lost} onRestart={onRestart} finalScore={points} />
           </Container>
         )}

@@ -22,7 +22,7 @@ const Player = ({ isHolding, position }) => (
       <Container
         style={{
           left: 0,
-          bottom: getCharacterVerticalOffset(blockWidth) + GUTTER,
+          bottom: getCharacterVerticalOffset(blockWidth),
           transform: `translate3d(${Math.round(
             GUTTER +
               position * (blockWidth + GUTTER) +

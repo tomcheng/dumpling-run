@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 
 class Timer extends Component {
@@ -20,7 +20,7 @@ class Timer extends Component {
   }
 
   render() {
-    return null;
+    return <div>Timer goes here.</div>;
   }
 }
 

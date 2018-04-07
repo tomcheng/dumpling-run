@@ -6,7 +6,6 @@ import {
   COLORS,
   GUTTER,
   BLOCK_BORDER_WIDTH,
-  GAME_AREA_BORDER,
   BLOCK_MOVE_DURATION,
   BLOCK_APPEAR_DURATION,
   BLOCK_DISAPPEAR_DURATION,
@@ -89,12 +88,10 @@ const Block = ({
           zIndex: 1,
           width: blockWidth,
           height: blockHeight,
-          left: GUTTER + column * (blockWidth + GUTTER),
+          left: column * (blockWidth + GUTTER),
           transform: `translate3d(0, ${
             held
               ? gameHeight -
-                2 * GAME_AREA_BORDER -
-                2 * GUTTER -
                 getCharacterHoldPosition(blockWidth) -
                 (holdPosition + 1) * (blockHeight + GUTTER)
               : row * (blockHeight + GUTTER)

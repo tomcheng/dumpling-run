@@ -81,8 +81,7 @@ class AppContainer extends Component {
     );
     const gameWidth =
       blockWidth * NUM_COLUMNS +
-      GUTTER * (NUM_COLUMNS - 1) +
-      2 * (GUTTER + GAME_AREA_BORDER);
+      GUTTER * (NUM_COLUMNS - 1);
 
     this.setState(state => ({
       ...state,
