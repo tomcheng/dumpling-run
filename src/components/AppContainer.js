@@ -110,69 +110,59 @@ class AppContainer extends Component {
   };
 
   pick = () => {
-    this.setState(state => {
-      const { blocks } = state;
+    const { blocks } = this.state;
+    const currentColumn = this.getCurrentColumn();
 
-      const currentColumn = this.getCurrentColumn(state);
+    if (currentColumn.length === 0) {
+      return;
+    }
 
-      if (currentColumn.length === 0) {
-        return state;
-      }
+    const { color } = last(currentColumn);
+    const idsToHold = takeRightWhile(
+      currentColumn,
+      block => block.color === color
+    ).map(block => block.id);
+    let holdPosition = 0;
 
-      const { color } = last(currentColumn);
+    const newBlocks = blocks.map(
+      block =>
+        idsToHold.includes(block.id)
+          ? {
+              ...block,
+              held: true,
+              column: null,
+              row: null,
+              holdPosition: holdPosition++
+            }
+          : block
+    );
 
-      const idsToHold = takeRightWhile(
-        currentColumn,
-        block => block.color === color
-      ).map(block => block.id);
-
-      let holdPosition = 0;
-
-      const newBlocks = blocks.map(
-        block =>
-          idsToHold.includes(block.id)
-            ? {
-                ...block,
-                held: true,
-                column: null,
-                row: null,
-                holdPosition: holdPosition++
-              }
-            : block
-      );
-
-      return { ...state, blocks: newBlocks };
-    });
+    this.setState({ blocks: newBlocks });
   };
 
   drop = () => {
-    this.setState(
-      state => {
-        const { blocks, position } = state;
+    const { blocks, position } = this.state;
+    const lastRow = this.getCurrentColumn().length - 1;
+    const numHeld = blocks.filter(block => block.held).length;
 
-        const lastRow = this.getCurrentColumn(state).length - 1;
-        const numHeld = blocks.filter(block => block.held).length;
-
-        const newBlocks = blocks.map(
-          block =>
-            block.held
-              ? {
-                  ...block,
-                  held: false,
-                  holdPosition: null,
-                  column: position,
-                  row: lastRow + numHeld - block.holdPosition
-                }
-              : block
-        );
-        return { ...state, blocks: newBlocks };
-      },
-      () => {
-        setTimeout(() => {
-          this.findAdjacentBlocks();
-        }, REMOVAL_DELAY);
-      }
+    const newBlocks = blocks.map(
+      block =>
+        block.held
+          ? {
+              ...block,
+              held: false,
+              holdPosition: null,
+              column: position,
+              row: lastRow + numHeld - block.holdPosition
+            }
+          : block
     );
+
+    this.setState({ blocks: newBlocks }, () => {
+      setTimeout(() => {
+        this.removeMatchedBlocks();
+      }, REMOVAL_DELAY);
+    });
   };
 
   getCurrentColumn = (state = this.state) =>
@@ -180,67 +170,58 @@ class AppContainer extends Component {
       "row"
     ]);
 
-  findAdjacentBlocks = () => {
-    const { blocks } = this.state;
+  removeMatchedBlocks = () => {
+    const { blocks, points } = this.state;
     const adjacentBlockIds = getAdjacents(
       blocks,
       last(this.getCurrentColumn()).id
     );
 
-    if (adjacentBlockIds.length >= 4) {
-      this.setState(state => {
-        const newBlocks = state.blocks.filter(
-          block => !adjacentBlockIds.includes(block.id)
-        );
+    if (adjacentBlockIds.length < 4) {
+      return;
+    }
 
-        for (let i = 0; i < NUM_COLUMNS; i++) {
-          const column = sortBy(
-            newBlocks.filter(({ column }) => column === i),
-            ["row"]
-          );
-          column.forEach((block, index) => {
-            if (block.row !== index) {
-              const blockIndex = findIndex(
-                newBlocks,
-                ({ id }) => id === block.id
-              );
-              newBlocks[blockIndex] = { ...block, row: index };
-            }
-          });
+    const newBlocks = blocks.filter(
+      block => !adjacentBlockIds.includes(block.id)
+    );
+
+    for (let i = 0; i < NUM_COLUMNS; i++) {
+      const column = sortBy(newBlocks.filter(({ column }) => column === i), [
+        "row"
+      ]);
+      column.forEach((block, index) => {
+        if (block.row !== index) {
+          const blockIndex = findIndex(newBlocks, ({ id }) => id === block.id);
+          newBlocks[blockIndex] = { ...block, row: index };
         }
-
-        return {
-          ...state,
-          points: state.points + adjacentBlockIds.length * POINTS_PER_BLOCK,
-          blocks: newBlocks
-        };
       });
     }
+
+    this.setState({
+      points: points + adjacentBlockIds.length * POINTS_PER_BLOCK,
+      blocks: newBlocks
+    });
   };
 
   addNewRow = () => {
-    this.setState(state => {
-      let lastId = state.blocks.length > 0 ? last(state.blocks).id : 0;
-      const newBlocks = state.blocks
-        .map(block => ({
-          ...block,
-          row: block.held ? block.row : block.row + 1
+    const { blocks } = this.state;
+    let lastId = blocks.length > 0 ? last(blocks).id : 0;
+    const newBlocks = blocks
+      .map(block => ({
+        ...block,
+        row: block.held ? block.row : block.row + 1
+      }))
+      .concat(
+        [...Array(NUM_COLUMNS)].map((_, index) => ({
+          id: ++lastId,
+          row: 0,
+          column: index,
+          color: sample(keys(COLORS)),
+          held: false
         }))
-        .concat(
-          [...Array(NUM_COLUMNS)].map((_, index) => ({
-            id: ++lastId,
-            row: 0,
-            column: index,
-            color: sample(keys(COLORS)),
-            held: false
-          }))
-        );
+      );
 
-      return {
-        ...state,
-        blocks: newBlocks
-      };
-    }, this.checkLose);
+    this.setState({ blocks: newBlocks }, this.checkLose);
   };
 
   checkLose = () => {
