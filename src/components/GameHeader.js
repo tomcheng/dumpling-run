@@ -52,14 +52,14 @@ const GameHeader = ({ gameWidth, points, onFastForward, onPause }) => (
       Score: <strong>{points}</strong>
     </div>
     <Actions>
+      <Icon onClick={onPause}>
+        <Bar />
+        <Bar />
+      </Icon>
       <Icon onClick={onFastForward}>
         <Arrow />
         <Arrow />
         <ThinBar />
-      </Icon>
-      <Icon onClick={onPause}>
-        <Bar />
-        <Bar />
       </Icon>
     </Actions>
   </Container>
