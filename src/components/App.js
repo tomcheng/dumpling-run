@@ -79,7 +79,9 @@ class App extends Component {
     paused: PropTypes.bool.isRequired,
     points: PropTypes.number.isRequired,
     position: PropTypes.number.isRequired,
+    resetTimer: PropTypes.bool.isRequired,
     onAddNewRow: PropTypes.func.isRequired,
+    onClearResetTimer: PropTypes.func.isRequired,
     onClickColumn: PropTypes.func.isRequired,
     onPause: PropTypes.func.isRequired,
     onRemovedBlock: PropTypes.func.isRequired,
@@ -115,7 +117,9 @@ class App extends Component {
       paused,
       points,
       position,
+      resetTimer,
       onAddNewRow,
+      onClearResetTimer,
       onClickColumn,
       onPause,
       onRemovedBlock,
@@ -136,10 +140,12 @@ class App extends Component {
             />
             <GameContainer style={{ width: gameWidth }}>
               <Timer
-                onAddNewRow={onAddNewRow}
                 interval={NEW_ROW_INTERVAL}
                 lost={lost}
                 paused={paused}
+                resetTimer={resetTimer}
+                onAddNewRow={onAddNewRow}
+                onClearResetTimer={onClearResetTimer}
               />
               <GameArea innerRef={this.gameAreaRef}>
                 <Columns>

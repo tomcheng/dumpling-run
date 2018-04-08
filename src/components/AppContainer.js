@@ -54,10 +54,11 @@ const newState = () => ({
   blocks: generateBlocks(),
   blockIdsToRemove: [],
   heldBlockIds: [],
+  points: 0,
+  rowsAdded: 0,
   lost: false,
   paused: false,
-  points: 0,
-  rowsAdded: 0
+  resetTimer: false
 });
 
 class AppContainer extends Component {
@@ -233,12 +234,32 @@ class AppContainer extends Component {
       });
     }
 
-    this.setState(state => ({
-      ...state,
-      blocks: newBlocks,
-      blockIdsToRemove: [],
-      points: state.points + blockIdsToRemove.length * POINTS_PER_BLOCK
-    }));
+    this.setState(
+      state => ({
+        ...state,
+        blocks: newBlocks,
+        blockIdsToRemove: [],
+        points: state.points + blockIdsToRemove.length * POINTS_PER_BLOCK
+      }),
+      () => {
+        if (newBlocks.length === 0) {
+          this.handleClearBoard();
+        }
+      }
+    );
+  };
+
+  handleClearBoard = () => {
+    const { rowsAdded, points } = this.state;
+    this.setState({
+      blocks: generateBlocks({ rows: 3, rowsAdded }),
+      points: points + 5000,
+      resetTimer: true
+    });
+  };
+
+  handleClearResetTimer = () => {
+    this.setState({ resetTimer: false });
   };
 
   checkLose = () => {
@@ -289,15 +310,16 @@ class AppContainer extends Component {
 
   render() {
     const {
-      position,
-      lost,
-      paused,
+      blocks,
+      blockIdsToRemove,
       blockWidth,
       gameWidth,
-      blocks,
+      heldBlockIds,
+      lost,
+      paused,
       points,
-      blockIdsToRemove,
-      heldBlockIds
+      position,
+      resetTimer
     } = this.state;
 
     return (
@@ -321,7 +343,9 @@ class AppContainer extends Component {
           paused={paused}
           points={points}
           position={position}
+          resetTimer={resetTimer}
           onAddNewRow={this.handleAddNewRow}
+          onClearResetTimer={this.handleClearResetTimer}
           onClickColumn={this.handleClickColumn}
           onPause={this.handlePause}
           onRestart={this.handleRestart}

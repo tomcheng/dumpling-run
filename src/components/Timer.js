@@ -29,7 +29,9 @@ class Timer extends Component {
     interval: PropTypes.number.isRequired,
     lost: PropTypes.bool.isRequired,
     paused: PropTypes.bool.isRequired,
-    onAddNewRow: PropTypes.func.isRequired
+    resetTimer: PropTypes.bool.isRequired,
+    onAddNewRow: PropTypes.func.isRequired,
+    onClearResetTimer: PropTypes.func.isRequired,
   };
 
   state = {
@@ -43,7 +45,7 @@ class Timer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { paused, interval, lost } = this.props;
+    const { paused, interval, lost, resetTimer, onClearResetTimer } = this.props;
     const { progress } = this.state;
 
     if (prevProps.paused && !paused) {
@@ -56,6 +58,11 @@ class Timer extends Component {
 
     if (prevProps.lost && !lost) {
       this.resetTimer();
+    }
+
+    if (!prevProps.resetTimer && resetTimer) {
+      this.resetTimer();
+      onClearResetTimer();
     }
   }
 

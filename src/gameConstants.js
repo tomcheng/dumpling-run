@@ -24,11 +24,10 @@ export const NUM_COLUMNS = 10;
 export const STARTING_ROWS = 5;
 export const MAX_ROWS = 14;
 export const POINTS_PER_BLOCK = 100;
-export const POINTS_TO_ADVANCE = 3000;
-export const CHANCE_OF_WALL = 0.03;
-export const CHANCE_OF_CHILI = 0.04;
+export const CHANCE_OF_WALL = 0.02;
+export const CHANCE_OF_CHILI = 0.05;
 export const getNumColors = ({ rowsAdded }) => {
-  const rowsBeforeAddingColor = 8;
+  const rowsBeforeAddingColor = 10;
   const startingColors = 5;
 
   return Math.min(
