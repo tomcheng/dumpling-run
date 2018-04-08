@@ -27,6 +27,7 @@ const TimerBar = styled.div`
 class Timer extends Component {
   static propTypes = {
     interval: PropTypes.number.isRequired,
+    lost: PropTypes.bool.isRequired,
     paused: PropTypes.bool.isRequired,
     onAddNewRow: PropTypes.func.isRequired
   };
@@ -42,18 +43,19 @@ class Timer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { paused, interval } = this.props;
+    const { paused, interval, lost } = this.props;
     const { progress } = this.state;
-
-    if (!prevProps.paused && paused) {
-      cancelAnimationFrame(this.state.request);
-    }
 
     if (prevProps.paused && !paused) {
       this.setState({
         startTime: Math.round(Date.now() - progress * interval),
         request: requestAnimationFrame(this.incrementTimer)
       });
+      return;
+    }
+
+    if (prevProps.lost && !lost) {
+      this.resetTimer();
     }
   }
 
@@ -69,8 +71,13 @@ class Timer extends Component {
   };
 
   incrementTimer = () => {
-    const { interval, onAddNewRow } = this.props;
+    const { interval, onAddNewRow, paused, lost } = this.props;
     const { startTime } = this.state;
+
+    if (paused || lost) {
+      return;
+    }
+
     const newProgress = (Date.now() - startTime) / interval;
 
     if (newProgress >= 1) {
