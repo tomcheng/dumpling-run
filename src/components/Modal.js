@@ -24,16 +24,16 @@ const Overlay = styled.div`
   bottom: 0;
   top: 0;
   background-color: ${COLORS.background};
-  transition: opacity 400ms ease-in-out 800ms;
+  transition: opacity 400ms ease-in-out;
   z-index: -1;
 `;
 
-const Modal = ({ children, open }) => (
+const Modal = ({ children, open, delay }) => (
   <Transition in={open} timeout={0}>
     {state =>
       ["entering", "entered"].includes(state) && (
         <Container>
-          <Overlay style={{ opacity: state === "entered" ? 0.9 : 0 }} />
+          <Overlay style={{ opacity: state === "entered" ? 0.9 : 0, transitionDelay: delay + "ms" }}/>
           {children(state)}
         </Container>
       )
@@ -44,6 +44,10 @@ const Modal = ({ children, open }) => (
 Modal.propTypes = {
   children: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired
+};
+
+Modal.defaultProps = {
+  delay: 0
 };
 
 export default Modal;

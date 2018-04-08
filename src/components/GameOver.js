@@ -29,7 +29,7 @@ const Button = styled.div`
 `;
 
 const GameOver = ({ lost, finalScore, onRestart }) => (
-  <Modal open={lost}>
+  <Modal open={lost} delay={800}>
     {state => (
       <Fragment>
         <Title style={{ opacity: state === "entered" ? 1 : 0 }}>
