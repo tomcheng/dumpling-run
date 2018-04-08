@@ -133,6 +133,7 @@ class App extends Component {
                 onAddNewRow={onAddNewRow}
                 interval={NEW_ROW_INTERVAL}
                 lost={lost}
+                paused={paused}
               />
               <Dimensions.Provider
                 value={{
