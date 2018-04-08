@@ -1,5 +1,14 @@
 import { Component } from "react";
 import PropTypes from "prop-types";
+import keys from "lodash/keys";
+
+const easingFunctions = {
+  linear: x => x,
+  "ease-in": x => x * x * x,
+  "ease-out": x => --x * x * x + 1,
+  "ease-in-out": x =>
+    x < 0.5 ? 4 * x * x * x : (x - 1) * (2 * x - 2) * (2 * x - 2) + 1
+};
 
 class Animate extends Component {
   static propTypes = {
@@ -9,19 +18,28 @@ class Animate extends Component {
     start: PropTypes.number.isRequired,
     delay: PropTypes.number,
     duration: PropTypes.number,
+    easing: PropTypes.oneOf(keys(easingFunctions)),
     reverseDelay: PropTypes.number,
     reverseDuration: PropTypes.number,
+    reverseEasing: PropTypes.oneOf(keys(easingFunctions)),
     onAnimationEnd: PropTypes.func
   };
 
   static defaultProps = {
     delay: 0,
-    duration: 400
+    duration: 400,
+    easing: "ease-in-out"
   };
 
   constructor(props) {
     super();
-    this.state = { value: this.getTargetValue(props) };
+    this.state = { value: props.start };
+  }
+
+  componentDidMount() {
+    if (this.props.on) {
+      this.startAnimation();
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -46,6 +64,11 @@ class Animate extends Component {
         ? props.reverseDelay
         : props.delay;
 
+  getEasing = (props = this.props) =>
+    easingFunctions[
+      props.on ? props.easing : props.reverseEasing || props.easing
+    ];
+
   startAnimation = () => {
     this.setState({
       startTime: Date.now(),
@@ -59,6 +82,7 @@ class Animate extends Component {
 
     const duration = this.getDuration();
     const delay = this.getDelay();
+    const easing = this.getEasing();
     const targetValue = this.getTargetValue();
     const now = Date.now();
 
@@ -70,7 +94,8 @@ class Animate extends Component {
     if (now < startTime + delay + duration) {
       this.setState({
         value:
-          (now - startTime - delay) / duration * (targetValue - startValue) +
+          easing((now - startTime - delay) / duration) *
+            (targetValue - startValue) +
           startValue,
         request: requestAnimationFrame(this.updateAnimation)
       });

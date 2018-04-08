@@ -59,7 +59,7 @@ class Modal extends Component {
         start={0}
         end={0.9}
         on={open}
-        duration={400}
+        duration={200}
         delay={delay}
         reverseDuration={0}
         reverseDelay={0}
