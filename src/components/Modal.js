@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import Animate from "./Animate";
-import { COLORS } from "../gameConstants";
+import { COLORS, BLOCK_BORDER_WIDTH } from "../gameConstants";
 
 const Container = styled.div`
   position: fixed;
@@ -27,7 +27,25 @@ const Overlay = styled.div`
   z-index: -1;
 `;
 
+const Title = styled.div`
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: bold;
+  margin-bottom: 5px;
+`;
+
+const Button = styled.div`
+  font-weight: bold;
+  border: ${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown};
+  border-radius: 2px;
+  padding: 5px 10px;
+  cursor: pointer;
+  user-select: none;
+`;
+
 class Modal extends Component {
+  static Title = Title;
+  static Button = Button;
   static propTypes = {
     children: PropTypes.node.isRequired,
     open: PropTypes.bool.isRequired

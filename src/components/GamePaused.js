@@ -4,8 +4,8 @@ import Modal from "./Modal";
 
 const GamePaused = ({ paused, onResume }) => (
   <Modal open={paused}>
-    <div>GAME PAUSED</div>
-    <button onClick={onResume}>Resume</button>
+    <Modal.Title>Paused</Modal.Title>
+    <Modal.Button onClick={onResume}>Resume</Modal.Button>
   </Modal>
 );
 
