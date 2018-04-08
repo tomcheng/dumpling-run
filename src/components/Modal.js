@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import Transition from "react-transition-group/Transition";
+import Animate from "./Animate";
 import { COLORS } from "../gameConstants";
 
 const Container = styled.div`
@@ -24,25 +24,22 @@ const Overlay = styled.div`
   bottom: 0;
   top: 0;
   background-color: ${COLORS.background};
-  transition: opacity 400ms ease-in-out;
   z-index: -1;
 `;
 
 const Modal = ({ children, open, delay }) => (
-  <Transition in={open} timeout={0}>
-    {state =>
-      ["entering", "entered"].includes(state) && (
-        <Container>
-          <Overlay style={{ opacity: state === "entered" ? 0.9 : 0, transitionDelay: delay + "ms" }}/>
-          {children(state)}
-        </Container>
-      )
-    }
-  </Transition>
+  <Animate start={0} end={0.9} delay={delay} on={open}>
+    {value => (
+      <Container style={{ visibility: open ? "visible" : "hidden" }}>
+        <Overlay style={{ opacity: value }} />
+        {children}
+      </Container>
+    )}
+  </Animate>
 );
 
 Modal.propTypes = {
-  children: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
   open: PropTypes.bool.isRequired
 };
 

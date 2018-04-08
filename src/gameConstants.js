@@ -13,7 +13,7 @@ export const CHANCE_OF_WALL = 0.03;
 export const CHANCE_OF_CHILI = 0.04;
 
 // TIMING
-export const NEW_ROW_INTERVAL = 15000;
+export const NEW_ROW_INTERVAL = 1500000;
 export const BLOCK_MOVE_DURATION = 70;
 export const REMOVAL_DELAY = BLOCK_MOVE_DURATION + 10;
 export const BLOCK_APPEAR_DURATION = 200;

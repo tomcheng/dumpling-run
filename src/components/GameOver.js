@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { COLORS, BLOCK_BORDER_WIDTH } from "../gameConstants";
@@ -30,22 +30,9 @@ const Button = styled.div`
 
 const GameOver = ({ lost, finalScore, onRestart }) => (
   <Modal open={lost} delay={800}>
-    {state => (
-      <Fragment>
-        <Title style={{ opacity: state === "entered" ? 1 : 0 }}>
-          Game Over
-        </Title>
-        <Score style={{ opacity: state === "entered" ? 1 : 0 }}>
-          Final Score: {finalScore}
-        </Score>
-        <Button
-          style={{ opacity: state === "entered" ? 1 : 0 }}
-          onClick={onRestart}
-        >
-          Play Again
-        </Button>
-      </Fragment>
-    )}
+    <Title>Game Over</Title>
+    <Score>Final Score: {finalScore}</Score>
+    <Button onClick={onRestart}>Play Again</Button>
   </Modal>
 );
 

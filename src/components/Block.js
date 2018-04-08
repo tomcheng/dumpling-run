@@ -103,8 +103,11 @@ const Block = ({
             timeout={0}
             in={!toRemove}
             appear
-            addEndListener={node => {
-              node.addEventListener("animationend", onRemoved);
+            addEndListener={(node, done) => {
+              node.addEventListener("animationend", () => {
+                onRemoved();
+                done();
+              });
             }}
           >
             {state => {

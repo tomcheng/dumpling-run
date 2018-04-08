@@ -11,10 +11,12 @@ import {
   getBlockHeight
 } from "../gameConstants";
 import Dimensions from "./DimensionsContext";
+import GameHeader from "./GameHeader"
 import Timer from "./Timer";
 import Player from "./Player";
 import Block from "./Block";
 import GameOver from "./GameOver";
+import GamePaused from "./GamePaused";
 
 const Container = styled.div`
   flex-grow: 1;
@@ -27,10 +29,6 @@ const Container = styled.div`
   line-height: 20px;
   font-family: Roboto, Arial, "Helvetica Neue", Helvetica, sans-serif;
   color: ${COLORS.brown};
-`;
-
-const Header = styled.div`
-  padding-bottom: ${MINIMUM_SCREEN_PADDING}px;
 `;
 
 const GameContainer = styled.div`
@@ -77,12 +75,15 @@ class App extends Component {
     blockIdsToRemove: PropTypes.arrayOf(PropTypes.number).isRequired,
     heldBlockIds: PropTypes.arrayOf(PropTypes.number).isRequired,
     lost: PropTypes.bool.isRequired,
+    paused: PropTypes.bool.isRequired,
     points: PropTypes.number.isRequired,
     position: PropTypes.number.isRequired,
     onAddNewRow: PropTypes.func.isRequired,
     onClickColumn: PropTypes.func.isRequired,
+    onPause: PropTypes.func.isRequired,
     onRemovedBlock: PropTypes.func.isRequired,
-    onRestart: PropTypes.func.isRequired
+    onRestart: PropTypes.func.isRequired,
+    onResume: PropTypes.func.isRequired
   };
 
   gameAreaRef = createRef();
@@ -110,10 +111,13 @@ class App extends Component {
       points,
       blockIdsToRemove,
       heldBlockIds,
+      paused,
       onAddNewRow,
       onClickColumn,
+      onPause,
       onRemovedBlock,
-      onRestart
+      onRestart,
+      onResume
     } = this.props;
     const { gameHeight } = this.state;
 
@@ -123,10 +127,13 @@ class App extends Component {
       <Dimensions.Consumer>
         {({ gameWidth, blockWidth, ...otherDimensions }) => (
           <Container>
-            <Header style={{ width: gameWidth }}>
-              Score: <strong>{points}</strong>
-            </Header>
+            <GameHeader gameWidth={gameWidth} points={points} onPause={onPause} />
             <GameContainer style={{ width: gameWidth }}>
+              <Timer
+                onAddNewRow={onAddNewRow}
+                interval={NEW_ROW_INTERVAL}
+                lost={lost}
+              />
               <Dimensions.Provider
                 value={{
                   ...otherDimensions,
@@ -136,11 +143,6 @@ class App extends Component {
                   blockHeight: getBlockHeight(blockWidth, gameHeight)
                 }}
               >
-                <Timer
-                  onAddNewRow={onAddNewRow}
-                  interval={NEW_ROW_INTERVAL}
-                  lost={lost}
-                />
                 <GameArea innerRef={this.gameAreaRef}>
                   <Columns>
                     {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
@@ -169,6 +171,7 @@ class App extends Component {
               </Dimensions.Provider>
             </GameContainer>
             <GameOver lost={lost} onRestart={onRestart} finalScore={points} />
+            <GamePaused paused={paused} onResume={onResume} />
           </Container>
         )}
       </Dimensions.Consumer>

@@ -50,8 +50,10 @@ const getInitialState = () => ({
   blockIdsToRemove: [],
   heldBlockIds: [],
   lost: false,
+  paused: false,
   dimensions: {
-    blockWidth: 0
+    blockWidth: 0,
+    gameWidth: 0
   },
   points: 0
 });
@@ -246,8 +248,16 @@ class AppContainer extends Component {
     }
   };
 
-  restart = () => {
+  handleRestart = () => {
     this.setState(omit(getInitialState(), ["dimensions"]));
+  };
+
+  handlePause = () => {
+    this.setState({ paused: true });
+  };
+
+  handleResume = () => {
+    this.setState({ paused: false });
   };
 
   handleKeyDown = evt => {
@@ -280,6 +290,7 @@ class AppContainer extends Component {
     const {
       position,
       lost,
+      paused,
       dimensions,
       blocks,
       points,
@@ -303,12 +314,15 @@ class AppContainer extends Component {
             points={points}
             blocks={blocks}
             lost={lost}
+            paused={paused}
             position={position}
             blockIdsToRemove={blockIdsToRemove}
             heldBlockIds={heldBlockIds}
             onAddNewRow={this.addNewRow}
             onClickColumn={this.handleClickColumn}
-            onRestart={this.restart}
+            onPause={this.handlePause}
+            onRestart={this.handleRestart}
+            onResume={this.handleResume}
             onRemovedBlock={this.handleRemovedBlock}
           />
         </DimensionsContext.Provider>
