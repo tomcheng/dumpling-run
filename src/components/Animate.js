@@ -7,8 +7,11 @@ class Animate extends Component {
     end: PropTypes.number.isRequired,
     on: PropTypes.bool.isRequired,
     start: PropTypes.number.isRequired,
+    delay: PropTypes.number,
     duration: PropTypes.number,
-    delay: PropTypes.number
+    reverseDelay: PropTypes.number,
+    reverseDuration: PropTypes.number,
+    onAnimationEnd: PropTypes.func
   };
 
   static defaultProps = {
@@ -29,6 +32,20 @@ class Animate extends Component {
 
   getTargetValue = (props = this.props) => (props.on ? props.end : props.start);
 
+  getDuration = (props = this.props) =>
+    props.on
+      ? props.duration
+      : typeof props.reverseDuration === "number"
+        ? props.reverseDuration
+        : props.duration;
+
+  getDelay = (props = this.props) =>
+    props.on
+      ? props.delay
+      : typeof props.reverseDelay === "number"
+        ? props.reverseDelay
+        : props.delay;
+
   startAnimation = () => {
     this.setState({
       startTime: Date.now(),
@@ -38,25 +55,39 @@ class Animate extends Component {
   };
 
   updateAnimation = () => {
-    const { duration } = this.props;
     const { startTime, startValue } = this.state;
+
+    const duration = this.getDuration();
+    const delay = this.getDelay();
     const targetValue = this.getTargetValue();
     const now = Date.now();
 
-    if (now >= startTime + duration) {
+    if (now < startTime + delay) {
+      this.setState({ request: requestAnimationFrame(this.updateAnimation) });
+      return;
+    }
+
+    if (now < startTime + delay + duration) {
       this.setState({
-        value: targetValue,
-        request: null
+        value:
+          (now - startTime - delay) / duration * (targetValue - startValue) +
+          startValue,
+        request: requestAnimationFrame(this.updateAnimation)
       });
       return;
     }
 
-    const newValue =
-      (now - startTime) / duration * (targetValue - startValue) + startValue;
-    this.setState({
-      value: newValue,
-      request: requestAnimationFrame(this.updateAnimation)
-    });
+    this.setState(
+      {
+        value: targetValue,
+        request: null
+      },
+      () => {
+        if (this.props.onAnimationEnd) {
+          this.props.onAnimationEnd();
+        }
+      }
+    );
   };
 
   render() {
