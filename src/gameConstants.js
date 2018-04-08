@@ -50,6 +50,7 @@ export const GUTTER = 1;
 export const MINIMUM_SCREEN_PADDING = 8;
 export const GAME_AREA_BORDER = 2;
 export const BLOCK_BORDER_WIDTH = 2;
+export const TIMER_HEIGHT = 4;
 export const getBlockHeight = simpleMemoize(
   (blockWidth, gameHeight) =>
     Math.floor(
