@@ -9,15 +9,18 @@ const Score = styled.div`
   margin-bottom: 30px;
 `;
 
-const GameOver = ({ lost, finalScore, onRestart }) => (
+const GameOver = ({ lost, blocksCleared, boardsCleared, onRestart }) => (
   <Modal open={lost} delay={800}>
     <Animate start={0} end={1} delay={400} on>
       {opacity => <Modal.Title style={{ opacity }}>Game Over</Modal.Title>}
     </Animate>
     <Animate start={0} end={1} delay={1200} on>
-      {opacity => <Score style={{ opacity }}>Final Score: {finalScore}</Score>}
+      {opacity => <Score style={{ opacity }}>Number of Blocks Cleared: {blocksCleared}</Score>}
     </Animate>
     <Animate start={0} end={1} delay={2000} on>
+      {opacity => <Score style={{ opacity }}>Number of Boards Cleared: {boardsCleared}</Score>}
+    </Animate>
+    <Animate start={0} end={1} delay={2800} on>
       {opacity => (
         <Modal.Button style={{ opacity }} onClick={onRestart}>
           Play Again
@@ -28,7 +31,8 @@ const GameOver = ({ lost, finalScore, onRestart }) => (
 );
 
 GameOver.propTypes = {
-  finalScore: PropTypes.number.isRequired,
+  blocksCleared: PropTypes.number.isRequired,
+  boardsCleared: PropTypes.number.isRequired,
   lost: PropTypes.bool.isRequired,
   onRestart: PropTypes.func.isRequired
 };

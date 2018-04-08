@@ -46,10 +46,17 @@ const Icon = styled.div`
   cursor: pointer;
 `;
 
-const GameHeader = ({ gameWidth, points, onFastForward, onPause }) => (
+const GameHeader = ({
+  gameWidth,
+  blocksCleared,
+  boardsCleared,
+  onFastForward,
+  onPause
+}) => (
   <Container style={{ width: gameWidth }}>
     <div>
-      Score: <strong>{points}</strong>
+      Blocks Cleared: <strong>{blocksCleared}</strong>&nbsp;&nbsp; Boards
+      Cleared: <strong>{boardsCleared}</strong>
     </div>
     <Actions>
       <Icon onClick={onPause}>
@@ -67,7 +74,7 @@ const GameHeader = ({ gameWidth, points, onFastForward, onPause }) => (
 
 GameHeader.propTypes = {
   gameWidth: PropTypes.number.isRequired,
-  points: PropTypes.number.isRequired,
+  blocksCleared: PropTypes.number.isRequired,
   onFastForward: PropTypes.func.isRequired,
   onPause: PropTypes.func.isRequired
 };

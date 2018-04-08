@@ -14,7 +14,6 @@ import {
   GAME_AREA_BORDER,
   MINIMUM_SCREEN_PADDING,
   REMOVAL_DELAY,
-  POINTS_PER_BLOCK,
   CHANCE_OF_WALL,
   CHANCE_OF_CHILI,
   getNumColors
@@ -54,7 +53,8 @@ const newState = () => ({
   blocks: generateBlocks(),
   blockIdsToRemove: [],
   heldBlockIds: [],
-  points: 0,
+  blocksCleared: 0,
+  boardsCleared: 0,
   rowsAdded: 0,
   lost: false,
   paused: false,
@@ -239,7 +239,7 @@ class AppContainer extends Component {
         ...state,
         blocks: newBlocks,
         blockIdsToRemove: [],
-        points: state.points + blockIdsToRemove.length * POINTS_PER_BLOCK
+        blocksCleared: state.blocksCleared + blockIdsToRemove.length
       }),
       () => {
         if (newBlocks.length === 0) {
@@ -250,12 +250,11 @@ class AppContainer extends Component {
   };
 
   handleClearBoard = () => {
-    const { rowsAdded, points } = this.state;
-    this.setState({
-      blocks: generateBlocks({ rows: 3, rowsAdded }),
-      points: points + 5000,
+    this.setState(state => ({
+      blocks: generateBlocks({ rows: 3, rowsAdded: state.rowsAdded }),
+      boardsCleared: state.boardsCleared + 1,
       resetTimer: true
-    });
+    }));
   };
 
   handleClearResetTimer = () => {
@@ -315,14 +314,15 @@ class AppContainer extends Component {
 
   render() {
     const {
-      blocks,
       blockIdsToRemove,
+      blocks,
+      blocksCleared,
       blockWidth,
+      boardsCleared,
       gameWidth,
       heldBlockIds,
       lost,
       paused,
-      points,
       position,
       resetTimer
     } = this.state;
@@ -341,12 +341,13 @@ class AppContainer extends Component {
         <App
           blockIdsToRemove={blockIdsToRemove}
           blocks={blocks}
+          blocksCleared={blocksCleared}
           blockWidth={blockWidth}
+          boardsCleared={boardsCleared}
           gameWidth={gameWidth}
           heldBlockIds={heldBlockIds}
           lost={lost}
           paused={paused}
-          points={points}
           position={position}
           resetTimer={resetTimer}
           onAddNewRow={this.handleAddNewRow}

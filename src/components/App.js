@@ -72,12 +72,13 @@ class App extends Component {
         row: PropTypes.number
       })
     ).isRequired,
+    blocksCleared: PropTypes.number.isRequired,
     blockWidth: PropTypes.number.isRequired,
+    boardsCleared: PropTypes.number.isRequired,
     gameWidth: PropTypes.number.isRequired,
     heldBlockIds: PropTypes.arrayOf(PropTypes.number).isRequired,
     lost: PropTypes.bool.isRequired,
     paused: PropTypes.bool.isRequired,
-    points: PropTypes.number.isRequired,
     position: PropTypes.number.isRequired,
     resetTimer: PropTypes.bool.isRequired,
     onAddNewRow: PropTypes.func.isRequired,
@@ -111,12 +112,13 @@ class App extends Component {
     const {
       blockIdsToRemove,
       blocks,
+      blocksCleared,
       blockWidth,
+      boardsCleared,
       gameWidth,
       heldBlockIds,
       lost,
       paused,
-      points,
       position,
       resetTimer,
       onAddNewRow,
@@ -136,8 +138,9 @@ class App extends Component {
     return (
           <Container>
             <GameHeader
+              blocksCleared={blocksCleared}
+              boardsCleared={boardsCleared}
               gameWidth={gameWidth}
-              points={points}
               onFastForward={onFastForward}
               onPause={onPause}
             />
@@ -179,7 +182,7 @@ class App extends Component {
                 <Player isHolding={isHolding} position={position} blockWidth={blockWidth} />
               </GameArea>
             </GameContainer>
-            <GameOver lost={lost} onRestart={onRestart} finalScore={points} />
+            <GameOver lost={lost} onRestart={onRestart} blocksCleared={blocksCleared} boardsCleared={boardsCleared} />
             <GamePaused paused={paused} onResume={onResume} />
           </Container>
     );
