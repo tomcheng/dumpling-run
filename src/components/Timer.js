@@ -15,7 +15,7 @@ const TimerBackground = styled.div`
   left: 0;
   bottom: 0;
   background-color: ${COLORS.brown};
-  opacity: 0.2;
+  opacity: 0.25;
 `;
 
 const TimerBar = styled.div`

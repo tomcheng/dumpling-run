@@ -1,32 +1,8 @@
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { COLORS, BLOCK_BORDER_WIDTH } from "../gameConstants";
-import Transition from "react-transition-group/Transition";
-
-const Container = styled.div`
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Overlay = styled.div`
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  background-color: ${COLORS.background};
-  transition: opacity 400ms ease-in-out 800ms;
-  z-index: -1;
-`;
+import Modal from "./Modal";
 
 const Title = styled.div`
   font-size: 24px;
@@ -53,27 +29,24 @@ const Button = styled.div`
 `;
 
 const GameOver = ({ lost, finalScore, onRestart }) => (
-  <Transition in={lost} timeout={0}>
-    {state =>
-      ["entering", "entered"].includes(state) && (
-        <Container>
-          <Overlay style={{ opacity: state === "entered" ? 0.9 : 0 }} />
-          <Title style={{ opacity: state === "entered" ? 1 : 0 }}>
-            Game Over
-          </Title>
-          <Score style={{ opacity: state === "entered" ? 1 : 0 }}>
-            Final Score: {finalScore}
-          </Score>
-          <Button
-            style={{ opacity: state === "entered" ? 1 : 0 }}
-            onClick={onRestart}
-          >
-            Play Again
-          </Button>
-        </Container>
-      )
-    }
-  </Transition>
+  <Modal open={lost}>
+    {state => (
+      <Fragment>
+        <Title style={{ opacity: state === "entered" ? 1 : 0 }}>
+          Game Over
+        </Title>
+        <Score style={{ opacity: state === "entered" ? 1 : 0 }}>
+          Final Score: {finalScore}
+        </Score>
+        <Button
+          style={{ opacity: state === "entered" ? 1 : 0 }}
+          onClick={onRestart}
+        >
+          Play Again
+        </Button>
+      </Fragment>
+    )}
+  </Modal>
 );
 
 GameOver.propTypes = {
