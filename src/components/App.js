@@ -83,6 +83,7 @@ class App extends Component {
     onAddNewRow: PropTypes.func.isRequired,
     onClearResetTimer: PropTypes.func.isRequired,
     onClickColumn: PropTypes.func.isRequired,
+    onFastForward: PropTypes.func.isRequired,
     onPause: PropTypes.func.isRequired,
     onRemovedBlock: PropTypes.func.isRequired,
     onRestart: PropTypes.func.isRequired,
@@ -121,6 +122,7 @@ class App extends Component {
       onAddNewRow,
       onClearResetTimer,
       onClickColumn,
+      onFastForward,
       onPause,
       onRemovedBlock,
       onRestart,
@@ -136,6 +138,7 @@ class App extends Component {
             <GameHeader
               gameWidth={gameWidth}
               points={points}
+              onFastForward={onFastForward}
               onPause={onPause}
             />
             <GameContainer style={{ width: gameWidth }}>

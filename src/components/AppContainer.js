@@ -282,6 +282,11 @@ class AppContainer extends Component {
     this.setState({ paused: false });
   };
 
+  handleFastForward = () => {
+    this.setState({ resetTimer: true });
+    this.handleAddNewRow();
+  };
+
   handleKeyDown = evt => {
     switch (evt.code) {
       case "Space":
@@ -347,6 +352,7 @@ class AppContainer extends Component {
           onAddNewRow={this.handleAddNewRow}
           onClearResetTimer={this.handleClearResetTimer}
           onClickColumn={this.handleClickColumn}
+          onFastForward={this.handleFastForward}
           onPause={this.handlePause}
           onRestart={this.handleRestart}
           onResume={this.handleResume}
