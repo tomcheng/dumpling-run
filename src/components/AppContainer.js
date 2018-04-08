@@ -1,7 +1,6 @@
 import React, { Component, createRef } from "react";
 import findIndex from "lodash/findIndex";
 import last from "lodash/last";
-import omit from "lodash/omit";
 import sample from "lodash/sample";
 import sortBy from "lodash/sortBy";
 import takeRightWhile from "lodash/takeRightWhile";
@@ -39,7 +38,8 @@ const generateBlocks = ({
         id: lastId + 1 + row + column * rows,
         row,
         column,
-        color: isWall || isChili ? null : sample(BLOCK_COLORS.slice(0, numColors)),
+        color:
+          isWall || isChili ? null : sample(BLOCK_COLORS.slice(0, numColors)),
         isWall,
         isChili
       });
@@ -56,8 +56,6 @@ const newState = () => ({
   heldBlockIds: [],
   lost: false,
   paused: false,
-  blockWidth: 0,
-  gameWidth: 0,
   points: 0,
   rowsAdded: 0
 });
@@ -252,7 +250,7 @@ class AppContainer extends Component {
   };
 
   handleRestart = () => {
-    this.setState(omit(newState()));
+    this.setState(newState());
   };
 
   handlePause = () => {
