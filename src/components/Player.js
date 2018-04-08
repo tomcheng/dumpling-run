@@ -8,7 +8,6 @@ import {
 } from "../gameConstants";
 import Dumpling from "./Dumpling";
 import DumplingActive from "./DumplingActive";
-import Dimensions from "./DimensionsContext";
 
 const Container = styled.div`
   position: absolute;
@@ -16,31 +15,28 @@ const Container = styled.div`
   pointer-events: none;
 `;
 
-const Player = ({ isHolding, position }) => (
-  <Dimensions.Consumer>
-    {({ blockWidth }) => (
-      <Container
-        style={{
-          left: 0,
-          bottom: getCharacterVerticalOffset(blockWidth),
-          transform: `translate3d(${Math.round(
-            GUTTER +
-              position * (blockWidth + GUTTER) +
-              (blockWidth - getCharacterSize(blockWidth)) / 2
-          )}px, 0, 0)`
-        }}
-      >
-        {isHolding ? (
-          <DumplingActive width={getCharacterSize(blockWidth)} />
-        ) : (
-          <Dumpling width={getCharacterSize(blockWidth)} />
-        )}
-      </Container>
+const Player = ({ isHolding, position, blockWidth }) => (
+  <Container
+    style={{
+      left: 0,
+      bottom: getCharacterVerticalOffset(blockWidth),
+      transform: `translate3d(${Math.round(
+        GUTTER +
+          position * (blockWidth + GUTTER) +
+          (blockWidth - getCharacterSize(blockWidth)) / 2
+      )}px, 0, 0)`
+    }}
+  >
+    {isHolding ? (
+      <DumplingActive width={getCharacterSize(blockWidth)} />
+    ) : (
+      <Dumpling width={getCharacterSize(blockWidth)} />
     )}
-  </Dimensions.Consumer>
+  </Container>
 );
 
 Player.propTypes = {
+  blockWidth: PropTypes.number.isRequired,
   isHolding: PropTypes.bool.isRequired,
   position: PropTypes.number.isRequired
 };

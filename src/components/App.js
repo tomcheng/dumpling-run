@@ -10,8 +10,7 @@ import {
   COLORS,
   getBlockHeight
 } from "../gameConstants";
-import Dimensions from "./DimensionsContext";
-import GameHeader from "./GameHeader"
+import GameHeader from "./GameHeader";
 import Timer from "./Timer";
 import Player from "./Player";
 import Block from "./Block";
@@ -62,6 +61,7 @@ const Column = styled.div`
 
 class App extends Component {
   static propTypes = {
+    blockIdsToRemove: PropTypes.arrayOf(PropTypes.number).isRequired,
     blocks: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number.isRequired,
@@ -72,7 +72,8 @@ class App extends Component {
         row: PropTypes.number
       })
     ).isRequired,
-    blockIdsToRemove: PropTypes.arrayOf(PropTypes.number).isRequired,
+    blockWidth: PropTypes.number.isRequired,
+    gameWidth: PropTypes.number.isRequired,
     heldBlockIds: PropTypes.arrayOf(PropTypes.number).isRequired,
     lost: PropTypes.bool.isRequired,
     paused: PropTypes.bool.isRequired,
@@ -105,13 +106,15 @@ class App extends Component {
 
   render() {
     const {
-      blocks,
-      lost,
-      position,
-      points,
       blockIdsToRemove,
+      blocks,
+      blockWidth,
+      gameWidth,
       heldBlockIds,
+      lost,
       paused,
+      points,
+      position,
       onAddNewRow,
       onClickColumn,
       onPause,
@@ -122,12 +125,15 @@ class App extends Component {
     const { gameHeight } = this.state;
 
     const isHolding = heldBlockIds.length > 0;
+    const blockHeight = getBlockHeight(blockWidth, gameHeight);
 
     return (
-      <Dimensions.Consumer>
-        {({ gameWidth, blockWidth, ...otherDimensions }) => (
           <Container>
-            <GameHeader gameWidth={gameWidth} points={points} onPause={onPause} />
+            <GameHeader
+              gameWidth={gameWidth}
+              points={points}
+              onPause={onPause}
+            />
             <GameContainer style={{ width: gameWidth }}>
               <Timer
                 onAddNewRow={onAddNewRow}
@@ -135,47 +141,38 @@ class App extends Component {
                 lost={lost}
                 paused={paused}
               />
-              <Dimensions.Provider
-                value={{
-                  ...otherDimensions,
-                  gameWidth,
-                  blockWidth,
-                  gameHeight,
-                  blockHeight: getBlockHeight(blockWidth, gameHeight)
-                }}
-              >
-                <GameArea innerRef={this.gameAreaRef}>
-                  <Columns>
-                    {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
-                      <Column
-                        key={columnIndex}
-                        onClick={() => onClickColumn(columnIndex)}
-                      />
-                    ))}
-                  </Columns>
-                  {blocks.map(({ id, row, column, color, isChili, isWall }) => (
-                    <Block
-                      key={id}
-                      column={heldBlockIds.includes(id) ? position : column}
-                      color={color}
-                      row={row}
-                      holdPosition={heldBlockIds.indexOf(id)}
-                      held={heldBlockIds.includes(id)}
-                      toRemove={blockIdsToRemove.includes(id)}
-                      isChili={isChili}
-                      isWall={isWall}
-                      onRemoved={onRemovedBlock}
+              <GameArea innerRef={this.gameAreaRef}>
+                <Columns>
+                  {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
+                    <Column
+                      key={columnIndex}
+                      onClick={() => onClickColumn(columnIndex)}
                     />
                   ))}
-                  <Player isHolding={isHolding} position={position} />
-                </GameArea>
-              </Dimensions.Provider>
+                </Columns>
+                {blocks.map(({ id, row, column, color, isChili, isWall }) => (
+                  <Block
+                    key={id}
+                    blockWidth={blockWidth}
+                    blockHeight={blockHeight}
+                    gameHeight={gameHeight}
+                    column={heldBlockIds.includes(id) ? position : column}
+                    color={color}
+                    row={row}
+                    holdPosition={heldBlockIds.indexOf(id)}
+                    held={heldBlockIds.includes(id)}
+                    toRemove={blockIdsToRemove.includes(id)}
+                    isChili={isChili}
+                    isWall={isWall}
+                    onRemoved={onRemovedBlock}
+                  />
+                ))}
+                <Player isHolding={isHolding} position={position} blockWidth={blockWidth} />
+              </GameArea>
             </GameContainer>
             <GameOver lost={lost} onRestart={onRestart} finalScore={points} />
             <GamePaused paused={paused} onResume={onResume} />
           </Container>
-        )}
-      </Dimensions.Consumer>
     );
   }
 }

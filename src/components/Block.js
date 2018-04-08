@@ -13,7 +13,6 @@ import {
   getCharacterHoldPosition
 } from "../gameConstants";
 import Transition from "react-transition-group/Transition";
-import Dimensions from "./DimensionsContext";
 import ChiliBlock from "./ChiliBlock";
 import Wall from "./Wall";
 
@@ -77,67 +76,67 @@ const Block = ({
   isChili,
   isWall,
   holdPosition,
+  blockWidth,
+  blockHeight,
+  gameHeight,
   toRemove,
   onRemoved
 }) => {
+  const positionStyles = {
+    position: "absolute",
+    zIndex: 1,
+    width: blockWidth,
+    height: blockHeight,
+    left: column * (blockWidth + GUTTER),
+    transform: `translate3d(0, ${
+      held
+        ? gameHeight -
+          getCharacterHoldPosition(blockWidth) -
+          (holdPosition + 1) * (blockHeight + GUTTER)
+        : row * (blockHeight + GUTTER)
+    }px, 0)`
+  };
+
   return (
-    <Dimensions.Consumer>
-      {({ gameHeight, blockWidth, blockHeight }) => {
-        const positionStyles = {
-          position: "absolute",
-          zIndex: 1,
-          width: blockWidth,
-          height: blockHeight,
-          left: column * (blockWidth + GUTTER),
-          transform: `translate3d(0, ${
-            held
-              ? gameHeight -
-                getCharacterHoldPosition(blockWidth) -
-                (holdPosition + 1) * (blockHeight + GUTTER)
-              : row * (blockHeight + GUTTER)
-          }px, 0)`
-        };
+    <Transition
+      timeout={0}
+      in={!toRemove}
+      appear
+      addEndListener={(node, done) => {
+        node.addEventListener("animationend", () => {
+          onRemoved();
+          done();
+        });
+      }}
+    >
+      {state => {
+        if (isChili) {
+          return <StyledChili state={state} style={positionStyles} />;
+        }
+
+        if (isWall) {
+          return <StyledWall state={state} style={positionStyles} />;
+        }
 
         return (
-          <Transition
-            timeout={0}
-            in={!toRemove}
-            appear
-            addEndListener={(node, done) => {
-              node.addEventListener("animationend", () => {
-                onRemoved();
-                done();
-              });
+          <StyledBlock
+            state={state}
+            style={{
+              ...positionStyles,
+              backgroundColor: COLORS[color]
             }}
-          >
-            {state => {
-              if (isChili) {
-                return <StyledChili state={state} style={positionStyles} />;
-              }
-
-              if (isWall) {
-                return <StyledWall state={state} style={positionStyles} />;
-              }
-
-              return (
-                <StyledBlock
-                  state={state}
-                  style={{
-                    ...positionStyles,
-                    backgroundColor: COLORS[color]
-                  }}
-                />
-              );
-            }}
-          </Transition>
+          />
         );
       }}
-    </Dimensions.Consumer>
+    </Transition>
   );
 };
 
 Block.propTypes = {
   column: PropTypes.number.isRequired,
+  blockHeight: PropTypes.number.isRequired,
+  blockWidth: PropTypes.number.isRequired,
+  gameHeight: PropTypes.number.isRequired,
   held: PropTypes.bool.isRequired,
   isChili: PropTypes.bool.isRequired,
   isWall: PropTypes.bool.isRequired,

@@ -19,7 +19,6 @@ import {
   CHANCE_OF_WALL,
   CHANCE_OF_CHILI
 } from "../gameConstants";
-import DimensionsContext from "./DimensionsContext";
 import App from "./App";
 
 const generateBlocks = ({ rows = STARTING_ROWS, lastId = 0 } = {}) => {
@@ -51,10 +50,8 @@ const getInitialState = () => ({
   heldBlockIds: [],
   lost: false,
   paused: false,
-  dimensions: {
-    blockWidth: 0,
-    gameWidth: 0
-  },
+  blockWidth: 0,
+  gameWidth: 0,
   points: 0
 });
 
@@ -81,16 +78,12 @@ class AppContainer extends Component {
         (NUM_COLUMNS - 1) * GUTTER) /
         NUM_COLUMNS
     );
-    const gameWidth =
-      blockWidth * NUM_COLUMNS +
-      GUTTER * (NUM_COLUMNS - 1);
+    const gameWidth = blockWidth * NUM_COLUMNS + GUTTER * (NUM_COLUMNS - 1);
 
     this.setState(state => ({
       ...state,
-      dimensions: {
-        blockWidth,
-        gameWidth
-      }
+      blockWidth,
+      gameWidth
     }));
   };
 
@@ -196,7 +189,7 @@ class AppContainer extends Component {
     }
   };
 
-  addNewRow = () => {
+  handleAddNewRow = () => {
     const { blocks } = this.state;
     const lastId = blocks.length > 0 ? last(blocks).id : 0;
     const newBlocks = blocks
@@ -249,7 +242,7 @@ class AppContainer extends Component {
   };
 
   handleRestart = () => {
-    this.setState(omit(getInitialState(), ["dimensions"]));
+    this.setState(omit(getInitialState(), ["blockWidth", "gameWidth"]));
   };
 
   handlePause = () => {
@@ -291,7 +284,8 @@ class AppContainer extends Component {
       position,
       lost,
       paused,
-      dimensions,
+      blockWidth,
+      gameWidth,
       blocks,
       points,
       blockIdsToRemove,
@@ -309,23 +303,23 @@ class AppContainer extends Component {
           overflow: "hidden"
         }}
       >
-        <DimensionsContext.Provider value={dimensions}>
-          <App
-            points={points}
-            blocks={blocks}
-            lost={lost}
-            paused={paused}
-            position={position}
-            blockIdsToRemove={blockIdsToRemove}
-            heldBlockIds={heldBlockIds}
-            onAddNewRow={this.addNewRow}
-            onClickColumn={this.handleClickColumn}
-            onPause={this.handlePause}
-            onRestart={this.handleRestart}
-            onResume={this.handleResume}
-            onRemovedBlock={this.handleRemovedBlock}
-          />
-        </DimensionsContext.Provider>
+        <App
+          blockIdsToRemove={blockIdsToRemove}
+          blocks={blocks}
+          blockWidth={blockWidth}
+          gameWidth={gameWidth}
+          heldBlockIds={heldBlockIds}
+          lost={lost}
+          paused={paused}
+          points={points}
+          position={position}
+          onAddNewRow={this.handleAddNewRow}
+          onClickColumn={this.handleClickColumn}
+          onPause={this.handlePause}
+          onRestart={this.handleRestart}
+          onResume={this.handleResume}
+          onRemovedBlock={this.handleRemovedBlock}
+        />
       </div>
     );
   }
