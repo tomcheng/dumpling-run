@@ -17,12 +17,18 @@ import {
   REMOVAL_DELAY,
   POINTS_PER_BLOCK,
   CHANCE_OF_WALL,
-  CHANCE_OF_CHILI
+  CHANCE_OF_CHILI,
+  getNumColors
 } from "../gameConstants";
 import App from "./App";
 
-const generateBlocks = ({ rows = STARTING_ROWS, lastId = 0 } = {}) => {
+const generateBlocks = ({
+  rows = STARTING_ROWS,
+  lastId = 0,
+  rowsAdded = 0
+} = {}) => {
   const blocks = [];
+  const numColors = getNumColors({ rowsAdded });
 
   for (let column = 0; column < NUM_COLUMNS; column++) {
     for (let row = 0; row < rows; row++) {
@@ -33,7 +39,7 @@ const generateBlocks = ({ rows = STARTING_ROWS, lastId = 0 } = {}) => {
         id: lastId + 1 + row + column * rows,
         row,
         column,
-        color: isWall || isChili ? null : sample(BLOCK_COLORS),
+        color: isWall || isChili ? null : sample(BLOCK_COLORS.slice(0, numColors)),
         isWall,
         isChili
       });
@@ -43,7 +49,7 @@ const generateBlocks = ({ rows = STARTING_ROWS, lastId = 0 } = {}) => {
   return blocks;
 };
 
-const getInitialState = () => ({
+const newState = () => ({
   position: Math.floor(NUM_COLUMNS / 2),
   blocks: generateBlocks(),
   blockIdsToRemove: [],
@@ -52,12 +58,13 @@ const getInitialState = () => ({
   paused: false,
   blockWidth: 0,
   gameWidth: 0,
-  points: 0
+  points: 0,
+  rowsAdded: 0
 });
 
 class AppContainer extends Component {
   containerRef = createRef();
-  state = getInitialState();
+  state = { ...newState(), gameWidth: 0, blockWidth: 0 };
 
   componentDidMount() {
     this.setDimensions();
@@ -190,16 +197,19 @@ class AppContainer extends Component {
   };
 
   handleAddNewRow = () => {
-    const { blocks } = this.state;
+    const { blocks, rowsAdded } = this.state;
     const lastId = blocks.length > 0 ? last(blocks).id : 0;
     const newBlocks = blocks
       .map(block => ({
         ...block,
         row: block.row + 1
       }))
-      .concat(generateBlocks({ rows: 1, lastId }));
+      .concat(generateBlocks({ rows: 1, lastId, rowsAdded }));
 
-    this.setState({ blocks: newBlocks }, this.checkLose);
+    this.setState(
+      { blocks: newBlocks, rowsAdded: rowsAdded + 1 },
+      this.checkLose
+    );
   };
 
   handleRemovedBlock = () => {
@@ -242,7 +252,7 @@ class AppContainer extends Component {
   };
 
   handleRestart = () => {
-    this.setState(omit(getInitialState(), ["blockWidth", "gameWidth"]));
+    this.setState(omit(newState()));
   };
 
   handlePause = () => {
