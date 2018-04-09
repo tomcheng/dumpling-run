@@ -27,7 +27,7 @@ export const STARTING_ROWS = 5;
 export const MAX_ROWS = 14;
 const CHANCE_OF_WALL_FOR_ROW = 0.2;
 const MAX_WALLS = 4;
-const CHANCE_OF_CHILI_FOR_ROW = 0.4;
+const CHANCE_OF_CHILI_FOR_ROW = 0.3;
 
 const getNumColors = ({ rowsAdded }) => {
   const rowsBeforeAddingColor = 10;
