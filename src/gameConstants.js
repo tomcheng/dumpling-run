@@ -25,6 +25,7 @@ export const BLOCK_COLORS = keys(omit(COLORS, ["background", "brown"]));
 export const NUM_COLUMNS = 10;
 export const STARTING_ROWS = 5;
 export const MAX_ROWS = 14;
+export const ROWS_AFTER_CLEARING_BOARD = 5;
 const CHANCE_OF_WALL_FOR_ROW = 0.2;
 const MAX_WALLS = 4;
 const CHANCE_OF_CHILI_FOR_ROW = 0.3;

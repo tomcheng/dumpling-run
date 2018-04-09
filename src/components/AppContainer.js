@@ -9,6 +9,7 @@ import {
   MAX_ROWS,
   NUM_COLUMNS,
   STARTING_ROWS,
+  ROWS_AFTER_CLEARING_BOARD,
   GUTTER,
   GAME_AREA_BORDER,
   MINIMUM_SCREEN_PADDING,
@@ -220,7 +221,7 @@ class AppContainer extends Component {
   handleClearBoard = () => {
     this.setState(state => ({
       blocks: getBlocks({
-        rows: 3,
+        rows: ROWS_AFTER_CLEARING_BOARD,
         rowsAdded: state.rowsAdded,
         existingBlocks: state.blocks
       }),
