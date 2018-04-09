@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Modal from "./Modal";
 import Animate from "./Animate";
 
-const Score = styled.div`
+const Body = styled.div`
   font-weight: bold;
   margin-bottom: 30px;
 `;
@@ -14,12 +14,14 @@ const GameOver = ({ lost, blocksCleared, boardsCleared, onRestart }) => (
     <Animate start={0} end={1} delay={400} on>
       {opacity => <Modal.Title style={{ opacity }}>Game Over</Modal.Title>}
     </Animate>
-    <Animate start={0} end={1} delay={1200} on>
-      {opacity => <Score style={{ opacity }}>Number of Blocks Cleared: {blocksCleared}</Score>}
-    </Animate>
-    <Animate start={0} end={1} delay={2000} on>
-      {opacity => <Score style={{ opacity }}>Number of Boards Cleared: {boardsCleared}</Score>}
-    </Animate>
+    <Body>
+      <Animate start={0} end={1} delay={1200} on>
+        {opacity => <div style={{ opacity }}>Blocks Cleared: {blocksCleared}</div>}
+      </Animate>
+      <Animate start={0} end={1} delay={2000} on>
+        {opacity => <div style={{ opacity }}>Boards Cleared: {boardsCleared}</div>}
+      </Animate>
+    </Body>
     <Animate start={0} end={1} delay={2800} on>
       {opacity => (
         <Modal.Button style={{ opacity }} onClick={onRestart}>

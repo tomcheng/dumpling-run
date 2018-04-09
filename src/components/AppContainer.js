@@ -20,9 +20,10 @@ import {
 } from "../gameConstants";
 import App from "./App";
 
+let blockId = 0;
+
 const generateBlocks = ({
   rows = STARTING_ROWS,
-  lastId = 0,
   rowsAdded = 0
 } = {}) => {
   const blocks = [];
@@ -34,7 +35,7 @@ const generateBlocks = ({
       const isWall = rand < CHANCE_OF_WALL;
       const isChili = !isWall && rand - CHANCE_OF_WALL < CHANCE_OF_CHILI;
       blocks.push({
-        id: lastId + 1 + row + column * rows,
+        id: ++blockId,
         row,
         column,
         color:
@@ -197,13 +198,12 @@ class AppContainer extends Component {
 
   handleAddNewRow = () => {
     const { blocks, rowsAdded } = this.state;
-    const lastId = blocks.length > 0 ? last(blocks).id : 0;
     const newBlocks = blocks
       .map(block => ({
         ...block,
         row: block.row + 1
       }))
-      .concat(generateBlocks({ rows: 1, lastId, rowsAdded }));
+      .concat(generateBlocks({ rows: 1, rowsAdded }));
 
     this.setState(
       { blocks: newBlocks, rowsAdded: rowsAdded + 1 },
