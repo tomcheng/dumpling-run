@@ -3,6 +3,7 @@ import findIndex from "lodash/findIndex";
 import last from "lodash/last";
 import sortBy from "lodash/sortBy";
 import takeRightWhile from "lodash/takeRightWhile";
+import times from "lodash/times";
 import { getAdjacents } from "../utils/gridUtils";
 import {
   MAX_ROWS,
@@ -273,13 +274,37 @@ class AppContainer extends Component {
     }
   };
 
-  handleClickColumn = position => {
+  handleClickColumn = targetPosition => {
+    const { blocks, heldBlockIds, position } = this.state;
+    const columnAmounts = times(NUM_COLUMNS, () => 0);
+    blocks.forEach(block => {
+      if (heldBlockIds.includes(block.id)) {
+        return;
+      }
+
+      columnAmounts[block.column] += 1;
+    });
+    const isHolding = heldBlockIds.length > 0;
+    let newPosition = isHolding ? position : targetPosition;
+    while (newPosition !== targetPosition) {
+      const positionToCheck =
+        targetPosition > newPosition ? newPosition + 1 : newPosition - 1;
+      if (columnAmounts[positionToCheck] + heldBlockIds.length > MAX_ROWS) {
+        break;
+      }
+      newPosition = positionToCheck;
+    }
+
     this.setState(
       state => ({
         ...state,
-        position
+        position: newPosition
       }),
-      this.toggle
+      () => {
+        if (newPosition === targetPosition) {
+          this.toggle();
+        }
+      }
     );
   };
 
