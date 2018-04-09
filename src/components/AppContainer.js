@@ -1,12 +1,10 @@
 import React, { Component, createRef } from "react";
 import findIndex from "lodash/findIndex";
 import last from "lodash/last";
-import sample from "lodash/sample";
 import sortBy from "lodash/sortBy";
 import takeRightWhile from "lodash/takeRightWhile";
 import { getAdjacents } from "../utils/gridUtils";
 import {
-  BLOCK_COLORS,
   MAX_ROWS,
   NUM_COLUMNS,
   STARTING_ROWS,
@@ -14,44 +12,13 @@ import {
   GAME_AREA_BORDER,
   MINIMUM_SCREEN_PADDING,
   REMOVAL_DELAY,
-  CHANCE_OF_WALL,
-  CHANCE_OF_CHILI,
-  getNumColors
+  getBlocks
 } from "../gameConstants";
 import App from "./App";
 
-let blockId = 0;
-
-const generateBlocks = ({
-  rows = STARTING_ROWS,
-  rowsAdded = 0
-} = {}) => {
-  const blocks = [];
-  const numColors = getNumColors({ rowsAdded });
-
-  for (let column = 0; column < NUM_COLUMNS; column++) {
-    for (let row = 0; row < rows; row++) {
-      const rand = Math.random();
-      const isWall = rand < CHANCE_OF_WALL;
-      const isChili = !isWall && rand - CHANCE_OF_WALL < CHANCE_OF_CHILI;
-      blocks.push({
-        id: ++blockId,
-        row,
-        column,
-        color:
-          isWall || isChili ? null : sample(BLOCK_COLORS.slice(0, numColors)),
-        isWall,
-        isChili
-      });
-    }
-  }
-
-  return blocks;
-};
-
 const newState = () => ({
   position: Math.floor(NUM_COLUMNS / 2),
-  blocks: generateBlocks(),
+  blocks: getBlocks({ rows: STARTING_ROWS, rowsAdded: 0, existingBlocks: [] }),
   blockIdsToRemove: [],
   heldBlockIds: [],
   blocksCleared: 0,
@@ -203,7 +170,7 @@ class AppContainer extends Component {
         ...block,
         row: block.row + 1
       }))
-      .concat(generateBlocks({ rows: 1, rowsAdded }));
+      .concat(getBlocks({ rows: 1, rowsAdded, existingBlocks: blocks }));
 
     this.setState(
       { blocks: newBlocks, rowsAdded: rowsAdded + 1 },
@@ -251,7 +218,11 @@ class AppContainer extends Component {
 
   handleClearBoard = () => {
     this.setState(state => ({
-      blocks: generateBlocks({ rows: 3, rowsAdded: state.rowsAdded }),
+      blocks: getBlocks({
+        rows: 3,
+        rowsAdded: state.rowsAdded,
+        existingBlocks: state.blocks
+      }),
       boardsCleared: state.boardsCleared + 1,
       resetTimer: true
     }));

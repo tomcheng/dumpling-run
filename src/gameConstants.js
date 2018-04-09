@@ -1,6 +1,8 @@
 import clamp from "lodash/clamp";
 import keys from "lodash/keys";
 import omit from "lodash/omit";
+import range from "lodash/range";
+import sample from "lodash/sample";
 import { simpleMemoize } from "./utils/generalUtils";
 
 // COLORS
@@ -23,17 +25,64 @@ export const BLOCK_COLORS = keys(omit(COLORS, ["background", "brown"]));
 export const NUM_COLUMNS = 10;
 export const STARTING_ROWS = 5;
 export const MAX_ROWS = 14;
-export const CHANCE_OF_WALL = 0.02;
-export const CHANCE_OF_CHILI = 0.05;
-export const getNumColors = ({ rowsAdded }) => {
+const CHANCE_OF_WALL_FOR_ROW = 0.2;
+const MAX_WALLS = 4;
+const CHANCE_OF_CHILI_FOR_ROW = 0.4;
+
+const getNumColors = ({ rowsAdded }) => {
   const rowsBeforeAddingColor = 10;
   const startingColors = 5;
 
   return Math.min(
-    Math.floor(rowsAdded / rowsBeforeAddingColor) +
-      startingColors,
+    Math.floor(rowsAdded / rowsBeforeAddingColor) + startingColors,
     BLOCK_COLORS.length
   );
+};
+
+let blockId = 0;
+
+export const getBlocks = ({ rows, rowsAdded, existingBlocks }) => {
+  const numColors = getNumColors({ rowsAdded });
+  const newBlocks = [];
+  const columnsWithWall = range(NUM_COLUMNS).filter(col =>
+    existingBlocks.some(b => b.isWall && b.column === col)
+  );
+
+  for (let row = 0; row < rows; row++) {
+    const shouldHaveWall =
+      Math.random() < CHANCE_OF_WALL_FOR_ROW &&
+      columnsWithWall.length < MAX_WALLS;
+    const wallColumn = sample(
+      range(NUM_COLUMNS).filter(col => !columnsWithWall.includes(col))
+    );
+
+    if (shouldHaveWall) {
+      columnsWithWall.push(wallColumn);
+    }
+
+    const shouldHaveChili = Math.random() < CHANCE_OF_CHILI_FOR_ROW;
+    const chiliColumn = sample(
+      range(NUM_COLUMNS).filter(
+        col => !columnsWithWall.includes(col) && col !== wallColumn
+      )
+    );
+
+    for (let column = 0; column < NUM_COLUMNS; column++) {
+      const isWall = shouldHaveWall && column === wallColumn;
+      const isChili = shouldHaveChili && column === chiliColumn;
+      newBlocks.push({
+        id: ++blockId,
+        row,
+        column,
+        color:
+          isWall || isChili ? null : sample(BLOCK_COLORS.slice(0, numColors)),
+        isWall,
+        isChili
+      });
+    }
+  }
+
+  return newBlocks;
 };
 
 // TIMING
