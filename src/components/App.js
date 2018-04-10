@@ -65,11 +65,7 @@ class App extends Component {
     blocks: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number.isRequired,
-        isChili: PropTypes.bool.isRequired,
-        isWall: PropTypes.bool.isRequired,
-        color: PropTypes.string,
-        column: PropTypes.number,
-        row: PropTypes.number
+        column: PropTypes.number
       })
     ).isRequired,
     blocksCleared: PropTypes.number.isRequired,
@@ -81,6 +77,7 @@ class App extends Component {
     paused: PropTypes.bool.isRequired,
     position: PropTypes.number.isRequired,
     resetTimer: PropTypes.bool.isRequired,
+    wallDamages: PropTypes.objectOf(PropTypes.number).isRequired,
     onAddNewRow: PropTypes.func.isRequired,
     onClearResetTimer: PropTypes.func.isRequired,
     onClickColumn: PropTypes.func.isRequired,
@@ -121,6 +118,7 @@ class App extends Component {
       paused,
       position,
       resetTimer,
+      wallDamages,
       onAddNewRow,
       onClearResetTimer,
       onClickColumn,
@@ -136,55 +134,63 @@ class App extends Component {
     const blockHeight = getBlockHeight(blockWidth, gameHeight);
 
     return (
-          <Container>
-            <GameHeader
-              blocksCleared={blocksCleared}
-              boardsCleared={boardsCleared}
-              gameWidth={gameWidth}
-              onFastForward={onFastForward}
-              onPause={onPause}
-            />
-            <GameContainer style={{ width: gameWidth }}>
-              <Timer
-                interval={NEW_ROW_INTERVAL}
-                lost={lost}
-                paused={paused}
-                resetTimer={resetTimer}
-                onAddNewRow={onAddNewRow}
-                onClearResetTimer={onClearResetTimer}
+      <Container>
+        <GameHeader
+          blocksCleared={blocksCleared}
+          boardsCleared={boardsCleared}
+          gameWidth={gameWidth}
+          onFastForward={onFastForward}
+          onPause={onPause}
+        />
+        <GameContainer style={{ width: gameWidth }}>
+          <Timer
+            interval={NEW_ROW_INTERVAL}
+            lost={lost}
+            paused={paused}
+            resetTimer={resetTimer}
+            onAddNewRow={onAddNewRow}
+            onClearResetTimer={onClearResetTimer}
+          />
+          <GameArea innerRef={this.gameAreaRef}>
+            <Columns>
+              {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
+                <Column
+                  key={columnIndex}
+                  onClick={() => onClickColumn(columnIndex)}
+                />
+              ))}
+            </Columns>
+            {blocks.map(({ id, column, isWall, ...other }) => (
+              <Block
+                {...other}
+                key={id}
+                isWall={isWall}
+                blockWidth={blockWidth}
+                blockHeight={blockHeight}
+                column={heldBlockIds.includes(id) ? position : column}
+                gameHeight={gameHeight}
+                holdPosition={heldBlockIds.indexOf(id)}
+                held={heldBlockIds.includes(id)}
+                toRemove={blockIdsToRemove.includes(id)}
+                wallDamage={isWall ? wallDamages[id] || 0 : null}
+                onRemoved={onRemovedBlock}
               />
-              <GameArea innerRef={this.gameAreaRef}>
-                <Columns>
-                  {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
-                    <Column
-                      key={columnIndex}
-                      onClick={() => onClickColumn(columnIndex)}
-                    />
-                  ))}
-                </Columns>
-                {blocks.map(({ id, row, column, color, isChili, isWall }) => (
-                  <Block
-                    key={id}
-                    blockWidth={blockWidth}
-                    blockHeight={blockHeight}
-                    gameHeight={gameHeight}
-                    column={heldBlockIds.includes(id) ? position : column}
-                    color={color}
-                    row={row}
-                    holdPosition={heldBlockIds.indexOf(id)}
-                    held={heldBlockIds.includes(id)}
-                    toRemove={blockIdsToRemove.includes(id)}
-                    isChili={isChili}
-                    isWall={isWall}
-                    onRemoved={onRemovedBlock}
-                  />
-                ))}
-                <Player isHolding={isHolding} position={position} blockWidth={blockWidth} />
-              </GameArea>
-            </GameContainer>
-            <GameOver lost={lost} onRestart={onRestart} blocksCleared={blocksCleared} boardsCleared={boardsCleared} />
-            <GamePaused paused={paused} onResume={onResume} />
-          </Container>
+            ))}
+            <Player
+              isHolding={isHolding}
+              position={position}
+              blockWidth={blockWidth}
+            />
+          </GameArea>
+        </GameContainer>
+        <GameOver
+          lost={lost}
+          onRestart={onRestart}
+          blocksCleared={blocksCleared}
+          boardsCleared={boardsCleared}
+        />
+        <GamePaused paused={paused} onResume={onResume} />
+      </Container>
     );
   }
 }

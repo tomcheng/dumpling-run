@@ -1,6 +1,8 @@
 import React, { Component, createRef } from "react";
 import findIndex from "lodash/findIndex";
+import keyBy from "lodash/keyBy";
 import last from "lodash/last";
+import omit from "lodash/omit";
 import sortBy from "lodash/sortBy";
 import takeRightWhile from "lodash/takeRightWhile";
 import times from "lodash/times";
@@ -28,7 +30,8 @@ const newState = () => ({
   rowsAdded: 0,
   lost: false,
   paused: false,
-  resetTimer: false
+  resetTimer: false,
+  wallDamages: {}
 });
 
 class AppContainer extends Component {
@@ -142,7 +145,7 @@ class AppContainer extends Component {
   };
 
   removeMatchedBlocks = () => {
-    const { blocks } = this.state;
+    const { blocks, wallDamages } = this.state;
     const lastBlock = last(this.getCurrentColumn());
 
     if (lastBlock.isChili) {
@@ -155,12 +158,40 @@ class AppContainer extends Component {
       return;
     }
 
-    const adjacentBlockIds = getAdjacents(blocks, lastBlock.id);
+    const blocksById = keyBy(blocks, block => block.id);
+    const adjacentBlockAndWallIds = getAdjacents(blocks, lastBlock.id);
+    const adjacentBlockIds = [];
+    const wallIdsToRemove = [];
+    const wallIdsToUpdate = [];
+
+    adjacentBlockAndWallIds.forEach(id => {
+      const { isWall } = blocksById[id];
+      const damage = wallDamages[id];
+
+      if (isWall) {
+        if (damage === 2) {
+          wallIdsToRemove.push(id);
+        } else {
+          wallIdsToUpdate.push(id);
+        }
+      } else {
+        adjacentBlockIds.push(id);
+      }
+    });
+
+    const newWallDamages = wallIdsToUpdate.reduce(
+      (acc, curr) => ({ ...acc, [curr]: (acc[curr] || 0) + 1 }),
+      wallDamages
+    );
 
     if (adjacentBlockIds.length >= 4) {
       this.setState(state => ({
         ...state,
-        blockIdsToRemove: state.blockIdsToRemove.concat(adjacentBlockIds)
+        blockIdsToRemove: state.blockIdsToRemove.concat(
+          adjacentBlockIds,
+          wallIdsToRemove
+        ),
+        wallDamages: newWallDamages
       }));
     }
   };
@@ -208,7 +239,8 @@ class AppContainer extends Component {
         ...state,
         blocks: newBlocks,
         blockIdsToRemove: [],
-        blocksCleared: state.blocksCleared + blockIdsToRemove.length
+        blocksCleared: state.blocksCleared + blockIdsToRemove.length,
+        wallDamages: omit(state.wallDamages, blockIdsToRemove)
       }),
       () => {
         if (newBlocks.length === 0) {
@@ -321,7 +353,8 @@ class AppContainer extends Component {
       lost,
       paused,
       position,
-      resetTimer
+      resetTimer,
+      wallDamages
     } = this.state;
 
     return (
@@ -347,6 +380,7 @@ class AppContainer extends Component {
           paused={paused}
           position={position}
           resetTimer={resetTimer}
+          wallDamages={wallDamages}
           onAddNewRow={this.handleAddNewRow}
           onClearResetTimer={this.handleClearResetTimer}
           onClickColumn={this.handleClickColumn}

@@ -30,10 +30,10 @@ const Brick = styled.div`
   }
 `;
 
-const Wall = ({ className, style }) => (
+const Wall = ({ className, style, wallDamage }) => (
   <Container className={className} style={style}>
     <Row>
-      <Brick style={{ flexGrow: 1 }} />
+      <Brick style={{ flexGrow: 1 }}>{wallDamage}</Brick>
       <Brick style={{ flexGrow: 2 }} />
       <Brick style={{ flexGrow: 2 }} />
       <Brick style={{ flexGrow: 2 }} />
@@ -56,6 +56,7 @@ const Wall = ({ className, style }) => (
 );
 
 Wall.propTypes = {
+  wallDamage: PropTypes.number.isRequired,
   className: PropTypes.string,
   style: PropTypes.object
 };

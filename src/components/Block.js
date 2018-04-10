@@ -80,6 +80,7 @@ const Block = ({
   blockHeight,
   gameHeight,
   toRemove,
+  wallDamage,
   onRemoved
 }) => {
   const positionStyles = {
@@ -115,7 +116,7 @@ const Block = ({
         }
 
         if (isWall) {
-          return <StyledWall state={state} style={positionStyles} />;
+          return <StyledWall state={state} style={positionStyles} wallDamage={wallDamage} />;
         }
 
         return (
@@ -144,7 +145,8 @@ Block.propTypes = {
   onRemoved: PropTypes.func.isRequired,
   color: PropTypes.oneOf(BLOCK_COLORS),
   holdPosition: PropTypes.number,
-  row: PropTypes.number
+  row: PropTypes.number,
+  wallDamage: PropTypes.number
 };
 
 export default Block;

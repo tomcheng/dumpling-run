@@ -12,20 +12,31 @@ export const getAdjacents = (blocks, startId) => {
       return;
     }
 
-    if (block.color !== targetColor) {
+    if (block.color !== targetColor && !block.isWall) {
       return;
     }
 
     adjacentIds.push(block.id);
 
-    floodFill(blocks.find(b => b.row === block.row + 1 && b.column === block.column));
-    floodFill(blocks.find(b => b.row === block.row - 1 && b.column === block.column));
-    floodFill(blocks.find(b => b.row === block.row && b.column === block.column + 1));
-    floodFill(blocks.find(b => b.row === block.row && b.column === block.column - 1));
+    if (block.isWall) {
+      return;
+    }
+
+    floodFill(
+      blocks.find(b => b.row === block.row + 1 && b.column === block.column)
+    );
+    floodFill(
+      blocks.find(b => b.row === block.row - 1 && b.column === block.column)
+    );
+    floodFill(
+      blocks.find(b => b.row === block.row && b.column === block.column + 1)
+    );
+    floodFill(
+      blocks.find(b => b.row === block.row && b.column === block.column - 1)
+    );
   };
 
   floodFill(startBlock);
 
   return adjacentIds;
 };
-
