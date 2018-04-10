@@ -34,9 +34,9 @@ export const NUM_COLUMNS = 10;
 export const STARTING_ROWS = 5;
 export const MAX_ROWS = 14;
 export const ROWS_AFTER_CLEARING_BOARD = 5;
+export const BLOCKS_BEFORE_NEXT_CHILI = 30;
 const CHANCE_OF_WALL_FOR_ROW = 0.3;
 const MAX_WALLS = 4;
-const CHANCE_OF_CHILI_FOR_ROW = 0.3;
 
 const getNumColors = ({ rowsAdded }) => {
   const rowsBeforeAddingColor = 10;
@@ -50,7 +50,7 @@ const getNumColors = ({ rowsAdded }) => {
 
 let blockId = 0;
 
-export const getBlocks = ({ rows, rowsAdded, existingBlocks }) => {
+export const getBlocks = ({ rows, rowsAdded, existingBlocks, addChili }) => {
   const numColors = getNumColors({ rowsAdded });
   const newBlocks = [];
   const columnsWithWall = range(NUM_COLUMNS).filter(col =>
@@ -69,7 +69,6 @@ export const getBlocks = ({ rows, rowsAdded, existingBlocks }) => {
       columnsWithWall.push(wallColumn);
     }
 
-    const shouldHaveChili = Math.random() < CHANCE_OF_CHILI_FOR_ROW;
     const chiliColumn = sample(
       range(NUM_COLUMNS).filter(
         col => !columnsWithWall.includes(col) && col !== wallColumn
@@ -78,7 +77,7 @@ export const getBlocks = ({ rows, rowsAdded, existingBlocks }) => {
 
     for (let column = 0; column < NUM_COLUMNS; column++) {
       const isWall = shouldHaveWall && column === wallColumn;
-      const isChili = shouldHaveChili && column === chiliColumn;
+      const isChili = addChili && column === chiliColumn;
       newBlocks.push({
         id: ++blockId,
         row,

@@ -68,6 +68,7 @@ class App extends Component {
         column: PropTypes.number
       })
     ).isRequired,
+    blocksBeforeNextChili: PropTypes.number.isRequired,
     blocksCleared: PropTypes.number.isRequired,
     blockWidth: PropTypes.number.isRequired,
     boardsCleared: PropTypes.number.isRequired,
@@ -109,6 +110,7 @@ class App extends Component {
     const {
       blockIdsToRemove,
       blocks,
+      blocksBeforeNextChili,
       blocksCleared,
       blockWidth,
       boardsCleared,
@@ -136,6 +138,7 @@ class App extends Component {
     return (
       <Container>
         <GameHeader
+          blocksBeforeNextChili={blocksBeforeNextChili}
           blocksCleared={blocksCleared}
           boardsCleared={boardsCleared}
           gameWidth={gameWidth}

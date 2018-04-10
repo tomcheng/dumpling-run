@@ -12,6 +12,7 @@ import {
   NUM_COLUMNS,
   STARTING_ROWS,
   ROWS_AFTER_CLEARING_BOARD,
+  BLOCKS_BEFORE_NEXT_CHILI,
   GUTTER,
   GAME_AREA_BORDER,
   MINIMUM_SCREEN_PADDING,
@@ -22,9 +23,10 @@ import App from "./App";
 
 const newState = () => ({
   position: Math.floor(NUM_COLUMNS / 2),
-  blocks: getBlocks({ rows: STARTING_ROWS, rowsAdded: 0, existingBlocks: [] }),
+  blocks: getBlocks({ rows: STARTING_ROWS, rowsAdded: 0, existingBlocks: [], addChili: false }),
   blockIdsToRemove: [],
   heldBlockIds: [],
+  blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
   blocksCleared: 0,
   boardsCleared: 0,
   rowsAdded: 0,
@@ -196,16 +198,25 @@ class AppContainer extends Component {
   };
 
   handleAddNewRow = () => {
-    const { blocks, rowsAdded } = this.state;
+    const { blocks, rowsAdded, blocksBeforeNextChili } = this.state;
+    const addChili = blocksBeforeNextChili === 0;
     const newBlocks = blocks
       .map(block => ({
         ...block,
         row: block.row + 1
       }))
-      .concat(getBlocks({ rows: 1, rowsAdded, existingBlocks: blocks }));
+      .concat(
+        getBlocks({ rows: 1, rowsAdded, existingBlocks: blocks, addChili })
+      );
 
     this.setState(
-      { blocks: newBlocks, rowsAdded: rowsAdded + 1 },
+      {
+        blocks: newBlocks,
+        rowsAdded: rowsAdded + 1,
+        blocksBeforeNextChili: addChili
+          ? BLOCKS_BEFORE_NEXT_CHILI
+          : blocksBeforeNextChili
+      },
       this.checkLose
     );
   };
@@ -238,6 +249,10 @@ class AppContainer extends Component {
         ...state,
         blocks: newBlocks,
         blockIdsToRemove: [],
+        blocksBeforeNextChili: Math.max(
+          state.blocksBeforeNextChili - blockIdsToRemove.length,
+          0
+        ),
         blocksCleared: state.blocksCleared + blockIdsToRemove.length,
         wallDamages: omit(state.wallDamages, blockIdsToRemove)
       }),
@@ -344,6 +359,7 @@ class AppContainer extends Component {
     const {
       blockIdsToRemove,
       blocks,
+      blocksBeforeNextChili,
       blocksCleared,
       blockWidth,
       boardsCleared,
@@ -370,6 +386,7 @@ class AppContainer extends Component {
         <App
           blockIdsToRemove={blockIdsToRemove}
           blocks={blocks}
+          blocksBeforeNextChili={blocksBeforeNextChili}
           blocksCleared={blocksCleared}
           blockWidth={blockWidth}
           boardsCleared={boardsCleared}

@@ -48,6 +48,7 @@ const Icon = styled.div`
 
 const GameHeader = ({
   gameWidth,
+  blocksBeforeNextChili,
   blocksCleared,
   boardsCleared,
   onFastForward,
@@ -55,8 +56,8 @@ const GameHeader = ({
 }) => (
   <Container style={{ width: gameWidth }}>
     <div>
-      Blocks Cleared: <strong>{blocksCleared}</strong>&nbsp;&nbsp; Boards
-      Cleared: <strong>{boardsCleared}</strong>
+      Blocks for Next Chili: <strong>{blocksBeforeNextChili}</strong>&nbsp;&nbsp;{" "}
+      Boards Cleared: <strong>{boardsCleared}</strong>
     </div>
     <Actions>
       <Icon onClick={onPause}>
@@ -73,8 +74,9 @@ const GameHeader = ({
 );
 
 GameHeader.propTypes = {
-  gameWidth: PropTypes.number.isRequired,
+  blocksBeforeNextChili: PropTypes.number.isRequired,
   blocksCleared: PropTypes.number.isRequired,
+  gameWidth: PropTypes.number.isRequired,
   onFastForward: PropTypes.func.isRequired,
   onPause: PropTypes.func.isRequired
 };
