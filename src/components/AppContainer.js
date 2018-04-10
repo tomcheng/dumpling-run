@@ -146,54 +146,53 @@ class AppContainer extends Component {
 
   removeMatchedBlocks = () => {
     const { blocks, wallDamages } = this.state;
-    const lastBlock = last(this.getCurrentColumn());
+    const currentColumn = this.getCurrentColumn();
+    const lastBlock = last(currentColumn);
+    const blocksById = keyBy(blocks, block => block.id);
+    let blockIdsToRemove = [];
+    let wallIds = [];
 
     if (lastBlock.isChili) {
-      this.setState(state => ({
-        ...state,
-        blockIdsToRemove: state.blockIdsToRemove.concat(
-          this.getCurrentColumn().map(b => b.id)
+      blockIdsToRemove = currentColumn.map(b => b.id);
+      wallIds = blocks
+        .filter(
+          b =>
+            b.isWall &&
+            [lastBlock.column - 1, lastBlock.column + 1].includes(b.column) &&
+            b.row <= lastBlock.row
         )
-      }));
-      return;
+        .map(b => b.id);
+    } else {
+      const adjacentBlockAndWallIds = getAdjacents(blocks, lastBlock.id);
+      if (
+        adjacentBlockAndWallIds.filter(id => !blocksById[id].isWall).length >= 4
+      ) {
+        adjacentBlockAndWallIds.forEach(id => {
+          if (blocksById[id].isWall) {
+            wallIds.push(id);
+          } else {
+            blockIdsToRemove.push(id);
+          }
+        });
+      }
     }
 
-    const blocksById = keyBy(blocks, block => block.id);
-    const adjacentBlockAndWallIds = getAdjacents(blocks, lastBlock.id);
-    const adjacentBlockIds = [];
-    const wallIdsToRemove = [];
-    const wallIdsToUpdate = [];
-
-    adjacentBlockAndWallIds.forEach(id => {
-      const { isWall } = blocksById[id];
-      const damage = wallDamages[id];
-
-      if (isWall) {
-        if (damage === 2) {
-          wallIdsToRemove.push(id);
-        } else {
-          wallIdsToUpdate.push(id);
-        }
-      } else {
-        adjacentBlockIds.push(id);
-      }
-    });
+    const wallIdsToUpdate = wallIds.filter(id => wallDamages[id] !== 2);
+    const wallIdsToRemove = wallIds.filter(id => wallDamages[id] === 2);
 
     const newWallDamages = wallIdsToUpdate.reduce(
       (acc, curr) => ({ ...acc, [curr]: (acc[curr] || 0) + 1 }),
       wallDamages
     );
 
-    if (adjacentBlockIds.length >= 4) {
-      this.setState(state => ({
-        ...state,
-        blockIdsToRemove: state.blockIdsToRemove.concat(
-          adjacentBlockIds,
-          wallIdsToRemove
-        ),
-        wallDamages: newWallDamages
-      }));
-    }
+    this.setState(state => ({
+      ...state,
+      blockIdsToRemove: state.blockIdsToRemove.concat(
+        blockIdsToRemove,
+        wallIdsToRemove
+      ),
+      wallDamages: newWallDamages
+    }));
   };
 
   handleAddNewRow = () => {
