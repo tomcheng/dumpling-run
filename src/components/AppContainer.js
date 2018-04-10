@@ -268,7 +268,7 @@ class AppContainer extends Component {
     this.setState(state => ({
       blocks: getBlocks({
         rows: ROWS_AFTER_CLEARING_BOARD,
-        rowsAdded: state.rowsAdded,
+        boardsCleared: state.boardsCleared + 1,
         existingBlocks: state.blocks
       }),
       boardsCleared: state.boardsCleared + 1,
