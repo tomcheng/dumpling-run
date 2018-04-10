@@ -21,6 +21,14 @@ export const COLORS = {
 
 export const BLOCK_COLORS = keys(omit(COLORS, ["background", "brown"]));
 
+// TIMING
+export const NEW_ROW_INTERVAL = 15000;
+export const BLOCK_MOVE_DURATION = 70;
+export const REMOVAL_DELAY = BLOCK_MOVE_DURATION + 10;
+export const BLOCK_APPEAR_DURATION = 200;
+export const BLOCK_DISAPPEAR_DURATION = 500;
+export const BLOCK_DISAPPEAR_BLINK_COUNT = 2;
+
 // GAME LOGIC
 export const NUM_COLUMNS = 10;
 export const STARTING_ROWS = 5;
@@ -85,14 +93,6 @@ export const getBlocks = ({ rows, rowsAdded, existingBlocks }) => {
 
   return newBlocks;
 };
-
-// TIMING
-export const NEW_ROW_INTERVAL = 15000;
-export const BLOCK_MOVE_DURATION = 70;
-export const REMOVAL_DELAY = BLOCK_MOVE_DURATION + 10;
-export const BLOCK_APPEAR_DURATION = 200;
-export const BLOCK_DISAPPEAR_DURATION = 500;
-export const BLOCK_DISAPPEAR_BLINK_COUNT = 2;
 
 // CHARACTER DIMENSIONS
 export const getCharacterSize = simpleMemoize(blockWidth =>

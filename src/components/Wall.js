@@ -3,7 +3,11 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import range from "lodash/range";
 import shuffle from "lodash/shuffle";
-import { BLOCK_BORDER_WIDTH, COLORS } from "../gameConstants";
+import {
+  BLOCK_BORDER_WIDTH,
+  COLORS,
+  BLOCK_DISAPPEAR_DURATION
+} from "../gameConstants";
 
 const borderStyle = `${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown}`;
 
@@ -12,7 +16,7 @@ const Container = styled.div`
   border-radius: 2px;
   display: flex;
   flex-direction: column;
-  background-color: ${COLORS.background};
+  background-color: ${COLORS.brown};
 `;
 
 const Row = styled.div`
@@ -27,9 +31,11 @@ const Row = styled.div`
 const Brick = styled.div`
   flex-grow: 0;
   flex-shrink: 0;
-  background-color: ${props => (props.damaged ? COLORS.brown : "#fff")};
+  background-color: #fff;
+  opacity: ${props => (props.damaged ? 0 : 1)};
+  transition: opacity 1ms linear ${BLOCK_DISAPPEAR_DURATION}ms;
 
-  & + & {
+  &:not(:first-child) {
     border-left: ${borderStyle};
   }
 `;
