@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { MINIMUM_SCREEN_PADDING, COLORS } from "../gameConstants";
@@ -40,6 +40,10 @@ const Bar = styled.div`
   }
 `;
 
+const Alert = styled.strong`
+  color: ${COLORS.red};
+`;
+
 const Icon = styled.div`
   display: flex;
   padding: 5px 15px;
@@ -56,8 +60,14 @@ const GameHeader = ({
 }) => (
   <Container style={{ width: gameWidth }}>
     <div>
-      Blocks for Next Chili: <strong>{blocksBeforeNextChili}</strong>&nbsp;&nbsp;{" "}
-      Boards Cleared: <strong>{boardsCleared}</strong>
+      Boards Cleared: <strong>{boardsCleared}</strong>&nbsp;&nbsp;{" "}
+      {blocksBeforeNextChili === 0 ? (
+        <Alert>One Chili, Coming Up!</Alert>
+      ) : (
+        <Fragment>
+          Blocks for Next Chili: <strong>{blocksBeforeNextChili}</strong>
+        </Fragment>
+      )}
     </div>
     <Actions>
       <Icon onClick={onPause}>
