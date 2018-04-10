@@ -1,6 +1,8 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import range from "lodash/range";
+import shuffle from "lodash/shuffle";
 import { BLOCK_BORDER_WIDTH, COLORS } from "../gameConstants";
 
 const borderStyle = `${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown}`;
@@ -23,42 +25,83 @@ const Row = styled.div`
 `;
 
 const Brick = styled.div`
-  background-color: rgba(0, 0, 0, 0.1);
+  flex-grow: 0;
+  flex-shrink: 0;
+  background-color: ${props => (props.damaged ? COLORS.brown : "#fff")};
 
   & + & {
     border-left: ${borderStyle};
   }
 `;
 
-const Wall = ({ className, style, wallDamage }) => (
-  <Container className={className} style={style}>
-    <Row>
-      <Brick style={{ flexGrow: 1 }}>{wallDamage}</Brick>
-      <Brick style={{ flexGrow: 2 }} />
-      <Brick style={{ flexGrow: 2 }} />
-      <Brick style={{ flexGrow: 2 }} />
-      <Brick style={{ flexGrow: 1 }} />
-    </Row>
-    <Row>
-      <Brick style={{ flexGrow: 1 }} />
-      <Brick style={{ flexGrow: 1 }} />
-      <Brick style={{ flexGrow: 1 }} />
-      <Brick style={{ flexGrow: 1 }} />
-    </Row>
-    <Row>
-      <Brick style={{ flexGrow: 1 }} />
-      <Brick style={{ flexGrow: 2 }} />
-      <Brick style={{ flexGrow: 2 }} />
-      <Brick style={{ flexGrow: 2 }} />
-      <Brick style={{ flexGrow: 1 }} />
-    </Row>
-  </Container>
-);
+const QuarterBrick = styled(Brick)`
+  flex-basis: 25%;
+`;
 
-Wall.propTypes = {
-  wallDamage: PropTypes.number.isRequired,
-  className: PropTypes.string,
-  style: PropTypes.object
-};
+const EightBrick = styled(Brick)`
+  flex-basis: 12.5%;
+`;
+
+class Wall extends Component {
+  static propTypes = {
+    wallDamage: PropTypes.number.isRequired,
+    className: PropTypes.string,
+    style: PropTypes.object
+  };
+
+  state = {};
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.wallDamage === prevState.wallDamage) {
+      return null;
+    }
+
+    if (nextProps.wallDamage === 0) {
+      return { wallDamage: 0, damagedBricks: {} };
+    }
+
+    const bricksToDamage = shuffle(
+      range(14).filter(i => !prevState.damagedBricks[i])
+    ).slice(0, nextProps.wallDamage === 1 ? 4 : 6);
+
+    return {
+      wallDamage: nextProps.wallDamage,
+      damagedBricks: bricksToDamage.reduce(
+        (acc, curr) => ({ ...acc, [curr]: true }),
+        prevState.damagedBricks
+      )
+    };
+  }
+
+  render() {
+    const { className, style } = this.props;
+    const { damagedBricks } = this.state;
+
+    return (
+      <Container className={className} style={style}>
+        <Row>
+          <EightBrick damaged={damagedBricks[0]} />
+          <QuarterBrick damaged={damagedBricks[1]} />
+          <QuarterBrick damaged={damagedBricks[2]} />
+          <QuarterBrick damaged={damagedBricks[3]} />
+          <EightBrick damaged={damagedBricks[4]} />
+        </Row>
+        <Row>
+          <QuarterBrick style={{ flexGrow: 1 }} damaged={damagedBricks[5]} />
+          <QuarterBrick style={{ flexGrow: 1 }} damaged={damagedBricks[6]} />
+          <QuarterBrick style={{ flexGrow: 1 }} damaged={damagedBricks[7]} />
+          <QuarterBrick style={{ flexGrow: 1 }} damaged={damagedBricks[8]} />
+        </Row>
+        <Row>
+          <EightBrick damaged={damagedBricks[9]} />
+          <QuarterBrick damaged={damagedBricks[10]} />
+          <QuarterBrick damaged={damagedBricks[11]} />
+          <QuarterBrick damaged={damagedBricks[12]} />
+          <EightBrick damaged={damagedBricks[13]} />
+        </Row>
+      </Container>
+    );
+  }
+}
 
 export default Wall;
