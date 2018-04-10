@@ -34,24 +34,20 @@ export const NUM_COLUMNS = 10;
 export const STARTING_ROWS = 5;
 export const MAX_ROWS = 14;
 export const ROWS_AFTER_CLEARING_BOARD = 5;
-export const BLOCKS_BEFORE_NEXT_CHILI = 30;
-const CHANCE_OF_WALL_FOR_ROW = 0.3;
-const MAX_WALLS = 4;
-
-const getNumColors = ({ rowsAdded }) => {
-  const rowsBeforeAddingColor = 10;
-  const startingColors = 5;
-
-  return Math.min(
-    Math.floor(rowsAdded / rowsBeforeAddingColor) + startingColors,
-    BLOCK_COLORS.length
-  );
-};
+export const BLOCKS_BEFORE_NEXT_CHILI = 50;
+const CHANCE_OF_WALL_FOR_ROW = 0.35;
+const MAX_WALLS = 5;
+const STARTING_COLORS = 5;
 
 let blockId = 0;
 
-export const getBlocks = ({ rows, rowsAdded, existingBlocks, addChili }) => {
-  const numColors = getNumColors({ rowsAdded });
+export const getBlocks = ({
+  rows,
+  boardsCleared,
+  existingBlocks,
+  addChili
+}) => {
+  const numColors = Math.min(STARTING_COLORS + boardsCleared, BLOCK_COLORS.length);
   const newBlocks = [];
   const columnsWithWall = range(NUM_COLUMNS).filter(col =>
     existingBlocks.some(b => b.isWall && b.column === col)

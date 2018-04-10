@@ -23,7 +23,7 @@ import App from "./App";
 
 const newState = () => ({
   position: Math.floor(NUM_COLUMNS / 2),
-  blocks: getBlocks({ rows: STARTING_ROWS, rowsAdded: 0, existingBlocks: [], addChili: false }),
+  blocks: getBlocks({ rows: STARTING_ROWS, boardsCleared: 0, existingBlocks: [], addChili: false }),
   blockIdsToRemove: [],
   heldBlockIds: [],
   blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
@@ -198,7 +198,7 @@ class AppContainer extends Component {
   };
 
   handleAddNewRow = () => {
-    const { blocks, rowsAdded, blocksBeforeNextChili } = this.state;
+    const { blocks, rowsAdded, boardsCleared, blocksBeforeNextChili } = this.state;
     const addChili = blocksBeforeNextChili === 0;
     const newBlocks = blocks
       .map(block => ({
@@ -206,7 +206,7 @@ class AppContainer extends Component {
         row: block.row + 1
       }))
       .concat(
-        getBlocks({ rows: 1, rowsAdded, existingBlocks: blocks, addChili })
+        getBlocks({ rows: 1, boardsCleared, existingBlocks: blocks, addChili })
       );
 
     this.setState(
