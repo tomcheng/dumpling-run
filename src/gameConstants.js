@@ -16,7 +16,9 @@ export const COLORS = {
   lightGreen: "#4be34d",
   purple: "#9251fb",
   brown: "#4d3d2f",
-  background: "#fbf6ea"
+  background: "#fbf6ea",
+  pink: "#cf34bf",
+  gold: "#827b1c"
 };
 
 export const BLOCK_COLORS = keys(omit(COLORS, ["background", "brown"]));
@@ -115,6 +117,6 @@ export const getBlockHeight = simpleMemoize(
         2 * GAME_AREA_BORDER -
         2 * GUTTER -
         getCharacterHoldPosition(blockWidth)) /
-        (MAX_ROWS + 0.5)
+        (MAX_ROWS + 0.2)
     ) - GUTTER
 );
