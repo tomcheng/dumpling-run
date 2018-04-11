@@ -272,6 +272,7 @@ class AppContainer extends Component {
         existingBlocks: state.blocks
       }),
       boardsCleared: state.boardsCleared + 1,
+      blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
       resetTimer: true
     }));
   };
