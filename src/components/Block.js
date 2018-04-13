@@ -81,7 +81,7 @@ const Block = ({
   gameHeight,
   toRemove,
   wallDamage,
-  onRemoved
+  onRemove
 }) => {
   const positionStyles = {
     position: "absolute",
@@ -105,7 +105,7 @@ const Block = ({
       appear
       addEndListener={(node, done) => {
         node.addEventListener("animationend", () => {
-          onRemoved();
+          onRemove();
           done();
         });
       }}
@@ -142,7 +142,7 @@ Block.propTypes = {
   isChili: PropTypes.bool.isRequired,
   isWall: PropTypes.bool.isRequired,
   toRemove: PropTypes.bool.isRequired,
-  onRemoved: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
   color: PropTypes.oneOf(BLOCK_COLORS),
   holdPosition: PropTypes.number,
   row: PropTypes.number,

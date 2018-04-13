@@ -23,9 +23,15 @@ import App from "./App";
 
 const newState = () => ({
   position: Math.floor(NUM_COLUMNS / 2),
-  blocks: getBlocks({ rows: STARTING_ROWS, boardsCleared: 0, existingBlocks: [], addChili: false }),
+  blocks: getBlocks({
+    rows: STARTING_ROWS,
+    boardsCleared: 0,
+    existingBlocks: [],
+    addChili: false
+  }),
   blockIdsToRemove: [],
   heldBlockIds: [],
+  wallDamages: {},
   blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
   blocksCleared: 0,
   boardsCleared: 0,
@@ -33,7 +39,7 @@ const newState = () => ({
   lost: false,
   paused: false,
   resetTimer: false,
-  wallDamages: {}
+  boardCleared: false
 });
 
 class AppContainer extends Component {
@@ -141,21 +147,21 @@ class AppContainer extends Component {
 
     this.setState({ blocks: newBlocks, heldBlockIds: [] }, () => {
       setTimeout(() => {
-        this.removeMatchedBlocks();
+        this.setBlocksToBeRemoved();
       }, REMOVAL_DELAY);
     });
   };
 
-  removeMatchedBlocks = () => {
-    const { blocks, wallDamages } = this.state;
+  setBlocksToBeRemoved = () => {
+    const { blocks, wallDamages, blockIdsToRemove } = this.state;
     const currentColumn = this.getCurrentColumn();
     const lastBlock = last(currentColumn);
     const blocksById = keyBy(blocks, block => block.id);
-    let blockIdsToRemove = [];
+    let newBlockIdsToRemove = [];
     let wallIds = [];
 
     if (lastBlock.isChili) {
-      blockIdsToRemove = currentColumn.map(b => b.id);
+      newBlockIdsToRemove = currentColumn.map(b => b.id);
       wallIds = blocks
         .filter(
           b =>
@@ -173,7 +179,7 @@ class AppContainer extends Component {
           if (blocksById[id].isWall) {
             wallIds.push(id);
           } else {
-            blockIdsToRemove.push(id);
+            newBlockIdsToRemove.push(id);
           }
         });
       }
@@ -187,18 +193,73 @@ class AppContainer extends Component {
       wallDamages
     );
 
+    const newIdsToRemove = blockIdsToRemove.concat(
+      newBlockIdsToRemove,
+      wallIdsToRemove
+    );
+
+    this.setState(
+      {
+        blockIdsToRemove: newIdsToRemove,
+        wallDamages: newWallDamages,
+        boardCleared: newIdsToRemove.length === blocks.length
+      }
+    );
+  };
+
+  handleRemoveBlock = () => {
+    const { blocks, blockIdsToRemove, boardCleared } = this.state;
+
+    if (blockIdsToRemove.length === 0) {
+      return;
+    }
+
+    const newBlocks = blocks.filter(
+      block => !blockIdsToRemove.includes(block.id)
+    );
+
+    for (let i = 0; i < NUM_COLUMNS; i++) {
+      const column = sortBy(newBlocks.filter(({ column }) => column === i), [
+        "row"
+      ]);
+      column.forEach((block, index) => {
+        if (block.row !== index) {
+          const blockIndex = findIndex(newBlocks, ({ id }) => id === block.id);
+          newBlocks[blockIndex] = { ...block, row: index };
+        }
+      });
+    }
+
     this.setState(state => ({
       ...state,
-      blockIdsToRemove: state.blockIdsToRemove.concat(
-        blockIdsToRemove,
-        wallIdsToRemove
+      blocks: newBlocks,
+      blockIdsToRemove: [],
+      blocksBeforeNextChili: Math.max(
+        state.blocksBeforeNextChili - blockIdsToRemove.length,
+        0
       ),
-      wallDamages: newWallDamages
-    }));
+      blocksCleared: state.blocksCleared + blockIdsToRemove.length,
+      wallDamages: omit(state.wallDamages, blockIdsToRemove)
+    }), () => {
+      if (boardCleared) {
+        this.handleClearBoard();
+      }
+    });
   };
 
   handleAddNewRow = () => {
-    const { blocks, rowsAdded, boardsCleared, blocksBeforeNextChili } = this.state;
+    const {
+      blocks,
+      rowsAdded,
+      boardCleared,
+      boardsCleared,
+      blocksBeforeNextChili
+    } = this.state;
+
+    if (boardCleared) {
+      return;
+    }
+
     const addChili = blocksBeforeNextChili === 0;
     const newBlocks = blocks
       .map(block => ({
@@ -221,59 +282,18 @@ class AppContainer extends Component {
     );
   };
 
-  handleRemovedBlock = () => {
-    const { blocks, blockIdsToRemove } = this.state;
-
-    if (blockIdsToRemove.length === 0) {
-      return;
-    }
-
-    const newBlocks = blocks.filter(
-      block => !blockIdsToRemove.includes(block.id)
-    );
-
-    for (let i = 0; i < NUM_COLUMNS; i++) {
-      const column = sortBy(newBlocks.filter(({ column }) => column === i), [
-        "row"
-      ]);
-      column.forEach((block, index) => {
-        if (block.row !== index) {
-          const blockIndex = findIndex(newBlocks, ({ id }) => id === block.id);
-          newBlocks[blockIndex] = { ...block, row: index };
-        }
-      });
-    }
-
-    this.setState(
-      state => ({
-        ...state,
-        blocks: newBlocks,
-        blockIdsToRemove: [],
-        blocksBeforeNextChili: Math.max(
-          state.blocksBeforeNextChili - blockIdsToRemove.length,
-          0
-        ),
-        blocksCleared: state.blocksCleared + blockIdsToRemove.length,
-        wallDamages: omit(state.wallDamages, blockIdsToRemove)
-      }),
-      () => {
-        if (newBlocks.length === 0) {
-          this.handleClearBoard();
-        }
-      }
-    );
-  };
-
   handleClearBoard = () => {
     this.setState(state => ({
       blocks: getBlocks({
         rows: ROWS_AFTER_CLEARING_BOARD,
         boardsCleared: state.boardsCleared + 1,
-        existingBlocks: state.blocks
+        existingBlocks: state.blocks,
+        addChili: false
       }),
       boardsCleared: state.boardsCleared + 1,
       blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
-      resetTimer: true
+      resetTimer: true,
+      boardCleared: false
     }));
   };
 
@@ -405,7 +425,7 @@ class AppContainer extends Component {
           onPause={this.handlePause}
           onRestart={this.handleRestart}
           onResume={this.handleResume}
-          onRemovedBlock={this.handleRemovedBlock}
+          onRemoveBlock={this.handleRemoveBlock}
         />
       </div>
     );

@@ -48,16 +48,17 @@ class Timer extends Component {
     const { paused, interval, lost, resetTimer, onClearResetTimer } = this.props;
     const { progress } = this.state;
 
+    if (prevProps.lost && !lost) {
+      this.resetTimer();
+      return;
+    }
+
     if (prevProps.paused && !paused) {
       this.setState({
         startTime: Math.round(Date.now() - progress * interval),
         request: requestAnimationFrame(this.incrementTimer)
       });
       return;
-    }
-
-    if (prevProps.lost && !lost) {
-      this.resetTimer();
     }
 
     if (!prevProps.resetTimer && resetTimer) {

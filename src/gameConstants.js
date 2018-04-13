@@ -49,7 +49,10 @@ export const getBlocks = ({
   existingBlocks,
   addChili
 }) => {
-  const numColors = Math.min(STARTING_COLORS + boardsCleared, BLOCK_COLORS.length);
+  const numColors = Math.min(
+    STARTING_COLORS + boardsCleared,
+    BLOCK_COLORS.length
+  );
   const newBlocks = [];
   const columnsWithWall = range(NUM_COLUMNS).filter(col =>
     existingBlocks.some(b => b.isWall && b.column === col)

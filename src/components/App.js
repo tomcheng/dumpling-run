@@ -84,7 +84,7 @@ class App extends Component {
     onClickColumn: PropTypes.func.isRequired,
     onFastForward: PropTypes.func.isRequired,
     onPause: PropTypes.func.isRequired,
-    onRemovedBlock: PropTypes.func.isRequired,
+    onRemoveBlock: PropTypes.func.isRequired,
     onRestart: PropTypes.func.isRequired,
     onResume: PropTypes.func.isRequired
   };
@@ -126,7 +126,7 @@ class App extends Component {
       onClickColumn,
       onFastForward,
       onPause,
-      onRemovedBlock,
+      onRemoveBlock,
       onRestart,
       onResume
     } = this.props;
@@ -176,7 +176,7 @@ class App extends Component {
                 held={heldBlockIds.includes(id)}
                 toRemove={blockIdsToRemove.includes(id)}
                 wallDamage={isWall ? wallDamages[id] || 0 : null}
-                onRemoved={onRemovedBlock}
+                onRemove={onRemoveBlock}
               />
             ))}
             <Player
