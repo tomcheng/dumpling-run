@@ -45,12 +45,12 @@ let blockId = 0;
 
 export const getBlocks = ({
   rows,
-  boardsCleared,
+  level,
   existingBlocks,
   addChili
 }) => {
   const numColors = Math.min(
-    STARTING_COLORS + boardsCleared,
+    STARTING_COLORS + level - 1,
     BLOCK_COLORS.length
   );
   const newBlocks = [];

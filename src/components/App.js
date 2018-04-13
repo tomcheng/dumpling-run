@@ -75,6 +75,7 @@ class App extends Component {
     boardsCleared: PropTypes.number.isRequired,
     gameWidth: PropTypes.number.isRequired,
     heldBlockIds: PropTypes.arrayOf(PropTypes.number).isRequired,
+    level: PropTypes.number.isRequired,
     levelComplete: PropTypes.bool.isRequired,
     lost: PropTypes.bool.isRequired,
     paused: PropTypes.bool.isRequired,
@@ -119,6 +120,7 @@ class App extends Component {
       boardsCleared,
       gameWidth,
       heldBlockIds,
+      level,
       levelComplete,
       lost,
       paused,
@@ -144,9 +146,9 @@ class App extends Component {
       <Container>
         <GameHeader
           blocksBeforeNextChili={blocksBeforeNextChili}
-          blocksCleared={blocksCleared}
-          boardsCleared={boardsCleared}
           gameWidth={gameWidth}
+          level={level}
+          levelComplete={levelComplete}
           onFastForward={onFastForward}
           onPause={onPause}
         />

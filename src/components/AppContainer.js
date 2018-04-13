@@ -25,7 +25,7 @@ const newState = () => ({
   position: Math.floor(NUM_COLUMNS / 2),
   blocks: getBlocks({
     rows: STARTING_ROWS,
-    boardsCleared: 0,
+    level: 1,
     existingBlocks: [],
     addChili: false
   }),
@@ -35,6 +35,7 @@ const newState = () => ({
   blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
   blocksCleared: 0,
   boardsCleared: 0,
+  level: 1,
   rowsAdded: 0,
   boardCleared: false,
   levelComplete: false,
@@ -254,8 +255,8 @@ class AppContainer extends Component {
       blocks,
       rowsAdded,
       boardCleared,
-      boardsCleared,
-      blocksBeforeNextChili
+      blocksBeforeNextChili,
+      level
     } = this.state;
 
     if (boardCleared) {
@@ -269,7 +270,7 @@ class AppContainer extends Component {
         row: block.row + 1
       }))
       .concat(
-        getBlocks({ rows: 1, boardsCleared, existingBlocks: blocks, addChili })
+        getBlocks({ rows: 1, level, existingBlocks: blocks, addChili })
       );
 
     this.setState(
@@ -292,12 +293,13 @@ class AppContainer extends Component {
     this.setState(state => ({
       blocks: getBlocks({
         rows: ROWS_AFTER_CLEARING_BOARD,
-        boardsCleared: state.boardsCleared + 1,
+        level: state.level + 1,
         existingBlocks: [],
         addChili: false
       }),
       boardsCleared: state.boardsCleared + 1,
       blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
+      level: state.level + 1,
       levelComplete: false,
       resetTimer: true
     }));
@@ -392,6 +394,7 @@ class AppContainer extends Component {
       boardsCleared,
       gameWidth,
       heldBlockIds,
+      level,
       levelComplete,
       lost,
       paused,
@@ -420,6 +423,7 @@ class AppContainer extends Component {
           boardsCleared={boardsCleared}
           gameWidth={gameWidth}
           heldBlockIds={heldBlockIds}
+          level={level}
           levelComplete={levelComplete}
           lost={lost}
           paused={paused}
