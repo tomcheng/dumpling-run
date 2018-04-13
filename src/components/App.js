@@ -2,13 +2,13 @@ import React, { createRef, Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import {
-  NEW_ROW_INTERVAL,
   NUM_COLUMNS,
   GUTTER,
   GAME_AREA_BORDER,
   MINIMUM_SCREEN_PADDING,
   COLORS,
-  getBlockHeight
+  getBlockHeight,
+  getNewRowInterval
 } from "../gameConstants";
 import GameHeader from "./GameHeader";
 import Timer from "./Timer";
@@ -154,7 +154,7 @@ class App extends Component {
         />
         <GameContainer style={{ width: gameWidth }}>
           <Timer
-            interval={NEW_ROW_INTERVAL}
+            interval={getNewRowInterval({ level })}
             paused={paused || levelComplete || lost}
             resetTimer={resetTimer}
             onAddNewRow={onAddNewRow}
@@ -199,10 +199,7 @@ class App extends Component {
           boardsCleared={boardsCleared}
         />
         <GamePaused paused={paused} onResume={onResume} />
-        <LevelComplete
-          levelComplete={levelComplete}
-          onNewLevel={onNewLevel}
-        />
+        <LevelComplete levelComplete={levelComplete} onNewLevel={onNewLevel} />
       </Container>
     );
   }

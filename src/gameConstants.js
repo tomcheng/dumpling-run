@@ -24,12 +24,23 @@ export const COLORS = {
 export const BLOCK_COLORS = keys(omit(COLORS, ["background", "brown"]));
 
 // TIMING
-export const NEW_ROW_INTERVAL = 15000;
 export const BLOCK_MOVE_DURATION = 70;
 export const REMOVAL_DELAY = BLOCK_MOVE_DURATION + 10;
 export const BLOCK_APPEAR_DURATION = 200;
 export const BLOCK_DISAPPEAR_DURATION = 500;
 export const BLOCK_DISAPPEAR_BLINK_COUNT = 2;
+
+const STARTING_INTERVAL = 15000;
+const INCREASE_PER_LEVEL = 2000;
+const MINIMUM_INTERVAL = 3000;
+
+export const getNewRowInterval = ({ level }) =>
+  Math.max(
+    STARTING_INTERVAL -
+      Math.max(level - 1 - BLOCK_COLORS.length + STARTING_COLORS, 0) *
+        INCREASE_PER_LEVEL,
+    MINIMUM_INTERVAL
+  );
 
 // GAME LOGIC
 export const NUM_COLUMNS = 10;
@@ -44,16 +55,8 @@ const STARTING_COLORS = 5;
 
 let blockId = 0;
 
-export const getBlocks = ({
-  rows,
-  level,
-  existingBlocks,
-  addChili
-}) => {
-  const numColors = Math.min(
-    STARTING_COLORS + level - 1,
-    BLOCK_COLORS.length
-  );
+export const getBlocks = ({ rows, level, existingBlocks, addChili }) => {
+  const numColors = Math.min(STARTING_COLORS + level - 1, BLOCK_COLORS.length);
   const newBlocks = [];
   const columnsWithWall = range(NUM_COLUMNS).filter(col =>
     existingBlocks.some(b => b.isWall && b.column === col)
