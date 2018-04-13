@@ -13,6 +13,7 @@ import {
   STARTING_ROWS,
   ROWS_AFTER_CLEARING_BOARD,
   BLOCKS_BEFORE_NEXT_CHILI,
+  BLOCKS_BEFORE_NEXT_LEVEL,
   GUTTER,
   GAME_AREA_BORDER,
   MINIMUM_SCREEN_PADDING,
@@ -33,12 +34,13 @@ const newState = () => ({
   heldBlockIds: [],
   wallDamages: {},
   blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
+  blocksBeforeNextLevel: BLOCKS_BEFORE_NEXT_LEVEL,
   blocksCleared: 0,
   boardsCleared: 0,
   level: 1,
   rowsAdded: 0,
-  boardCleared: false,
   levelComplete: false,
+  levelCompletePending: false,
   lost: false,
   paused: false,
   resetTimer: false
@@ -155,7 +157,12 @@ class AppContainer extends Component {
   };
 
   setBlocksToBeRemoved = () => {
-    const { blocks, wallDamages, blockIdsToRemove } = this.state;
+    const {
+      blocks,
+      wallDamages,
+      blockIdsToRemove,
+      blocksBeforeNextLevel
+    } = this.state;
     const currentColumn = this.getCurrentColumn();
     const lastBlock = last(currentColumn);
     const blocksById = keyBy(blocks, block => block.id);
@@ -200,15 +207,23 @@ class AppContainer extends Component {
       wallIdsToRemove
     );
 
+    const newBlocksBeforeNextLevel = Math.max(
+      0,
+      blocksBeforeNextLevel - newIdsToRemove.length
+    );
+
     this.setState({
       blockIdsToRemove: newIdsToRemove,
       wallDamages: newWallDamages,
-      boardCleared: newIdsToRemove.length === blocks.length
+      blocksBeforeNextLevel: newBlocksBeforeNextLevel,
+      levelCompletePending:
+        newIdsToRemove.length === blocks.length ||
+        newBlocksBeforeNextLevel === 0
     });
   };
 
   handleRemoveBlock = () => {
-    const { blocks, blockIdsToRemove, boardCleared } = this.state;
+    const { blocks, blockIdsToRemove, levelCompletePending } = this.state;
 
     if (blockIdsToRemove.length === 0) {
       return;
@@ -243,8 +258,8 @@ class AppContainer extends Component {
         wallDamages: omit(state.wallDamages, blockIdsToRemove)
       }),
       () => {
-        if (boardCleared) {
-          this.handleClearBoard();
+        if (levelCompletePending) {
+          this.setState({ levelComplete: true, levelCompletePending: false });
         }
       }
     );
@@ -254,12 +269,12 @@ class AppContainer extends Component {
     const {
       blocks,
       rowsAdded,
-      boardCleared,
+      levelComplete,
       blocksBeforeNextChili,
       level
     } = this.state;
 
-    if (boardCleared) {
+    if (levelComplete) {
       return;
     }
 
@@ -269,9 +284,7 @@ class AppContainer extends Component {
         ...block,
         row: block.row + 1
       }))
-      .concat(
-        getBlocks({ rows: 1, level, existingBlocks: blocks, addChili })
-      );
+      .concat(getBlocks({ rows: 1, level, existingBlocks: blocks, addChili }));
 
     this.setState(
       {
@@ -285,10 +298,6 @@ class AppContainer extends Component {
     );
   };
 
-  handleClearBoard = () => {
-    this.setState({ levelComplete: true, boardCleared: false });
-  };
-
   handleNewLevel = () => {
     this.setState(state => ({
       blocks: getBlocks({
@@ -299,6 +308,7 @@ class AppContainer extends Component {
       }),
       boardsCleared: state.boardsCleared + 1,
       blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
+      blocksBeforeNextLevel: BLOCKS_BEFORE_NEXT_LEVEL,
       level: state.level + 1,
       levelComplete: false,
       resetTimer: true

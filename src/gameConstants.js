@@ -37,6 +37,7 @@ export const STARTING_ROWS = 5;
 export const MAX_ROWS = 14;
 export const ROWS_AFTER_CLEARING_BOARD = 5;
 export const BLOCKS_BEFORE_NEXT_CHILI = 50;
+export const BLOCKS_BEFORE_NEXT_LEVEL = 150;
 const CHANCE_OF_WALL_FOR_ROW = 0.35;
 const MAX_WALLS = 5;
 const STARTING_COLORS = 5;
