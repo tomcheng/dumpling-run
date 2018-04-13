@@ -31,15 +31,13 @@ export const BLOCK_DISAPPEAR_DURATION = 500;
 export const BLOCK_DISAPPEAR_BLINK_COUNT = 2;
 
 const STARTING_INTERVAL = 15000;
-const INCREASE_PER_LEVEL = 2000;
-const MINIMUM_INTERVAL = 3000;
+const INTERVAL_DECAY = 0.9;
 
 export const getNewRowInterval = ({ level }) =>
-  Math.max(
-    STARTING_INTERVAL -
-      Math.max(level - 1 - BLOCK_COLORS.length + STARTING_COLORS, 0) *
-        INCREASE_PER_LEVEL,
-    MINIMUM_INTERVAL
+  Math.round(
+    STARTING_INTERVAL *
+      INTERVAL_DECAY **
+        Math.max(level - 1 - BLOCK_COLORS.length + STARTING_COLORS, 0)
   );
 
 // GAME LOGIC
