@@ -16,6 +16,7 @@ import Player from "./Player";
 import Block from "./Block";
 import GameOver from "./GameOver";
 import GamePaused from "./GamePaused";
+import LevelComplete from "./LevelComplete";
 
 const Container = styled.div`
   flex-grow: 1;
@@ -74,6 +75,7 @@ class App extends Component {
     boardsCleared: PropTypes.number.isRequired,
     gameWidth: PropTypes.number.isRequired,
     heldBlockIds: PropTypes.arrayOf(PropTypes.number).isRequired,
+    levelComplete: PropTypes.bool.isRequired,
     lost: PropTypes.bool.isRequired,
     paused: PropTypes.bool.isRequired,
     position: PropTypes.number.isRequired,
@@ -83,6 +85,7 @@ class App extends Component {
     onClearResetTimer: PropTypes.func.isRequired,
     onClickColumn: PropTypes.func.isRequired,
     onFastForward: PropTypes.func.isRequired,
+    onNewLevel: PropTypes.func.isRequired,
     onPause: PropTypes.func.isRequired,
     onRemoveBlock: PropTypes.func.isRequired,
     onRestart: PropTypes.func.isRequired,
@@ -116,6 +119,7 @@ class App extends Component {
       boardsCleared,
       gameWidth,
       heldBlockIds,
+      levelComplete,
       lost,
       paused,
       position,
@@ -125,6 +129,7 @@ class App extends Component {
       onClearResetTimer,
       onClickColumn,
       onFastForward,
+      onNewLevel,
       onPause,
       onRemoveBlock,
       onRestart,
@@ -149,7 +154,7 @@ class App extends Component {
           <Timer
             interval={NEW_ROW_INTERVAL}
             lost={lost}
-            paused={paused}
+            paused={paused || levelComplete}
             resetTimer={resetTimer}
             onAddNewRow={onAddNewRow}
             onClearResetTimer={onClearResetTimer}
@@ -193,6 +198,10 @@ class App extends Component {
           boardsCleared={boardsCleared}
         />
         <GamePaused paused={paused} onResume={onResume} />
+        <LevelComplete
+          levelComplete={levelComplete}
+          onNewLevel={onNewLevel}
+        />
       </Container>
     );
   }

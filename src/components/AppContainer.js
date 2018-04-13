@@ -36,10 +36,11 @@ const newState = () => ({
   blocksCleared: 0,
   boardsCleared: 0,
   rowsAdded: 0,
+  boardCleared: false,
+  levelComplete: false,
   lost: false,
   paused: false,
-  resetTimer: false,
-  boardCleared: false
+  resetTimer: false
 });
 
 class AppContainer extends Component {
@@ -198,13 +199,11 @@ class AppContainer extends Component {
       wallIdsToRemove
     );
 
-    this.setState(
-      {
-        blockIdsToRemove: newIdsToRemove,
-        wallDamages: newWallDamages,
-        boardCleared: newIdsToRemove.length === blocks.length
-      }
-    );
+    this.setState({
+      blockIdsToRemove: newIdsToRemove,
+      wallDamages: newWallDamages,
+      boardCleared: newIdsToRemove.length === blocks.length
+    });
   };
 
   handleRemoveBlock = () => {
@@ -230,21 +229,24 @@ class AppContainer extends Component {
       });
     }
 
-    this.setState(state => ({
-      ...state,
-      blocks: newBlocks,
-      blockIdsToRemove: [],
-      blocksBeforeNextChili: Math.max(
-        state.blocksBeforeNextChili - blockIdsToRemove.length,
-        0
-      ),
-      blocksCleared: state.blocksCleared + blockIdsToRemove.length,
-      wallDamages: omit(state.wallDamages, blockIdsToRemove)
-    }), () => {
-      if (boardCleared) {
-        this.handleClearBoard();
+    this.setState(
+      state => ({
+        ...state,
+        blocks: newBlocks,
+        blockIdsToRemove: [],
+        blocksBeforeNextChili: Math.max(
+          state.blocksBeforeNextChili - blockIdsToRemove.length,
+          0
+        ),
+        blocksCleared: state.blocksCleared + blockIdsToRemove.length,
+        wallDamages: omit(state.wallDamages, blockIdsToRemove)
+      }),
+      () => {
+        if (boardCleared) {
+          this.handleClearBoard();
+        }
       }
-    });
+    );
   };
 
   handleAddNewRow = () => {
@@ -283,17 +285,21 @@ class AppContainer extends Component {
   };
 
   handleClearBoard = () => {
+    this.setState({ levelComplete: true, boardCleared: false });
+  };
+
+  handleNewLevel = () => {
     this.setState(state => ({
       blocks: getBlocks({
         rows: ROWS_AFTER_CLEARING_BOARD,
         boardsCleared: state.boardsCleared + 1,
-        existingBlocks: state.blocks,
+        existingBlocks: [],
         addChili: false
       }),
       boardsCleared: state.boardsCleared + 1,
       blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
-      resetTimer: true,
-      boardCleared: false
+      levelComplete: false,
+      resetTimer: true
     }));
   };
 
@@ -386,6 +392,7 @@ class AppContainer extends Component {
       boardsCleared,
       gameWidth,
       heldBlockIds,
+      levelComplete,
       lost,
       paused,
       position,
@@ -413,6 +420,7 @@ class AppContainer extends Component {
           boardsCleared={boardsCleared}
           gameWidth={gameWidth}
           heldBlockIds={heldBlockIds}
+          levelComplete={levelComplete}
           lost={lost}
           paused={paused}
           position={position}
@@ -422,6 +430,7 @@ class AppContainer extends Component {
           onClearResetTimer={this.handleClearResetTimer}
           onClickColumn={this.handleClickColumn}
           onFastForward={this.handleFastForward}
+          onNewLevel={this.handleNewLevel}
           onPause={this.handlePause}
           onRestart={this.handleRestart}
           onResume={this.handleResume}

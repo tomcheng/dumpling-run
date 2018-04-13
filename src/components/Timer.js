@@ -31,7 +31,7 @@ class Timer extends Component {
     paused: PropTypes.bool.isRequired,
     resetTimer: PropTypes.bool.isRequired,
     onAddNewRow: PropTypes.func.isRequired,
-    onClearResetTimer: PropTypes.func.isRequired,
+    onClearResetTimer: PropTypes.func.isRequired
   };
 
   state = {
@@ -45,8 +45,20 @@ class Timer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { paused, interval, lost, resetTimer, onClearResetTimer } = this.props;
+    const {
+      paused,
+      interval,
+      lost,
+      resetTimer,
+      onClearResetTimer
+    } = this.props;
     const { progress } = this.state;
+
+    if (!prevProps.resetTimer && resetTimer) {
+      this.resetTimer();
+      onClearResetTimer();
+      return;
+    }
 
     if (prevProps.lost && !lost) {
       this.resetTimer();
@@ -58,12 +70,6 @@ class Timer extends Component {
         startTime: Math.round(Date.now() - progress * interval),
         request: requestAnimationFrame(this.incrementTimer)
       });
-      return;
-    }
-
-    if (!prevProps.resetTimer && resetTimer) {
-      this.resetTimer();
-      onClearResetTimer();
     }
   }
 
@@ -73,13 +79,14 @@ class Timer extends Component {
 
   resetTimer = () => {
     this.setState({
+      progress: 0,
       startTime: Date.now(),
       request: requestAnimationFrame(this.incrementTimer)
     });
   };
 
   incrementTimer = () => {
-    const { interval, onAddNewRow, paused, lost } = this.props;
+    const { interval, lost, paused, onAddNewRow } = this.props;
     const { startTime } = this.state;
 
     if (paused || lost) {
