@@ -153,8 +153,7 @@ class App extends Component {
         <GameContainer style={{ width: gameWidth }}>
           <Timer
             interval={NEW_ROW_INTERVAL}
-            lost={lost}
-            paused={paused || levelComplete}
+            paused={paused || levelComplete || lost}
             resetTimer={resetTimer}
             onAddNewRow={onAddNewRow}
             onClearResetTimer={onClearResetTimer}

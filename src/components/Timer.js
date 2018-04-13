@@ -27,7 +27,6 @@ const TimerBar = styled.div`
 class Timer extends Component {
   static propTypes = {
     interval: PropTypes.number.isRequired,
-    lost: PropTypes.bool.isRequired,
     paused: PropTypes.bool.isRequired,
     resetTimer: PropTypes.bool.isRequired,
     onAddNewRow: PropTypes.func.isRequired,
@@ -48,7 +47,6 @@ class Timer extends Component {
     const {
       paused,
       interval,
-      lost,
       resetTimer,
       onClearResetTimer
     } = this.props;
@@ -57,11 +55,6 @@ class Timer extends Component {
     if (!prevProps.resetTimer && resetTimer) {
       this.resetTimer();
       onClearResetTimer();
-      return;
-    }
-
-    if (prevProps.lost && !lost) {
-      this.resetTimer();
       return;
     }
 
@@ -86,10 +79,10 @@ class Timer extends Component {
   };
 
   incrementTimer = () => {
-    const { interval, lost, paused, onAddNewRow } = this.props;
+    const { interval, paused, onAddNewRow } = this.props;
     const { startTime } = this.state;
 
-    if (paused || lost) {
+    if (paused) {
       return;
     }
 
