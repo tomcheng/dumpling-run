@@ -28,16 +28,17 @@ export const MAX_WALLS = 5;
 export const BLOCKS_BEFORE_NEXT_CHILI = 50;
 
 const STARTING_COLORS = 5;
-const STARTING_BLOCKS_PER_LEVEL = 150;
+const STARTING_BLOCKS_PER_LEVEL = 120;
+const LEVEL_TO_START_DECREASING = 11;
 const BLOCKS_PER_LEVEL_DECREASE = 10;
-const MINIMUM_BLOCKS_PER_LEVEL = 70;
+const MINIMUM_BLOCKS_PER_LEVEL = 60;
 
 export const NUM_COLORS = level =>
   Math.min(STARTING_COLORS + level - 1, BLOCK_COLORS.length);
 export const BLOCKS_TO_CLEAR_LEVEL = level =>
   Math.max(
     STARTING_BLOCKS_PER_LEVEL -
-      Math.max(level - 1 - BLOCK_COLORS.length + STARTING_COLORS, 0) *
+      Math.max(level + 1 - LEVEL_TO_START_DECREASING, 0) *
         BLOCKS_PER_LEVEL_DECREASE,
     MINIMUM_BLOCKS_PER_LEVEL
   );
