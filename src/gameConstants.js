@@ -26,7 +26,7 @@ export const STARTING_ROWS = 5;
 export const CHANCE_OF_WALL_FOR_ROW = 0.35;
 export const MAX_WALLS = 5;
 export const BLOCKS_BEFORE_NEXT_CHILI = 50;
-export const BLOCKS_BEFORE_NEXT_LEVEL = 150;
+export const BLOCKS_TO_CLEAR_LEVEL = 150;
 
 const STARTING_COLORS = 5;
 export const NUM_COLORS = level =>  Math.min(STARTING_COLORS + level - 1, BLOCK_COLORS.length);

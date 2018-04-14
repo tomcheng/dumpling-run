@@ -76,7 +76,7 @@ class App extends Component {
     gameWidth: PropTypes.number.isRequired,
     heldBlockIds: PropTypes.arrayOf(PropTypes.number).isRequired,
     level: PropTypes.number.isRequired,
-    levelComplete: PropTypes.bool.isRequired,
+    levelCleared: PropTypes.bool.isRequired,
     lost: PropTypes.bool.isRequired,
     paused: PropTypes.bool.isRequired,
     position: PropTypes.number.isRequired,
@@ -121,7 +121,7 @@ class App extends Component {
       gameWidth,
       heldBlockIds,
       level,
-      levelComplete,
+      levelCleared,
       lost,
       paused,
       position,
@@ -148,14 +148,14 @@ class App extends Component {
           blocksBeforeNextChili={blocksBeforeNextChili}
           gameWidth={gameWidth}
           level={level}
-          levelComplete={levelComplete}
+          levelCleared={levelCleared}
           onFastForward={onFastForward}
           onPause={onPause}
         />
         <GameContainer style={{ width: gameWidth }}>
           <Timer
             interval={NEW_ROW_INTERVAL(level)}
-            paused={paused || levelComplete || lost}
+            paused={paused || levelCleared || lost}
             resetTimer={resetTimer}
             onAddNewRow={onAddNewRow}
             onClearResetTimer={onClearResetTimer}
@@ -199,7 +199,7 @@ class App extends Component {
           boardsCleared={boardsCleared}
         />
         <GamePaused paused={paused} onResume={onResume} />
-        <LevelComplete levelComplete={levelComplete} onNewLevel={onNewLevel} />
+        <LevelComplete levelCleared={levelCleared} onNewLevel={onNewLevel} />
       </Container>
     );
   }

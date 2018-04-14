@@ -16,7 +16,7 @@ import {
   STARTING_ROWS,
   BLOCK_COLORS,
   BLOCKS_BEFORE_NEXT_CHILI,
-  BLOCKS_BEFORE_NEXT_LEVEL,
+  BLOCKS_TO_CLEAR_LEVEL,
   GUTTER,
   GAME_AREA_BORDER,
   MAX_WALLS,
@@ -77,13 +77,13 @@ const newState = () => ({
   heldBlockIds: [],
   wallDamages: {},
   blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
-  blocksBeforeNextLevel: BLOCKS_BEFORE_NEXT_LEVEL,
+  blocksToClearLevel: BLOCKS_TO_CLEAR_LEVEL,
   blocksCleared: 0,
   boardsCleared: 0,
   level: 1,
   rowsAdded: 0,
-  levelComplete: false,
-  levelCompletePending: false,
+  levelCleared: false,
+  levelClearedPending: false,
   lost: false,
   paused: false,
   resetTimer: false
@@ -258,15 +258,15 @@ class AppContainer extends Component {
     this.setState({
       blockIdsToRemove: newIdsToRemove,
       wallDamages: newWallDamages,
-      blocksBeforeNextLevel: newBlocksBeforeNextLevel,
-      levelCompletePending:
+      blocksToClearLevel: newBlocksBeforeNextLevel,
+      levelClearedPending:
         newIdsToRemove.length === blocks.length ||
         newBlocksBeforeNextLevel === 0
     });
   };
 
   handleRemoveBlock = () => {
-    const { blocks, blockIdsToRemove, levelCompletePending } = this.state;
+    const { blocks, blockIdsToRemove, levelClearedPending } = this.state;
 
     if (blockIdsToRemove.length === 0) {
       return;
@@ -301,8 +301,8 @@ class AppContainer extends Component {
         wallDamages: omit(state.wallDamages, blockIdsToRemove)
       }),
       () => {
-        if (levelCompletePending) {
-          this.setState({ levelComplete: true, levelCompletePending: false });
+        if (levelClearedPending) {
+          this.setState({ levelCleared: true, levelClearedPending: false });
         }
       }
     );
@@ -312,12 +312,12 @@ class AppContainer extends Component {
     const {
       blocks,
       rowsAdded,
-      levelComplete,
+      levelCleared,
       blocksBeforeNextChili,
       level
     } = this.state;
 
-    if (levelComplete) {
+    if (levelCleared) {
       return;
     }
 
@@ -349,9 +349,9 @@ class AppContainer extends Component {
       }),
       boardsCleared: state.boardsCleared + 1,
       blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
-      blocksBeforeNextLevel: BLOCKS_BEFORE_NEXT_LEVEL,
+      blocksToClearLevel: BLOCKS_TO_CLEAR_LEVEL,
       level: state.level + 1,
-      levelComplete: false,
+      levelCleared: false,
       resetTimer: true
     }));
   };
@@ -446,7 +446,7 @@ class AppContainer extends Component {
       gameWidth,
       heldBlockIds,
       level,
-      levelComplete,
+      levelCleared,
       lost,
       paused,
       position,
@@ -475,7 +475,7 @@ class AppContainer extends Component {
           gameWidth={gameWidth}
           heldBlockIds={heldBlockIds}
           level={level}
-          levelComplete={levelComplete}
+          levelCleared={levelCleared}
           lost={lost}
           paused={paused}
           position={position}

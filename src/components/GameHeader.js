@@ -54,14 +54,14 @@ const GameHeader = ({
   gameWidth,
   blocksBeforeNextChili,
   level,
-  levelComplete,
+  levelCleared,
   onFastForward,
   onPause
 }) => (
   <Container style={{ width: gameWidth }}>
     <div>
       Level: <strong>{level}</strong>&nbsp;&nbsp;{" "}
-      {blocksBeforeNextChili === 0 && !levelComplete ? (
+      {blocksBeforeNextChili === 0 && !levelCleared ? (
         <Alert>One Chili, Coming Up!</Alert>
       ) : (
         <Fragment>
@@ -87,7 +87,7 @@ GameHeader.propTypes = {
   blocksBeforeNextChili: PropTypes.number.isRequired,
   gameWidth: PropTypes.number.isRequired,
   level: PropTypes.number.isRequired,
-  levelComplete: PropTypes.bool.isRequired,
+  levelCleared: PropTypes.bool.isRequired,
   onFastForward: PropTypes.func.isRequired,
   onPause: PropTypes.func.isRequired
 };
