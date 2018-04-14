@@ -1,75 +1,7 @@
 import clamp from "lodash/clamp";
 import keys from "lodash/keys";
 import omit from "lodash/omit";
-import range from "lodash/range";
-import sample from "lodash/sample";
 import { simpleMemoize } from "./utils/generalUtils";
-
-// GAME LOGIC
-export const NUM_COLUMNS = 10;
-export const STARTING_ROWS = 5;
-export const MAX_ROWS = 14;
-export const ROWS_AFTER_CLEARING_BOARD = 5;
-export const BLOCKS_BEFORE_NEXT_CHILI = 50;
-export const BLOCKS_BEFORE_NEXT_LEVEL = 150;
-const CHANCE_OF_WALL_FOR_ROW = 0.35;
-const MAX_WALLS = 5;
-const STARTING_COLORS = 5;
-
-let blockId = 0;
-
-export const getBlocks = ({ rows, level, existingBlocks, addChili }) => {
-  const numColors = Math.min(STARTING_COLORS + level - 1, BLOCK_COLORS.length);
-  const newBlocks = [];
-  const columnsWithWall = range(NUM_COLUMNS).filter(col =>
-    existingBlocks.some(b => b.isWall && b.column === col)
-  );
-
-  for (let row = 0; row < rows; row++) {
-    const shouldHaveWall =
-      Math.random() < CHANCE_OF_WALL_FOR_ROW &&
-      columnsWithWall.length < MAX_WALLS;
-    const wallColumn = sample(
-      range(NUM_COLUMNS).filter(col => !columnsWithWall.includes(col))
-    );
-
-    if (shouldHaveWall) {
-      columnsWithWall.push(wallColumn);
-    }
-
-    const chiliColumn = sample(
-      range(NUM_COLUMNS).filter(
-        col => !columnsWithWall.includes(col) && col !== wallColumn
-      )
-    );
-
-    for (let column = 0; column < NUM_COLUMNS; column++) {
-      const isWall = shouldHaveWall && column === wallColumn;
-      const isChili = addChili && column === chiliColumn;
-      newBlocks.push({
-        id: ++blockId,
-        row,
-        column,
-        color:
-          isWall || isChili ? null : sample(BLOCK_COLORS.slice(0, numColors)),
-        isWall,
-        isChili
-      });
-    }
-  }
-
-  return newBlocks;
-};
-
-const STARTING_INTERVAL = 15000;
-const INTERVAL_DECAY = 0.9;
-
-export const NEW_ROW_INTERVAL = level =>
-  Math.round(
-    STARTING_INTERVAL *
-    INTERVAL_DECAY **
-    Math.max(level - 1 - BLOCK_COLORS.length + STARTING_COLORS, 0)
-  );
 
 // COLORS
 export const COLORS = {
@@ -86,6 +18,27 @@ export const COLORS = {
 };
 
 export const BLOCK_COLORS = keys(omit(COLORS, ["background", "brown"]));
+
+// GAME LOGIC
+export const NUM_COLUMNS = 10;
+export const MAX_ROWS = 14;
+export const STARTING_ROWS = 5;
+export const CHANCE_OF_WALL_FOR_ROW = 0.35;
+export const MAX_WALLS = 5;
+export const BLOCKS_BEFORE_NEXT_CHILI = 50;
+export const BLOCKS_BEFORE_NEXT_LEVEL = 150;
+
+const STARTING_COLORS = 5;
+export const NUM_COLORS = level =>  Math.min(STARTING_COLORS + level - 1, BLOCK_COLORS.length);
+
+const STARTING_INTERVAL = 15000;
+const INTERVAL_DECAY = 0.9;
+export const NEW_ROW_INTERVAL = level =>
+  Math.round(
+    STARTING_INTERVAL *
+    INTERVAL_DECAY **
+    Math.max(level - 1 - BLOCK_COLORS.length + STARTING_COLORS, 0)
+  );
 
 // TIMING
 export const BLOCK_MOVE_DURATION = 70;

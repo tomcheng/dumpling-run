@@ -3,33 +3,76 @@ import findIndex from "lodash/findIndex";
 import keyBy from "lodash/keyBy";
 import last from "lodash/last";
 import omit from "lodash/omit";
+import range from "lodash/range";
+import sample from "lodash/sample";
 import sortBy from "lodash/sortBy";
 import takeRightWhile from "lodash/takeRightWhile";
 import times from "lodash/times";
 import { getAdjacents } from "../utils/gridUtils";
 import {
+  CHANCE_OF_WALL_FOR_ROW,
   MAX_ROWS,
   NUM_COLUMNS,
   STARTING_ROWS,
-  ROWS_AFTER_CLEARING_BOARD,
+  BLOCK_COLORS,
   BLOCKS_BEFORE_NEXT_CHILI,
   BLOCKS_BEFORE_NEXT_LEVEL,
   GUTTER,
   GAME_AREA_BORDER,
+  MAX_WALLS,
   MINIMUM_SCREEN_PADDING,
-  REMOVAL_DELAY,
-  getBlocks
+  NUM_COLORS,
+  REMOVAL_DELAY
 } from "../gameConstants";
 import App from "./App";
 
+let blockId = 0;
+
+const getBlocks = ({ rows = 1, level = 1, existingBlocks = [], addChili = false }) => {
+  const newBlocks = [];
+  const columnsWithWall = range(NUM_COLUMNS).filter(col =>
+    existingBlocks.some(b => b.isWall && b.column === col)
+  );
+
+  for (let row = 0; row < rows; row++) {
+    const shouldHaveWall =
+      Math.random() < CHANCE_OF_WALL_FOR_ROW &&
+      columnsWithWall.length < MAX_WALLS;
+    const wallColumn = sample(
+      range(NUM_COLUMNS).filter(col => !columnsWithWall.includes(col))
+    );
+
+    if (shouldHaveWall) {
+      columnsWithWall.push(wallColumn);
+    }
+
+    const chiliColumn = sample(
+      range(NUM_COLUMNS).filter(
+        col => !columnsWithWall.includes(col) && col !== wallColumn
+      )
+    );
+
+    for (let column = 0; column < NUM_COLUMNS; column++) {
+      const isWall = shouldHaveWall && column === wallColumn;
+      const isChili = addChili && column === chiliColumn;
+      newBlocks.push({
+        id: ++blockId,
+        row,
+        column,
+        color:
+          isWall || isChili ? null : sample(BLOCK_COLORS.slice(0, NUM_COLORS(level))),
+        isWall,
+        isChili
+      });
+    }
+  }
+
+  return newBlocks;
+};
+
 const newState = () => ({
   position: Math.floor(NUM_COLUMNS / 2),
-  blocks: getBlocks({
-    rows: STARTING_ROWS,
-    level: 1,
-    existingBlocks: [],
-    addChili: false
-  }),
+  blocks: getBlocks({ rows: STARTING_ROWS }),
   blockIdsToRemove: [],
   heldBlockIds: [],
   wallDamages: {},
@@ -284,7 +327,7 @@ class AppContainer extends Component {
         ...block,
         row: block.row + 1
       }))
-      .concat(getBlocks({ rows: 1, level, existingBlocks: blocks, addChili }));
+      .concat(getBlocks({ level, existingBlocks: blocks, addChili }));
 
     this.setState(
       {
@@ -301,10 +344,8 @@ class AppContainer extends Component {
   handleNewLevel = () => {
     this.setState(state => ({
       blocks: getBlocks({
-        rows: ROWS_AFTER_CLEARING_BOARD,
-        level: state.level + 1,
-        existingBlocks: [],
-        addChili: false
+        rows: STARTING_ROWS,
+        level: state.level + 1
       }),
       boardsCleared: state.boardsCleared + 1,
       blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
