@@ -7,8 +7,8 @@ import {
   GAME_AREA_BORDER,
   MINIMUM_SCREEN_PADDING,
   COLORS,
-  getBlockHeight,
-  getNewRowInterval
+  BLOCK_HEIGHT,
+  NEW_ROW_INTERVAL
 } from "../gameConstants";
 import GameHeader from "./GameHeader";
 import Timer from "./Timer";
@@ -140,7 +140,7 @@ class App extends Component {
     const { gameHeight } = this.state;
 
     const isHolding = heldBlockIds.length > 0;
-    const blockHeight = getBlockHeight(blockWidth, gameHeight);
+    const blockHeight = BLOCK_HEIGHT(blockWidth, gameHeight);
 
     return (
       <Container>
@@ -154,7 +154,7 @@ class App extends Component {
         />
         <GameContainer style={{ width: gameWidth }}>
           <Timer
-            interval={getNewRowInterval({ level })}
+            interval={NEW_ROW_INTERVAL(level)}
             paused={paused || levelComplete || lost}
             resetTimer={resetTimer}
             onAddNewRow={onAddNewRow}

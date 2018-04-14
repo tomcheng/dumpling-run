@@ -10,7 +10,7 @@ import {
   BLOCK_APPEAR_DURATION,
   BLOCK_DISAPPEAR_DURATION,
   BLOCK_DISAPPEAR_BLINK_COUNT,
-  getCharacterHoldPosition
+  CHARACTER_HOLD_POSITION
 } from "../gameConstants";
 import Transition from "react-transition-group/Transition";
 import ChiliBlock from "./ChiliBlock";
@@ -92,7 +92,7 @@ const Block = ({
     transform: `translate3d(0, ${
       held
         ? gameHeight -
-          getCharacterHoldPosition(blockWidth) -
+          CHARACTER_HOLD_POSITION(blockWidth) -
           (holdPosition + 1) * (blockHeight + GUTTER)
         : row * (blockHeight + GUTTER)
     }px, 0)`

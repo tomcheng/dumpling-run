@@ -5,41 +5,6 @@ import range from "lodash/range";
 import sample from "lodash/sample";
 import { simpleMemoize } from "./utils/generalUtils";
 
-// COLORS
-export const COLORS = {
-  orange: "#ee6a29",
-  green: "#26632d",
-  yellow: "#e7ea08",
-  red: "#a51d1a",
-  lightBrown: "#c4bc9d",
-  blue: "#57abef",
-  lightGreen: "#4be34d",
-  purple: "#9251fb",
-  brown: "#4d3d2f",
-  background: "#fbf6ea"
-  // pink: "#cf34bf",
-  // gold: "#827b1c"
-};
-
-export const BLOCK_COLORS = keys(omit(COLORS, ["background", "brown"]));
-
-// TIMING
-export const BLOCK_MOVE_DURATION = 70;
-export const REMOVAL_DELAY = BLOCK_MOVE_DURATION + 10;
-export const BLOCK_APPEAR_DURATION = 200;
-export const BLOCK_DISAPPEAR_DURATION = 500;
-export const BLOCK_DISAPPEAR_BLINK_COUNT = 2;
-
-const STARTING_INTERVAL = 15000;
-const INTERVAL_DECAY = 0.9;
-
-export const getNewRowInterval = ({ level }) =>
-  Math.round(
-    STARTING_INTERVAL *
-      INTERVAL_DECAY **
-        Math.max(level - 1 - BLOCK_COLORS.length + STARTING_COLORS, 0)
-  );
-
 // GAME LOGIC
 export const NUM_COLUMNS = 10;
 export const STARTING_ROWS = 5;
@@ -96,18 +61,38 @@ export const getBlocks = ({ rows, level, existingBlocks, addChili }) => {
   return newBlocks;
 };
 
-// CHARACTER DIMENSIONS
-export const getCharacterSize = simpleMemoize(blockWidth =>
-  clamp(blockWidth, 50, 140)
-);
-export const getCharacterVerticalOffset = simpleMemoize(
-  blockWidth => -Math.round(5 / 64 * getCharacterSize(blockWidth))
-);
-export const getCharacterHoldPosition = simpleMemoize(
-  blockWidth =>
-    Math.round(34 / 64 * getCharacterSize(blockWidth)) +
-    getCharacterVerticalOffset(blockWidth)
-);
+const STARTING_INTERVAL = 15000;
+const INTERVAL_DECAY = 0.9;
+
+export const NEW_ROW_INTERVAL = level =>
+  Math.round(
+    STARTING_INTERVAL *
+    INTERVAL_DECAY **
+    Math.max(level - 1 - BLOCK_COLORS.length + STARTING_COLORS, 0)
+  );
+
+// COLORS
+export const COLORS = {
+  orange: "#ee6a29",
+  green: "#26632d",
+  yellow: "#e7ea08",
+  red: "#a51d1a",
+  lightBrown: "#c4bc9d",
+  blue: "#57abef",
+  lightGreen: "#4be34d",
+  purple: "#9251fb",
+  brown: "#4d3d2f",
+  background: "#fbf6ea"
+};
+
+export const BLOCK_COLORS = keys(omit(COLORS, ["background", "brown"]));
+
+// TIMING
+export const BLOCK_MOVE_DURATION = 70;
+export const REMOVAL_DELAY = BLOCK_MOVE_DURATION + 10;
+export const BLOCK_APPEAR_DURATION = 200;
+export const BLOCK_DISAPPEAR_DURATION = 500;
+export const BLOCK_DISAPPEAR_BLINK_COUNT = 2;
 
 // GAME DIMENSIONS
 export const GUTTER = 1;
@@ -115,13 +100,27 @@ export const MINIMUM_SCREEN_PADDING = 8;
 export const GAME_AREA_BORDER = 2;
 export const BLOCK_BORDER_WIDTH = 2;
 export const TIMER_HEIGHT = 3;
-export const getBlockHeight = simpleMemoize(
+export const BLOCK_HEIGHT = simpleMemoize(
   (blockWidth, gameHeight) =>
     Math.floor(
       (gameHeight -
         2 * GAME_AREA_BORDER -
         2 * GUTTER -
-        getCharacterHoldPosition(blockWidth)) /
-        (MAX_ROWS + 0.2)
+        CHARACTER_HOLD_POSITION(blockWidth)) /
+      (MAX_ROWS + 0.2)
     ) - GUTTER
 );
+
+// CHARACTER DIMENSIONS
+export const CHARACTER_SIZE = simpleMemoize(blockWidth =>
+  clamp(blockWidth, 50, 140)
+);
+export const CHARACTER_VERTICAL_OFFSET = simpleMemoize(
+  blockWidth => -Math.round(5 / 64 * CHARACTER_SIZE(blockWidth))
+);
+export const CHARACTER_HOLD_POSITION = simpleMemoize(
+  blockWidth =>
+    Math.round(34 / 64 * CHARACTER_SIZE(blockWidth)) +
+    CHARACTER_VERTICAL_OFFSET(blockWidth)
+);
+
