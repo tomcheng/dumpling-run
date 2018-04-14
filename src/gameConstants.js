@@ -26,18 +26,29 @@ export const STARTING_ROWS = 5;
 export const CHANCE_OF_WALL_FOR_ROW = 0.35;
 export const MAX_WALLS = 5;
 export const BLOCKS_BEFORE_NEXT_CHILI = 50;
-export const BLOCKS_TO_CLEAR_LEVEL = 150;
 
 const STARTING_COLORS = 5;
-export const NUM_COLORS = level =>  Math.min(STARTING_COLORS + level - 1, BLOCK_COLORS.length);
+const STARTING_BLOCKS_PER_LEVEL = 150;
+const BLOCKS_PER_LEVEL_DECREASE = 10;
+const MINIMUM_BLOCKS_PER_LEVEL = 70;
+
+export const NUM_COLORS = level =>
+  Math.min(STARTING_COLORS + level - 1, BLOCK_COLORS.length);
+export const BLOCKS_TO_CLEAR_LEVEL = level =>
+  Math.max(
+    STARTING_BLOCKS_PER_LEVEL -
+      Math.max(level - 1 - BLOCK_COLORS.length + STARTING_COLORS, 0) *
+        BLOCKS_PER_LEVEL_DECREASE,
+    MINIMUM_BLOCKS_PER_LEVEL
+  );
 
 const STARTING_INTERVAL = 15000;
 const INTERVAL_DECAY = 0.9;
 export const NEW_ROW_INTERVAL = level =>
   Math.round(
     STARTING_INTERVAL *
-    INTERVAL_DECAY **
-    Math.max(level - 1 - BLOCK_COLORS.length + STARTING_COLORS, 0)
+      INTERVAL_DECAY **
+        Math.max(level - 1 - BLOCK_COLORS.length + STARTING_COLORS, 0)
   );
 
 // TIMING
@@ -60,7 +71,7 @@ export const BLOCK_HEIGHT = simpleMemoize(
         2 * GAME_AREA_BORDER -
         2 * GUTTER -
         CHARACTER_HOLD_POSITION(blockWidth)) /
-      (MAX_ROWS + 0.2)
+        (MAX_ROWS + 0.2)
     ) - GUTTER
 );
 
@@ -76,4 +87,3 @@ export const CHARACTER_HOLD_POSITION = simpleMemoize(
     Math.round(34 / 64 * CHARACTER_SIZE(blockWidth)) +
     CHARACTER_VERTICAL_OFFSET(blockWidth)
 );
-

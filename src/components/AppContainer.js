@@ -76,8 +76,8 @@ const newState = () => ({
   blockIdsToRemove: [],
   heldBlockIds: [],
   wallDamages: {},
-  blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
-  blocksToClearLevel: BLOCKS_TO_CLEAR_LEVEL,
+  blocksForNextChili: BLOCKS_BEFORE_NEXT_CHILI,
+  blocksToClearLevel: BLOCKS_TO_CLEAR_LEVEL(1),
   blocksCleared: 0,
   boardsCleared: 0,
   level: 1,
@@ -204,7 +204,7 @@ class AppContainer extends Component {
       blocks,
       wallDamages,
       blockIdsToRemove,
-      blocksBeforeNextLevel
+      blocksToClearLevel
     } = this.state;
     const currentColumn = this.getCurrentColumn();
     const lastBlock = last(currentColumn);
@@ -250,18 +250,12 @@ class AppContainer extends Component {
       wallIdsToRemove
     );
 
-    const newBlocksBeforeNextLevel = Math.max(
-      0,
-      blocksBeforeNextLevel - newIdsToRemove.length
-    );
-
     this.setState({
       blockIdsToRemove: newIdsToRemove,
       wallDamages: newWallDamages,
-      blocksToClearLevel: newBlocksBeforeNextLevel,
       levelClearedPending:
         newIdsToRemove.length === blocks.length ||
-        newBlocksBeforeNextLevel === 0
+        newIdsToRemove.length >= blocksToClearLevel
     });
   };
 
@@ -293,11 +287,12 @@ class AppContainer extends Component {
         ...state,
         blocks: newBlocks,
         blockIdsToRemove: [],
-        blocksBeforeNextChili: Math.max(
-          state.blocksBeforeNextChili - blockIdsToRemove.length,
+        blocksForNextChili: Math.max(
+          state.blocksForNextChili - blockIdsToRemove.length,
           0
         ),
         blocksCleared: state.blocksCleared + blockIdsToRemove.length,
+        blocksToClearLevel: Math.max(state.blocksToClearLevel - blockIdsToRemove.length, 0),
         wallDamages: omit(state.wallDamages, blockIdsToRemove)
       }),
       () => {
@@ -313,7 +308,7 @@ class AppContainer extends Component {
       blocks,
       rowsAdded,
       levelCleared,
-      blocksBeforeNextChili,
+      blocksForNextChili,
       level
     } = this.state;
 
@@ -321,7 +316,7 @@ class AppContainer extends Component {
       return;
     }
 
-    const addChili = blocksBeforeNextChili === 0;
+    const addChili = blocksForNextChili === 0;
     const newBlocks = blocks
       .map(block => ({
         ...block,
@@ -333,9 +328,9 @@ class AppContainer extends Component {
       {
         blocks: newBlocks,
         rowsAdded: rowsAdded + 1,
-        blocksBeforeNextChili: addChili
+        blocksForNextChili: addChili
           ? BLOCKS_BEFORE_NEXT_CHILI
-          : blocksBeforeNextChili
+          : blocksForNextChili
       },
       this.checkLose
     );
@@ -348,8 +343,8 @@ class AppContainer extends Component {
         level: state.level + 1
       }),
       boardsCleared: state.boardsCleared + 1,
-      blocksBeforeNextChili: BLOCKS_BEFORE_NEXT_CHILI,
-      blocksToClearLevel: BLOCKS_TO_CLEAR_LEVEL,
+      blocksForNextChili: BLOCKS_BEFORE_NEXT_CHILI,
+      blocksToClearLevel: BLOCKS_TO_CLEAR_LEVEL(state.level + 1),
       level: state.level + 1,
       levelCleared: false,
       resetTimer: true
@@ -439,8 +434,9 @@ class AppContainer extends Component {
     const {
       blockIdsToRemove,
       blocks,
-      blocksBeforeNextChili,
       blocksCleared,
+      blocksForNextChili,
+      blocksToClearLevel,
       blockWidth,
       boardsCleared,
       gameWidth,
@@ -468,8 +464,9 @@ class AppContainer extends Component {
         <App
           blockIdsToRemove={blockIdsToRemove}
           blocks={blocks}
-          blocksBeforeNextChili={blocksBeforeNextChili}
           blocksCleared={blocksCleared}
+          blocksForNextChili={blocksForNextChili}
+          blocksToClearLevel={blocksToClearLevel}
           blockWidth={blockWidth}
           boardsCleared={boardsCleared}
           gameWidth={gameWidth}

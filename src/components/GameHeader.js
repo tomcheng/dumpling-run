@@ -52,7 +52,8 @@ const Icon = styled.div`
 
 const GameHeader = ({
   gameWidth,
-  blocksBeforeNextChili,
+  blocksForNextChili,
+  blocksToClearLevel,
   level,
   levelCleared,
   onFastForward,
@@ -60,12 +61,13 @@ const GameHeader = ({
 }) => (
   <Container style={{ width: gameWidth }}>
     <div>
-      Level: <strong>{level}</strong>&nbsp;&nbsp;{" "}
-      {blocksBeforeNextChili === 0 && !levelCleared ? (
+      Level: <strong>{level}</strong>&nbsp;&nbsp; To Clear Level:{" "}
+      <strong>{blocksToClearLevel}</strong>&nbsp;&nbsp;{" "}
+      {blocksForNextChili === 0 && !levelCleared ? (
         <Alert>One Chili, Coming Up!</Alert>
       ) : (
         <Fragment>
-          Blocks for Next Chili: <strong>{blocksBeforeNextChili}</strong>
+          For Next Chili: <strong>{blocksForNextChili}</strong>
         </Fragment>
       )}
     </div>
@@ -84,7 +86,7 @@ const GameHeader = ({
 );
 
 GameHeader.propTypes = {
-  blocksBeforeNextChili: PropTypes.number.isRequired,
+  blocksForNextChili: PropTypes.number.isRequired,
   gameWidth: PropTypes.number.isRequired,
   level: PropTypes.number.isRequired,
   levelCleared: PropTypes.bool.isRequired,
