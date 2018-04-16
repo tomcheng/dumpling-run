@@ -63,15 +63,10 @@ const GameHeader = ({
   <Container style={{ width: gameWidth }}>
     <div>
       Level: <strong>{level}</strong>&nbsp;&nbsp; Score:{" "}
-      <strong>{score}</strong>&nbsp;&nbsp; Level:{" "}
+      <strong>{score}</strong>&nbsp;&nbsp; Blocks to Clear Level:{" "}
       <strong>{blocksToClearLevel}</strong>&nbsp;&nbsp;{" "}
-      {blocksForNextChili === 0 && !levelCleared ? (
-        <Alert>One Chili, Coming Up!</Alert>
-      ) : (
-        <Fragment>
-          Chili: <strong>{blocksForNextChili}</strong>
-        </Fragment>
-      )}
+      {blocksForNextChili === 0 &&
+        !levelCleared && <Alert>One Chili, Coming Up!</Alert>}
     </div>
     <Actions>
       <Icon onClick={onPause}>
