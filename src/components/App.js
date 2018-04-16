@@ -82,6 +82,7 @@ class App extends Component {
     paused: PropTypes.bool.isRequired,
     position: PropTypes.number.isRequired,
     resetTimer: PropTypes.bool.isRequired,
+    score: PropTypes.number.isRequired,
     wallDamages: PropTypes.objectOf(PropTypes.number).isRequired,
     onAddNewRow: PropTypes.func.isRequired,
     onClearResetTimer: PropTypes.func.isRequired,
@@ -128,6 +129,7 @@ class App extends Component {
       paused,
       position,
       resetTimer,
+      score,
       wallDamages,
       onAddNewRow,
       onClearResetTimer,
@@ -152,6 +154,7 @@ class App extends Component {
           gameWidth={gameWidth}
           level={level}
           levelCleared={levelCleared}
+          score={score}
           onFastForward={onFastForward}
           onPause={onPause}
         />

@@ -56,13 +56,14 @@ const GameHeader = ({
   blocksToClearLevel,
   level,
   levelCleared,
+  score,
   onFastForward,
   onPause
 }) => (
   <Container style={{ width: gameWidth }}>
     <div>
-      Level: <strong>{level}</strong>&nbsp;&nbsp; To Clear Level:{" "}
-      <strong>{blocksToClearLevel}</strong>&nbsp;&nbsp;{" "}
+      Level: <strong>{level}</strong>&nbsp;&nbsp; To Clear Level: Score:{" "}
+      <strong>{score}</strong>&nbsp;&nbsp; <strong>{blocksToClearLevel}</strong>&nbsp;&nbsp;{" "}
       {blocksForNextChili === 0 && !levelCleared ? (
         <Alert>One Chili, Coming Up!</Alert>
       ) : (
@@ -90,6 +91,7 @@ GameHeader.propTypes = {
   gameWidth: PropTypes.number.isRequired,
   level: PropTypes.number.isRequired,
   levelCleared: PropTypes.bool.isRequired,
+  score: PropTypes.number.isRequired,
   onFastForward: PropTypes.func.isRequired,
   onPause: PropTypes.func.isRequired
 };

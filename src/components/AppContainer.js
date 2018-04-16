@@ -28,7 +28,12 @@ import App from "./App";
 
 let blockId = 0;
 
-const getBlocks = ({ rows = 1, level = 1, existingBlocks = [], addChili = false }) => {
+const getBlocks = ({
+  rows = 1,
+  level = 1,
+  existingBlocks = [],
+  addChili = false
+}) => {
   const newBlocks = [];
   const columnsWithWall = range(NUM_COLUMNS).filter(col =>
     existingBlocks.some(b => b.isWall && b.column === col)
@@ -60,7 +65,9 @@ const getBlocks = ({ rows = 1, level = 1, existingBlocks = [], addChili = false 
         row,
         column,
         color:
-          isWall || isChili ? null : sample(BLOCK_COLORS.slice(0, NUM_COLORS(level))),
+          isWall || isChili
+            ? null
+            : sample(BLOCK_COLORS.slice(0, NUM_COLORS(level))),
         isWall,
         isChili
       });
@@ -82,6 +89,7 @@ const newState = () => ({
   boardsCleared: 0,
   level: 1,
   rowsAdded: 0,
+  score: 0,
   levelCleared: false,
   levelClearedPending: false,
   lost: false,
@@ -292,7 +300,10 @@ class AppContainer extends Component {
           0
         ),
         blocksCleared: state.blocksCleared + blockIdsToRemove.length,
-        blocksToClearLevel: Math.max(state.blocksToClearLevel - blockIdsToRemove.length, 0),
+        blocksToClearLevel: Math.max(
+          state.blocksToClearLevel - blockIdsToRemove.length,
+          0
+        ),
         wallDamages: omit(state.wallDamages, blockIdsToRemove)
       }),
       () => {
@@ -447,6 +458,7 @@ class AppContainer extends Component {
       paused,
       position,
       resetTimer,
+      score,
       wallDamages
     } = this.state;
 
@@ -477,6 +489,7 @@ class AppContainer extends Component {
           paused={paused}
           position={position}
           resetTimer={resetTimer}
+          score={score}
           wallDamages={wallDamages}
           onAddNewRow={this.handleAddNewRow}
           onClearResetTimer={this.handleClearResetTimer}
