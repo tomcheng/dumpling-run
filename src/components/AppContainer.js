@@ -376,9 +376,13 @@ class AppContainer extends Component {
   };
 
   checkLose = () => {
-    const { blocks } = this.state;
+    const { blocks, blockIdsToRemove } = this.state;
 
-    if (blocks.some(block => block.row + 1 > MAX_ROWS)) {
+    if (
+      blocks.some(
+        block => block.row + 1 > MAX_ROWS && !blockIdsToRemove.includes(block.id)
+      )
+    ) {
       this.setState({ lost: true });
     }
   };
