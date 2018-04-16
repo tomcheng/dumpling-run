@@ -13,12 +13,12 @@ const easingFunctions = {
 class Animate extends Component {
   static propTypes = {
     children: PropTypes.func.isRequired,
-    end: PropTypes.number.isRequired,
-    on: PropTypes.bool.isRequired,
-    start: PropTypes.number.isRequired,
     delay: PropTypes.number,
     duration: PropTypes.number,
+    end: PropTypes.number,
     easing: PropTypes.oneOf(keys(easingFunctions)),
+    on: PropTypes.bool,
+    start: PropTypes.number,
     reverseDelay: PropTypes.number,
     reverseDuration: PropTypes.number,
     reverseEasing: PropTypes.oneOf(keys(easingFunctions)),
@@ -28,7 +28,10 @@ class Animate extends Component {
   static defaultProps = {
     delay: 0,
     duration: 400,
-    easing: "ease-in-out"
+    easing: "ease-in-out",
+    end: 1,
+    on: true,
+    start: 0
   };
 
   constructor(props) {

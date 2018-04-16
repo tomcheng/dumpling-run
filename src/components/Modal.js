@@ -34,6 +34,12 @@ const Title = styled.div`
   margin-bottom: 5px;
 `;
 
+const Body = styled.div`
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: center;
+`;
+
 const Button = styled.div`
   font-weight: bold;
   border: ${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown};
@@ -45,6 +51,7 @@ const Button = styled.div`
 
 class Modal extends Component {
   static Title = Title;
+  static Body = Body;
   static Button = Button;
   static propTypes = {
     children: PropTypes.node.isRequired,
@@ -56,7 +63,7 @@ class Modal extends Component {
   };
 
   state = {};
-  
+
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.open !== prevState.open) {
       return { animationEnded: false, open: nextProps.open };

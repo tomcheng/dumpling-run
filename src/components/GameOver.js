@@ -1,30 +1,28 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
 import Modal from "./Modal";
 import Animate from "./Animate";
 
-const Body = styled.div`
-  font-weight: bold;
-  margin-bottom: 30px;
-`;
-
-const GameOver = ({ lost, blocksCleared, boardsCleared, onRestart }) => (
+const GameOver = ({ lost, level, score, onRestart }) => (
   <Modal open={lost} delay={800}>
-    <Animate start={0} end={1} delay={400} on>
+    <Animate delay={400}>
       {opacity => <Modal.Title style={{ opacity }}>Game Over</Modal.Title>}
     </Animate>
-    <Body>
-      <Animate start={0} end={1} delay={1200} on>
-        {opacity => <div style={{ opacity }}>Blocks Cleared: {blocksCleared}</div>}
+    <Modal.Body>
+      <Animate delay={1200}>
+        {opacity => <div style={{ opacity }}>Level Reached: {level}</div>}
       </Animate>
-      <Animate start={0} end={1} delay={2000} on>
-        {opacity => <div style={{ opacity }}>Boards Cleared: {boardsCleared}</div>}
+      <Animate delay={2000}>
+        {opacity => <div style={{ opacity }}>Final Score: {score}</div>}
       </Animate>
-    </Body>
-    <Animate start={0} end={1} delay={2800} on>
+    </Modal.Body>
+    <Animate delay={2800}>
       {opacity => (
-        <Modal.Button style={{ opacity }} onClick={onRestart}>
+        <Modal.Button
+          style={{ opacity }}
+          onClick={onRestart}
+          disabled={opacity < 1}
+        >
           Play Again
         </Modal.Button>
       )}
@@ -33,9 +31,9 @@ const GameOver = ({ lost, blocksCleared, boardsCleared, onRestart }) => (
 );
 
 GameOver.propTypes = {
-  blocksCleared: PropTypes.number.isRequired,
-  boardsCleared: PropTypes.number.isRequired,
+  level: PropTypes.number.isRequired,
   lost: PropTypes.bool.isRequired,
+  score: PropTypes.number.isRequired,
   onRestart: PropTypes.func.isRequired
 };
 

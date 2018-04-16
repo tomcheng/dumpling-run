@@ -69,10 +69,8 @@ class App extends Component {
         column: PropTypes.number
       })
     ).isRequired,
-    blocksCleared: PropTypes.number.isRequired,
     blocksForNextChili: PropTypes.number.isRequired,
     blockWidth: PropTypes.number.isRequired,
-    boardsCleared: PropTypes.number.isRequired,
     blocksToClearLevel: PropTypes.number.isRequired,
     gameWidth: PropTypes.number.isRequired,
     heldBlockIds: PropTypes.arrayOf(PropTypes.number).isRequired,
@@ -117,10 +115,8 @@ class App extends Component {
       blockIdsToRemove,
       blocks,
       blocksForNextChili,
-      blocksCleared,
       blocksToClearLevel,
       blockWidth,
-      boardsCleared,
       gameWidth,
       heldBlockIds,
       level,
@@ -199,13 +195,17 @@ class App extends Component {
           </GameArea>
         </GameContainer>
         <GameOver
+          level={level}
           lost={lost}
+          score={score}
           onRestart={onRestart}
-          blocksCleared={blocksCleared}
-          boardsCleared={boardsCleared}
         />
         <GamePaused paused={paused} onResume={onResume} />
-        <LevelComplete levelCleared={levelCleared} onNewLevel={onNewLevel} />
+        <LevelComplete
+          levelCleared={levelCleared}
+          onNewLevel={onNewLevel}
+          boardCleared={blocks.length === 0}
+        />
       </Container>
     );
   }

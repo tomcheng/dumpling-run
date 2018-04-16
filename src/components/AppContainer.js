@@ -22,6 +22,9 @@ import {
   MAX_WALLS,
   MINIMUM_SCREEN_PADDING,
   NUM_COLORS,
+  POINTS_PER_BLOCK,
+  POINTS_FOR_CLEARING_BOARD,
+  POINTS_FOR_CLEARING_LEVEL,
   REMOVAL_DELAY
 } from "../gameConstants";
 import App from "./App";
@@ -85,8 +88,6 @@ const newState = () => ({
   wallDamages: {},
   blocksForNextChili: BLOCKS_BEFORE_NEXT_CHILI,
   blocksToClearLevel: BLOCKS_TO_CLEAR_LEVEL(1),
-  blocksCleared: 0,
-  boardsCleared: 0,
   level: 1,
   rowsAdded: 0,
   score: 0,
@@ -299,11 +300,11 @@ class AppContainer extends Component {
           state.blocksForNextChili - blockIdsToRemove.length,
           0
         ),
-        blocksCleared: state.blocksCleared + blockIdsToRemove.length,
         blocksToClearLevel: Math.max(
           state.blocksToClearLevel - blockIdsToRemove.length,
           0
         ),
+        score: state.score + blockIdsToRemove.length * POINTS_PER_BLOCK,
         wallDamages: omit(state.wallDamages, blockIdsToRemove)
       }),
       () => {
@@ -348,18 +349,26 @@ class AppContainer extends Component {
   };
 
   handleNewLevel = () => {
-    this.setState(state => ({
+    const { blocks, level, score } = this.state;
+    const newLevel = level + 1;
+    let newScore = score + POINTS_FOR_CLEARING_LEVEL;
+
+    if (blocks.length === 0) {
+      newScore += POINTS_FOR_CLEARING_BOARD;
+    }
+
+    this.setState({
       blocks: getBlocks({
         rows: STARTING_ROWS,
-        level: state.level + 1
+        level: newLevel
       }),
-      boardsCleared: state.boardsCleared + 1,
       blocksForNextChili: BLOCKS_BEFORE_NEXT_CHILI,
-      blocksToClearLevel: BLOCKS_TO_CLEAR_LEVEL(state.level + 1),
-      level: state.level + 1,
+      blocksToClearLevel: BLOCKS_TO_CLEAR_LEVEL(newLevel),
+      level: newLevel,
       levelCleared: false,
-      resetTimer: true
-    }));
+      resetTimer: true,
+      score: newScore
+    });
   };
 
   handleClearResetTimer = () => {
@@ -445,11 +454,9 @@ class AppContainer extends Component {
     const {
       blockIdsToRemove,
       blocks,
-      blocksCleared,
       blocksForNextChili,
       blocksToClearLevel,
       blockWidth,
-      boardsCleared,
       gameWidth,
       heldBlockIds,
       level,
@@ -476,11 +483,9 @@ class AppContainer extends Component {
         <App
           blockIdsToRemove={blockIdsToRemove}
           blocks={blocks}
-          blocksCleared={blocksCleared}
           blocksForNextChili={blocksForNextChili}
           blocksToClearLevel={blocksToClearLevel}
           blockWidth={blockWidth}
-          boardsCleared={boardsCleared}
           gameWidth={gameWidth}
           heldBlockIds={heldBlockIds}
           level={level}
