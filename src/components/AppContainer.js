@@ -114,6 +114,11 @@ class AppContainer extends Component {
       return;
     }
 
+    if (this.state.lost) {
+      saveState(null);
+      return;
+    }
+
     saveState(this.state);
   };
 
