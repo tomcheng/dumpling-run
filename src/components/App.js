@@ -95,7 +95,7 @@ class App extends Component {
 
   gameAreaRef = createRef();
 
-  state = { gameHeight: 0 };
+  state = { gameHeight: 0, touched: false };
 
   componentDidMount() {
     this.setDimensions();
@@ -137,7 +137,7 @@ class App extends Component {
       onRestart,
       onResume
     } = this.props;
-    const { gameHeight } = this.state;
+    const { gameHeight, touched } = this.state;
 
     const isHolding = heldBlockIds.length > 0;
     const blockHeight = BLOCK_HEIGHT(blockWidth, gameHeight);
@@ -167,10 +167,15 @@ class App extends Component {
               {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
                 <Column
                   key={columnIndex}
-                  onClick={() => onClickColumn(columnIndex)}
+                  onClick={() => {
+                    if (!touched) {
+                      onClickColumn(columnIndex);
+                    }
+                  }}
                   onTouchStart={evt => {
                     evt.preventDefault();
                     onClickColumn(columnIndex);
+                    this.setState({ touched: true });
                   }}
                 />
               ))}
