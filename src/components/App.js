@@ -168,6 +168,10 @@ class App extends Component {
                 <Column
                   key={columnIndex}
                   onClick={() => onClickColumn(columnIndex)}
+                  onTouchStart={evt => {
+                    evt.preventDefault();
+                    onClickColumn(columnIndex);
+                  }}
                 />
               ))}
             </Columns>

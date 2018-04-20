@@ -120,7 +120,7 @@ class AppContainer extends Component {
     }
 
     saveState(this.state);
-  };
+  }
 
   componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKeyDown);
@@ -215,14 +215,11 @@ class AppContainer extends Component {
           : block
     );
 
-    this.setState(
-      { blocks: newBlocks, heldBlockIds: [] },
-      () => {
-        setTimeout(() => {
-          this.setBlocksToBeRemoved();
-        }, REMOVAL_DELAY);
-      }
-    );
+    this.setState({ blocks: newBlocks, heldBlockIds: [] }, () => {
+      setTimeout(() => {
+        this.setBlocksToBeRemoved();
+      }, REMOVAL_DELAY);
+    });
   };
 
   setBlocksToBeRemoved = () => {
