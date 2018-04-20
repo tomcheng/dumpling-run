@@ -66,6 +66,15 @@ class Wall extends Component {
       return { wallDamage: 0, damagedBricks: {} };
     }
 
+    if (nextProps.wallDamage && !prevState.damagedBricks) {
+      return {
+        wallDamage: nextProps.wallDamage,
+        damagedBricks: shuffle(range(14))
+          .slice(0, nextProps.wallDamage === 1 ? 4 : 10)
+          .reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+      };
+    }
+
     const bricksToDamage = shuffle(
       range(14).filter(i => !prevState.damagedBricks[i])
     ).slice(0, nextProps.wallDamage === 1 ? 4 : 6);

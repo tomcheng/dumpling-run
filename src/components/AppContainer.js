@@ -1,5 +1,6 @@
 import React, { Component, createRef } from "react";
 import findIndex from "lodash/findIndex";
+import get from "lodash/get";
 import keyBy from "lodash/keyBy";
 import last from "lodash/last";
 import omit from "lodash/omit";
@@ -9,6 +10,7 @@ import sortBy from "lodash/sortBy";
 import takeRightWhile from "lodash/takeRightWhile";
 import times from "lodash/times";
 import { getAdjacents } from "../utils/gridUtils";
+import { getSavedState, saveState } from "../utils/persistence";
 import {
   CHANCE_OF_WALL_FOR_ROW,
   MAX_ROWS,
@@ -29,14 +31,13 @@ import {
 } from "../gameConstants";
 import App from "./App";
 
-let blockId = 0;
-
 const getBlocks = ({
   rows = 1,
   level = 1,
   existingBlocks = [],
   addChili = false
 }) => {
+  let blockId = get(last(existingBlocks), "id", 0);
   const newBlocks = [];
   const columnsWithWall = range(NUM_COLUMNS).filter(col =>
     existingBlocks.some(b => b.isWall && b.column === col)
@@ -100,13 +101,21 @@ const newState = () => ({
 
 class AppContainer extends Component {
   containerRef = createRef();
-  state = { ...newState(), gameWidth: 0, blockWidth: 0 };
+  state = { ...(getSavedState() || newState()), gameWidth: 0, blockWidth: 0 };
 
   componentDidMount() {
     this.setDimensions();
     window.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("resize", this.setDimensions);
   }
+
+  componentDidUpdate() {
+    if (this.state.blockIdsToRemove.length > 0) {
+      return;
+    }
+
+    saveState(this.state);
+  };
 
   componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKeyDown);
@@ -201,11 +210,14 @@ class AppContainer extends Component {
           : block
     );
 
-    this.setState({ blocks: newBlocks, heldBlockIds: [] }, () => {
-      setTimeout(() => {
-        this.setBlocksToBeRemoved();
-      }, REMOVAL_DELAY);
-    });
+    this.setState(
+      { blocks: newBlocks, heldBlockIds: [] },
+      () => {
+        setTimeout(() => {
+          this.setBlocksToBeRemoved();
+        }, REMOVAL_DELAY);
+      }
+    );
   };
 
   setBlocksToBeRemoved = () => {
@@ -380,7 +392,8 @@ class AppContainer extends Component {
 
     if (
       blocks.some(
-        block => block.row + 1 > MAX_ROWS && !blockIdsToRemove.includes(block.id)
+        block =>
+          block.row + 1 > MAX_ROWS && !blockIdsToRemove.includes(block.id)
       )
     ) {
       this.setState({ lost: true });
