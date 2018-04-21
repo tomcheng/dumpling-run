@@ -35,9 +35,8 @@ const LevelComplete = ({ levelCleared, onNewLevel, boardCleared }) => (
     <Animate delay={boardCleared ? 2800 : 2000}>
       {opacity => (
         <Modal.Button
-          onClick={onNewLevel}
+          onClick={opacity > 0 ? onNewLevel : null}
           style={{ opacity }}
-          disabled={opacity < 1}
         >
           Next
         </Modal.Button>
