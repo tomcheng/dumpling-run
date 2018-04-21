@@ -334,11 +334,12 @@ class AppContainer extends Component {
       blocks,
       rowsAdded,
       levelCleared,
+      levelClearedPending,
       blocksForNextChili,
       level
     } = this.state;
 
-    if (levelCleared) {
+    if (levelCleared || levelClearedPending) {
       return;
     }
 
