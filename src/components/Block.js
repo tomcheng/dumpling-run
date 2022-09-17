@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import {
   BLOCK_COLORS,
   COLORS,
@@ -31,7 +31,7 @@ const StyledBlock = styled.div`
   opacity: ${props => (props.state === "entering" ? 0 : 1)};
   ${props =>
     props.state === "exited"
-      ? `animation: ${BLOCK_DISAPPEAR_DURATION /
+      ? css`animation: ${BLOCK_DISAPPEAR_DURATION /
           BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
       : ""};
   pointer-events: none;
@@ -45,7 +45,7 @@ const StyledWall = styled(Wall)`
   opacity: ${props => (props.state === "entering" ? 0 : 1)};
   ${props =>
     props.state === "exited"
-      ? `animation: ${BLOCK_DISAPPEAR_DURATION /
+      ? css`animation: ${BLOCK_DISAPPEAR_DURATION /
           BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
       : ""};
   pointer-events: none;
@@ -57,13 +57,13 @@ const StyledChili = styled(ChiliBlock)`
   opacity: ${props => (props.state === "entering" ? 0 : 1)};
   ${props =>
     props.state === "exited"
-      ? `animation: ${BLOCK_DISAPPEAR_DURATION /
+      ? css`animation: ${BLOCK_DISAPPEAR_DURATION /
           BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
       : ""};
   pointer-events: none;
   ${props =>
     props.state === "exited"
-      ? `animation: ${BLOCK_DISAPPEAR_DURATION /
+      ? css`animation: ${BLOCK_DISAPPEAR_DURATION /
           BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
       : ""};
 `;

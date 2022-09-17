@@ -27,7 +27,7 @@ import {
   POINTS_PER_BLOCK,
   POINTS_FOR_CLEARING_BOARD,
   POINTS_FOR_CLEARING_LEVEL,
-  REMOVAL_DELAY
+  REMOVAL_DELAY,
 } from "../gameConstants";
 import App from "./App";
 
@@ -35,12 +35,12 @@ const getBlocks = ({
   rows = 1,
   level = 1,
   existingBlocks = [],
-  addChili = false
+  addChili = false,
 }) => {
   let blockId = get(last(existingBlocks), "id", 0);
   const newBlocks = [];
-  const columnsWithWall = range(NUM_COLUMNS).filter(col =>
-    existingBlocks.some(b => b.isWall && b.column === col)
+  const columnsWithWall = range(NUM_COLUMNS).filter((col) =>
+    existingBlocks.some((b) => b.isWall && b.column === col)
   );
 
   for (let row = 0; row < rows; row++) {
@@ -48,7 +48,7 @@ const getBlocks = ({
       Math.random() < CHANCE_OF_WALL_FOR_ROW &&
       columnsWithWall.length < MAX_WALLS;
     const wallColumn = sample(
-      range(NUM_COLUMNS).filter(col => !columnsWithWall.includes(col))
+      range(NUM_COLUMNS).filter((col) => !columnsWithWall.includes(col))
     );
 
     if (shouldHaveWall) {
@@ -57,7 +57,7 @@ const getBlocks = ({
 
     const chiliColumn = sample(
       range(NUM_COLUMNS).filter(
-        col => !columnsWithWall.includes(col) && col !== wallColumn
+        (col) => !columnsWithWall.includes(col) && col !== wallColumn
       )
     );
 
@@ -73,7 +73,7 @@ const getBlocks = ({
             ? null
             : sample(BLOCK_COLORS.slice(0, NUM_COLORS(level))),
         isWall,
-        isChili
+        isChili,
       });
     }
   }
@@ -96,7 +96,7 @@ const newState = () => ({
   levelClearedPending: false,
   lost: false,
   paused: false,
-  resetTimer: false
+  resetTimer: false,
 });
 
 class AppContainer extends Component {
@@ -137,24 +137,24 @@ class AppContainer extends Component {
     );
     const gameWidth = blockWidth * NUM_COLUMNS + GUTTER * (NUM_COLUMNS - 1);
 
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
       blockWidth,
-      gameWidth
+      gameWidth,
     }));
   };
 
   moveLeft = () => {
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      position: Math.max(state.position - 1, 0)
+      position: Math.max(state.position - 1, 0),
     }));
   };
 
   moveRight = () => {
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      position: Math.min(state.position + 1, NUM_COLUMNS - 1)
+      position: Math.min(state.position + 1, NUM_COLUMNS - 1),
     }));
   };
 
@@ -193,9 +193,9 @@ class AppContainer extends Component {
     this.setState({
       heldBlockIds: isChili
         ? [id]
-        : takeRightWhile(currentColumn, block => block.color === color)
-            .map(block => block.id)
-            .reverse()
+        : takeRightWhile(currentColumn, (block) => block.color === color)
+            .map((block) => block.id)
+            .reverse(),
     });
   };
 
@@ -204,15 +204,14 @@ class AppContainer extends Component {
     const lastRow = this.getCurrentColumn().length - 1;
     const numHeld = heldBlockIds.length;
 
-    const newBlocks = blocks.map(
-      block =>
-        heldBlockIds.includes(block.id)
-          ? {
-              ...block,
-              column: position,
-              row: lastRow + numHeld - heldBlockIds.indexOf(block.id)
-            }
-          : block
+    const newBlocks = blocks.map((block) =>
+      heldBlockIds.includes(block.id)
+        ? {
+            ...block,
+            column: position,
+            row: lastRow + numHeld - heldBlockIds.indexOf(block.id),
+          }
+        : block
     );
 
     this.setState({ blocks: newBlocks, heldBlockIds: [] }, () => {
@@ -223,34 +222,31 @@ class AppContainer extends Component {
   };
 
   setBlocksToBeRemoved = () => {
-    const {
-      blocks,
-      wallDamages,
-      blockIdsToRemove,
-      blocksToClearLevel
-    } = this.state;
+    const { blocks, wallDamages, blockIdsToRemove, blocksToClearLevel } =
+      this.state;
     const currentColumn = this.getCurrentColumn();
     const lastBlock = last(currentColumn);
-    const blocksById = keyBy(blocks, block => block.id);
+    const blocksById = keyBy(blocks, (block) => block.id);
     let newBlockIdsToRemove = [];
     let wallIds = [];
 
     if (lastBlock.isChili) {
-      newBlockIdsToRemove = currentColumn.map(b => b.id);
+      newBlockIdsToRemove = currentColumn.map((b) => b.id);
       wallIds = blocks
         .filter(
-          b =>
+          (b) =>
             b.isWall &&
             [lastBlock.column - 1, lastBlock.column + 1].includes(b.column) &&
             b.row <= lastBlock.row
         )
-        .map(b => b.id);
+        .map((b) => b.id);
     } else {
       const adjacentBlockAndWallIds = getAdjacents(blocks, lastBlock.id);
       if (
-        adjacentBlockAndWallIds.filter(id => !blocksById[id].isWall).length >= 4
+        adjacentBlockAndWallIds.filter((id) => !blocksById[id].isWall).length >=
+        4
       ) {
-        adjacentBlockAndWallIds.forEach(id => {
+        adjacentBlockAndWallIds.forEach((id) => {
           if (blocksById[id].isWall) {
             wallIds.push(id);
           } else {
@@ -260,8 +256,8 @@ class AppContainer extends Component {
       }
     }
 
-    const wallIdsToUpdate = wallIds.filter(id => wallDamages[id] !== 2);
-    const wallIdsToRemove = wallIds.filter(id => wallDamages[id] === 2);
+    const wallIdsToUpdate = wallIds.filter((id) => wallDamages[id] !== 2);
+    const wallIdsToRemove = wallIds.filter((id) => wallDamages[id] === 2);
 
     const newWallDamages = wallIdsToUpdate.reduce(
       (acc, curr) => ({ ...acc, [curr]: (acc[curr] || 0) + 1 }),
@@ -278,35 +274,39 @@ class AppContainer extends Component {
       wallDamages: newWallDamages,
       levelClearedPending:
         newIdsToRemove.length === blocks.length ||
-        newIdsToRemove.length >= blocksToClearLevel
+        newIdsToRemove.length >= blocksToClearLevel,
     });
   };
 
   handleRemoveBlock = () => {
-    const { blocks, blockIdsToRemove, levelClearedPending } = this.state;
+    this.setState((state) => {
+      const { blocks, blockIdsToRemove, levelClearedPending } = state;
 
-    if (blockIdsToRemove.length === 0) {
-      return;
-    }
+      if (blockIdsToRemove.length === 0) {
+        return;
+      }
 
-    const newBlocks = blocks.filter(
-      block => !blockIdsToRemove.includes(block.id)
-    );
+      const newBlocks = blocks.filter(
+        (block) => !blockIdsToRemove.includes(block.id)
+      );
 
-    for (let i = 0; i < NUM_COLUMNS; i++) {
-      const column = sortBy(newBlocks.filter(({ column }) => column === i), [
-        "row"
-      ]);
-      column.forEach((block, index) => {
-        if (block.row !== index) {
-          const blockIndex = findIndex(newBlocks, ({ id }) => id === block.id);
-          newBlocks[blockIndex] = { ...block, row: index };
-        }
-      });
-    }
+      for (let i = 0; i < NUM_COLUMNS; i++) {
+        const column = sortBy(
+          newBlocks.filter(({ column }) => column === i),
+          ["row"]
+        );
+        column.forEach((block, index) => {
+          if (block.row !== index) {
+            const blockIndex = findIndex(
+              newBlocks,
+              ({ id }) => id === block.id
+            );
+            newBlocks[blockIndex] = { ...block, row: index };
+          }
+        });
+      }
 
-    this.setState(
-      state => ({
+      return {
         ...state,
         blocks: newBlocks,
         blockIdsToRemove: [],
@@ -319,14 +319,12 @@ class AppContainer extends Component {
           0
         ),
         score: state.score + blockIdsToRemove.length * POINTS_PER_BLOCK,
-        wallDamages: omit(state.wallDamages, blockIdsToRemove)
-      }),
-      () => {
-        if (levelClearedPending) {
-          this.setState({ levelCleared: true, levelClearedPending: false });
-        }
-      }
-    );
+        wallDamages: omit(state.wallDamages, blockIdsToRemove),
+        ...(levelClearedPending
+          ? { levelCleared: true, levelClearedPending: false }
+          : null),
+      };
+    });
   };
 
   handleAddNewRow = () => {
@@ -336,7 +334,7 @@ class AppContainer extends Component {
       levelCleared,
       levelClearedPending,
       blocksForNextChili,
-      level
+      level,
     } = this.state;
 
     if (levelCleared || levelClearedPending) {
@@ -345,9 +343,9 @@ class AppContainer extends Component {
 
     const addChili = blocksForNextChili === 0;
     const newBlocks = blocks
-      .map(block => ({
+      .map((block) => ({
         ...block,
-        row: block.row + 1
+        row: block.row + 1,
       }))
       .concat(getBlocks({ level, existingBlocks: blocks, addChili }));
 
@@ -357,7 +355,7 @@ class AppContainer extends Component {
         rowsAdded: rowsAdded + 1,
         blocksForNextChili: addChili
           ? BLOCKS_BEFORE_NEXT_CHILI
-          : blocksForNextChili
+          : blocksForNextChili,
       },
       this.checkLose
     );
@@ -375,7 +373,7 @@ class AppContainer extends Component {
     this.setState({
       blocks: getBlocks({
         rows: STARTING_ROWS,
-        level: newLevel
+        level: newLevel,
       }),
       blocksForNextChili: BLOCKS_BEFORE_NEXT_CHILI,
       blocksToClearLevel: BLOCKS_TO_CLEAR_LEVEL(newLevel),
@@ -385,7 +383,7 @@ class AppContainer extends Component {
       level: newLevel,
       levelCleared: false,
       resetTimer: true,
-      score: newScore
+      score: newScore,
     });
   };
 
@@ -398,7 +396,7 @@ class AppContainer extends Component {
 
     if (
       blocks.some(
-        block =>
+        (block) =>
           block.row + 1 > MAX_ROWS && !blockIdsToRemove.includes(block.id)
       )
     ) {
@@ -423,7 +421,7 @@ class AppContainer extends Component {
     this.handleAddNewRow();
   };
 
-  handleKeyDown = evt => {
+  handleKeyDown = (evt) => {
     switch (evt.code) {
       case "Space":
         this.toggle();
@@ -439,10 +437,10 @@ class AppContainer extends Component {
     }
   };
 
-  handleClickColumn = targetPosition => {
+  handleClickColumn = (targetPosition) => {
     const { blocks, heldBlockIds, position } = this.state;
     const columnAmounts = times(NUM_COLUMNS, () => 0);
-    blocks.forEach(block => {
+    blocks.forEach((block) => {
       if (heldBlockIds.includes(block.id)) {
         return;
       }
@@ -461,9 +459,9 @@ class AppContainer extends Component {
     }
 
     this.setState(
-      state => ({
+      (state) => ({
         ...state,
-        position: newPosition
+        position: newPosition,
       }),
       () => {
         if (newPosition === targetPosition) {
@@ -489,7 +487,7 @@ class AppContainer extends Component {
       position,
       resetTimer,
       score,
-      wallDamages
+      wallDamages,
     } = this.state;
 
     return (
@@ -500,7 +498,7 @@ class AppContainer extends Component {
           width: "100vw",
           display: "flex",
           flexDirection: "column",
-          overflow: "hidden"
+          overflow: "hidden",
         }}
       >
         <App

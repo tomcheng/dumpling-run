@@ -162,7 +162,7 @@ class App extends Component {
             onAddNewRow={onAddNewRow}
             onClearResetTimer={onClearResetTimer}
           />
-          <GameArea innerRef={this.gameAreaRef}>
+          <GameArea ref={this.gameAreaRef}>
             <Columns>
               {[...Array(NUM_COLUMNS)].map((_, columnIndex) => (
                 <Column

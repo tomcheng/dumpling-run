@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import get from "lodash/get";
 import "./index.css";
 import AppContainer from "./components/AppContainer";
@@ -11,6 +11,7 @@ if (orientationLock) {
   orientationLock("landscape").catch(e => {});
 }
 
-ReactDOM.render(<AppContainer />, document.getElementById("root"));
+const root = createRoot(document.getElementById("root"));
+root.render(<AppContainer />)
 
 registerServiceWorker();
