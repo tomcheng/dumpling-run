@@ -4,7 +4,7 @@ import styled from "styled-components";
 import {
   GUTTER,
   CHARACTER_SIZE,
-  CHARACTER_VERTICAL_OFFSET
+  CHARACTER_VERTICAL_OFFSET,
 } from "../gameConstants";
 import Dumpling from "./Dumpling";
 import DumplingActive from "./DumplingActive";
@@ -15,22 +15,28 @@ const Container = styled.div`
   pointer-events: none;
 `;
 
-const Player = ({ isHolding, position, blockWidth }) => (
+const Player = ({ character, isHolding, position, blockWidth }) => (
   <Container
     style={{
       left: 0,
-      bottom: CHARACTER_VERTICAL_OFFSET(blockWidth),
+      bottom: CHARACTER_VERTICAL_OFFSET({ blockWidth, character }),
       transform: `translate3d(${Math.round(
         GUTTER +
           position * (blockWidth + GUTTER) +
-          (blockWidth - CHARACTER_SIZE(blockWidth)) / 2
-      )}px, 0, 0)`
+          (blockWidth - CHARACTER_SIZE({ blockWidth, character })) / 2
+      )}px, 0, 0)`,
     }}
   >
     {isHolding ? (
-      <DumplingActive width={CHARACTER_SIZE(blockWidth)} />
+      <DumplingActive
+        width={CHARACTER_SIZE({ blockWidth, character })}
+        character={character}
+      />
     ) : (
-      <Dumpling width={CHARACTER_SIZE(blockWidth)} />
+      <Dumpling
+        width={CHARACTER_SIZE({ blockWidth, character })}
+        character={character}
+      />
     )}
   </Container>
 );
@@ -38,7 +44,7 @@ const Player = ({ isHolding, position, blockWidth }) => (
 Player.propTypes = {
   blockWidth: PropTypes.number.isRequired,
   isHolding: PropTypes.bool.isRequired,
-  position: PropTypes.number.isRequired
+  position: PropTypes.number.isRequired,
 };
 
 export default Player;

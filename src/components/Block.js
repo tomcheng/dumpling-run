@@ -10,7 +10,7 @@ import {
   BLOCK_APPEAR_DURATION,
   BLOCK_DISAPPEAR_DURATION,
   BLOCK_DISAPPEAR_BLINK_COUNT,
-  CHARACTER_HOLD_POSITION
+  CHARACTER_HOLD_POSITION,
 } from "../gameConstants";
 import Transition from "react-transition-group/Transition";
 import ChiliBlock from "./ChiliBlock";
@@ -28,11 +28,13 @@ const blink = keyframes`
 const StyledBlock = styled.div`
   transition: transform ${BLOCK_MOVE_DURATION}ms ease-out,
     opacity ${BLOCK_APPEAR_DURATION}ms ease-in-out ${BLOCK_MOVE_DURATION}ms;
-  opacity: ${props => (props.state === "entering" ? 0 : 1)};
-  ${props =>
+  opacity: ${(props) => (props.state === "entering" ? 0 : 1)};
+  ${(props) =>
     props.state === "exited"
-      ? css`animation: ${BLOCK_DISAPPEAR_DURATION /
-          BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
+      ? css`
+          animation: ${BLOCK_DISAPPEAR_DURATION / BLOCK_DISAPPEAR_BLINK_COUNT}ms
+            ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT};
+        `
       : ""};
   pointer-events: none;
   border: ${BLOCK_BORDER_WIDTH}px solid ${COLORS.brown};
@@ -42,11 +44,13 @@ const StyledBlock = styled.div`
 const StyledWall = styled(Wall)`
   transition: transform ${BLOCK_MOVE_DURATION}ms ease-out,
     opacity ${BLOCK_APPEAR_DURATION}ms ease-in-out ${BLOCK_MOVE_DURATION}ms;
-  opacity: ${props => (props.state === "entering" ? 0 : 1)};
-  ${props =>
+  opacity: ${(props) => (props.state === "entering" ? 0 : 1)};
+  ${(props) =>
     props.state === "exited"
-      ? css`animation: ${BLOCK_DISAPPEAR_DURATION /
-          BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
+      ? css`
+          animation: ${BLOCK_DISAPPEAR_DURATION / BLOCK_DISAPPEAR_BLINK_COUNT}ms
+            ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT};
+        `
       : ""};
   pointer-events: none;
 `;
@@ -54,21 +58,26 @@ const StyledWall = styled(Wall)`
 const StyledChili = styled(ChiliBlock)`
   transition: transform ${BLOCK_MOVE_DURATION}ms ease-out,
     opacity ${BLOCK_APPEAR_DURATION}ms ease-in-out ${BLOCK_MOVE_DURATION}ms;
-  opacity: ${props => (props.state === "entering" ? 0 : 1)};
-  ${props =>
+  opacity: ${(props) => (props.state === "entering" ? 0 : 1)};
+  ${(props) =>
     props.state === "exited"
-      ? css`animation: ${BLOCK_DISAPPEAR_DURATION /
-          BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
+      ? css`
+          animation: ${BLOCK_DISAPPEAR_DURATION / BLOCK_DISAPPEAR_BLINK_COUNT}ms
+            ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT};
+        `
       : ""};
   pointer-events: none;
-  ${props =>
+  ${(props) =>
     props.state === "exited"
-      ? css`animation: ${BLOCK_DISAPPEAR_DURATION /
-          BLOCK_DISAPPEAR_BLINK_COUNT}ms ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT}`
+      ? css`
+          animation: ${BLOCK_DISAPPEAR_DURATION / BLOCK_DISAPPEAR_BLINK_COUNT}ms
+            ${blink} step-end ${BLOCK_DISAPPEAR_BLINK_COUNT};
+        `
       : ""};
 `;
 
 const Block = ({
+  character,
   color,
   column,
   row,
@@ -81,7 +90,7 @@ const Block = ({
   gameHeight,
   toRemove,
   wallDamage,
-  onRemove
+  onRemove,
 }) => {
   const positionStyles = {
     position: "absolute",
@@ -92,10 +101,10 @@ const Block = ({
     transform: `translate3d(0, ${
       held
         ? gameHeight -
-          CHARACTER_HOLD_POSITION(blockWidth) -
+          CHARACTER_HOLD_POSITION({ blockWidth, character }) -
           (holdPosition + 1) * (blockHeight + GUTTER)
         : row * (blockHeight + GUTTER)
-    }px, 0)`
+    }px, 0)`,
   };
 
   return (
@@ -110,13 +119,19 @@ const Block = ({
         });
       }}
     >
-      {state => {
+      {(state) => {
         if (isChili) {
           return <StyledChili state={state} style={positionStyles} />;
         }
 
         if (isWall) {
-          return <StyledWall state={state} style={positionStyles} wallDamage={wallDamage} />;
+          return (
+            <StyledWall
+              state={state}
+              style={positionStyles}
+              wallDamage={wallDamage}
+            />
+          );
         }
 
         return (
@@ -124,7 +139,7 @@ const Block = ({
             state={state}
             style={{
               ...positionStyles,
-              backgroundColor: COLORS[color]
+              backgroundColor: COLORS[color],
             }}
           />
         );
@@ -146,7 +161,7 @@ Block.propTypes = {
   color: PropTypes.oneOf(BLOCK_COLORS),
   holdPosition: PropTypes.number,
   row: PropTypes.number,
-  wallDamage: PropTypes.number
+  wallDamage: PropTypes.number,
 };
 
 export default Block;

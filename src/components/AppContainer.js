@@ -97,6 +97,7 @@ const newState = () => ({
   lost: false,
   paused: false,
   resetTimer: false,
+  character: "miseh",
 });
 
 class AppContainer extends Component {
@@ -137,25 +138,22 @@ class AppContainer extends Component {
     );
     const gameWidth = blockWidth * NUM_COLUMNS + GUTTER * (NUM_COLUMNS - 1);
 
-    this.setState((state) => ({
-      ...state,
+    this.setState({
       blockWidth,
       gameWidth,
-    }));
+    });
   };
 
   moveLeft = () => {
-    this.setState((state) => ({
-      ...state,
+    this.setState({
       position: Math.max(state.position - 1, 0),
-    }));
+    });
   };
 
   moveRight = () => {
-    this.setState((state) => ({
-      ...state,
+    this.setState({
       position: Math.min(state.position + 1, NUM_COLUMNS - 1),
-    }));
+    });
   };
 
   getCurrentColumn = (state = this.state) => {
@@ -459,10 +457,9 @@ class AppContainer extends Component {
     }
 
     this.setState(
-      (state) => ({
-        ...state,
+      {
         position: newPosition,
-      }),
+      },
       () => {
         if (newPosition === targetPosition) {
           this.toggle();
@@ -478,6 +475,7 @@ class AppContainer extends Component {
       blocksForNextChili,
       blocksToClearLevel,
       blockWidth,
+      character,
       gameWidth,
       heldBlockIds,
       level,
@@ -507,6 +505,7 @@ class AppContainer extends Component {
           blocksForNextChili={blocksForNextChili}
           blocksToClearLevel={blocksToClearLevel}
           blockWidth={blockWidth}
+          character={character}
           gameWidth={gameWidth}
           heldBlockIds={heldBlockIds}
           level={level}

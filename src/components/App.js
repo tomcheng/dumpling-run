@@ -8,7 +8,7 @@ import {
   MINIMUM_SCREEN_PADDING,
   COLORS,
   BLOCK_HEIGHT,
-  NEW_ROW_INTERVAL
+  NEW_ROW_INTERVAL,
 } from "../gameConstants";
 import GameHeader from "./GameHeader";
 import Timer from "./Timer";
@@ -66,12 +66,13 @@ class App extends Component {
     blocks: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number.isRequired,
-        column: PropTypes.number
+        column: PropTypes.number,
       })
     ).isRequired,
     blocksForNextChili: PropTypes.number.isRequired,
     blockWidth: PropTypes.number.isRequired,
     blocksToClearLevel: PropTypes.number.isRequired,
+    character: PropTypes.string.isRequired,
     gameWidth: PropTypes.number.isRequired,
     heldBlockIds: PropTypes.arrayOf(PropTypes.number).isRequired,
     level: PropTypes.number.isRequired,
@@ -90,7 +91,7 @@ class App extends Component {
     onPause: PropTypes.func.isRequired,
     onRemoveBlock: PropTypes.func.isRequired,
     onRestart: PropTypes.func.isRequired,
-    onResume: PropTypes.func.isRequired
+    onResume: PropTypes.func.isRequired,
   };
 
   gameAreaRef = createRef();
@@ -117,6 +118,7 @@ class App extends Component {
       blocksForNextChili,
       blocksToClearLevel,
       blockWidth,
+      character,
       gameWidth,
       heldBlockIds,
       level,
@@ -135,12 +137,12 @@ class App extends Component {
       onPause,
       onRemoveBlock,
       onRestart,
-      onResume
+      onResume,
     } = this.props;
     const { gameHeight, touched } = this.state;
 
     const isHolding = heldBlockIds.length > 0;
-    const blockHeight = BLOCK_HEIGHT(blockWidth, gameHeight);
+    const blockHeight = BLOCK_HEIGHT(blockWidth, gameHeight, character);
 
     return (
       <Container>
@@ -172,7 +174,7 @@ class App extends Component {
                       onClickColumn(columnIndex);
                     }
                   }}
-                  onTouchStart={evt => {
+                  onTouchStart={(evt) => {
                     evt.preventDefault();
                     onClickColumn(columnIndex);
                     this.setState({ touched: true });
@@ -187,6 +189,7 @@ class App extends Component {
                 isWall={isWall}
                 blockWidth={blockWidth}
                 blockHeight={blockHeight}
+                character={character}
                 column={heldBlockIds.includes(id) ? position : column}
                 gameHeight={gameHeight}
                 holdPosition={heldBlockIds.indexOf(id)}
@@ -197,6 +200,7 @@ class App extends Component {
               />
             ))}
             <Player
+              character={character}
               isHolding={isHolding}
               position={position}
               blockWidth={blockWidth}
