@@ -84,7 +84,7 @@ export const BLOCK_HEIGHT = simpleMemoize(
 // CHARACTER DIMENSIONS
 export const CHARACTER_SIZE = simpleMemoize(({ blockWidth, character }) =>
   character === "miseh"
-    ? clamp(blockWidth, (50 * 80) / 64, (140 * 80) / 64)
+    ? clamp((blockWidth * 80) / 64, (50 * 80) / 64, (140 * 80) / 64)
     : clamp(blockWidth, 50, 140)
 );
 export const CHARACTER_VERTICAL_OFFSET = simpleMemoize(

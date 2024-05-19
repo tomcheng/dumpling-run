@@ -505,7 +505,7 @@ class AppContainer extends Component {
           blocksForNextChili={blocksForNextChili}
           blocksToClearLevel={blocksToClearLevel}
           blockWidth={blockWidth}
-          character={character}
+          character="miseh"
           gameWidth={gameWidth}
           heldBlockIds={heldBlockIds}
           level={level}
