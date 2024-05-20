@@ -468,6 +468,8 @@ class AppContainer extends Component {
     );
   };
 
+  handleChangeCharacter = (character) => {};
+
   render() {
     const {
       blockIdsToRemove,
@@ -517,6 +519,7 @@ class AppContainer extends Component {
           score={score}
           wallDamages={wallDamages}
           onAddNewRow={this.handleAddNewRow}
+          onChangeCharacter={this.handleChangeCharacter}
           onClearResetTimer={this.handleClearResetTimer}
           onClickColumn={this.handleClickColumn}
           onFastForward={this.handleFastForward}

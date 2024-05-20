@@ -65,13 +65,13 @@ const DumplingActive = ({ width, character }) => {
           stroke-linejoin="round"
         />
         <path
-          d="M57.7606 38.4789C60.7761 38.0322 63.501 37.2224 64.0873 32.2804"
+          d="M57.7606 38.4789C60.6862 38.7653 63.2651 36.9702 64.0422 33.9396"
           stroke="#4D3D2F"
           stroke-width="2"
           stroke-linecap="round"
         />
         <path
-          d="M61.7978 30.996C62.775 32.2525 65.4055 32.4925 66.4327 30.9681"
+          d="M61.7978 32.9794C62.775 33.487 65.4055 33.584 66.4327 32.9681"
           stroke="#4D3D2F"
           stroke-width="2"
           stroke-linecap="round"
@@ -107,13 +107,13 @@ const DumplingActive = ({ width, character }) => {
           stroke-linejoin="round"
         />
         <path
-          d="M21.0139 38.4154C18.1124 37.8646 15.8229 37.2224 15.2365 32.2804"
+          d="M21.0139 38.4154C18.034 38.9463 15.3796 37.8001 15.0176 34.2407"
           stroke="#4D3D2F"
           stroke-width="2"
           stroke-linecap="round"
         />
         <path
-          d="M17.5261 30.996C16.5488 32.2525 13.9183 32.4925 12.8911 30.9681"
+          d="M17.5261 32.9773C16.5488 33.3927 13.9183 33.4721 12.8911 32.9681"
           stroke="#4D3D2F"
           stroke-width="2"
           stroke-linecap="round"

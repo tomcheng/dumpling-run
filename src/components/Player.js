@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import {
   GUTTER,
-  CHARACTER_SIZE,
+  CHARACTER_WIDTH,
   CHARACTER_VERTICAL_OFFSET,
 } from "../gameConstants";
 import Dumpling from "./Dumpling";
@@ -23,18 +23,18 @@ const Player = ({ character, isHolding, position, blockWidth }) => (
       transform: `translate3d(${Math.round(
         GUTTER +
           position * (blockWidth + GUTTER) +
-          (blockWidth - CHARACTER_SIZE({ blockWidth, character })) / 2
+          (blockWidth - CHARACTER_WIDTH({ blockWidth, character })) / 2
       )}px, 0, 0)`,
     }}
   >
     {isHolding ? (
       <DumplingActive
-        width={CHARACTER_SIZE({ blockWidth, character })}
+        width={CHARACTER_WIDTH({ blockWidth, character })}
         character={character}
       />
     ) : (
       <Dumpling
-        width={CHARACTER_SIZE({ blockWidth, character })}
+        width={CHARACTER_WIDTH({ blockWidth, character })}
         character={character}
       />
     )}

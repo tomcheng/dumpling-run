@@ -82,7 +82,7 @@ export const BLOCK_HEIGHT = simpleMemoize(
 );
 
 // CHARACTER DIMENSIONS
-export const CHARACTER_SIZE = simpleMemoize(({ blockWidth, character }) =>
+export const CHARACTER_WIDTH = simpleMemoize(({ blockWidth, character }) =>
   character === "miseh"
     ? clamp((blockWidth * 80) / 64, (50 * 80) / 64, (140 * 80) / 64)
     : clamp(blockWidth, 50, 140)
@@ -90,14 +90,14 @@ export const CHARACTER_SIZE = simpleMemoize(({ blockWidth, character }) =>
 export const CHARACTER_VERTICAL_OFFSET = simpleMemoize(
   ({ blockWidth, character }) =>
     character === "miseh"
-      ? -Math.round((5 / 80) * CHARACTER_SIZE({ blockWidth, character }))
-      : -Math.round((5 / 64) * CHARACTER_SIZE({ blockWidth, character }))
+      ? -Math.round((5 / 80) * CHARACTER_WIDTH({ blockWidth, character }))
+      : -Math.round((5 / 64) * CHARACTER_WIDTH({ blockWidth, character }))
 );
 export const CHARACTER_HOLD_POSITION = simpleMemoize(
   ({ blockWidth, character }) =>
     character === "miseh"
-      ? Math.round((34 / 80) * CHARACTER_SIZE({ blockWidth, character })) +
+      ? Math.round((34 / 80) * CHARACTER_WIDTH({ blockWidth, character })) +
         CHARACTER_VERTICAL_OFFSET({ blockWidth, character })
-      : Math.round((34 / 64) * CHARACTER_SIZE({ blockWidth, character })) +
+      : Math.round((34 / 64) * CHARACTER_WIDTH({ blockWidth, character })) +
         CHARACTER_VERTICAL_OFFSET({ blockWidth, character })
 );
