@@ -130,6 +130,7 @@ class App extends Component {
       score,
       wallDamages,
       onAddNewRow,
+      onChangeCharacter,
       onClearResetTimer,
       onClickColumn,
       onFastForward,
@@ -139,7 +140,7 @@ class App extends Component {
       onRestart,
       onResume,
     } = this.props;
-    const { gameHeight, touched } = this.state;
+    const { gameHeight, touched, isCharacterModalOpen } = this.state;
 
     const isHolding = heldBlockIds.length > 0;
     const blockHeight = BLOCK_HEIGHT(blockWidth, gameHeight, character);
@@ -208,12 +209,18 @@ class App extends Component {
           </GameArea>
         </GameContainer>
         <GameOver
-          level={level}
           lost={lost}
+          level={level}
           score={score}
           onRestart={onRestart}
         />
-        <GamePaused paused={paused} onResume={onResume} />
+        <GamePaused
+          blockWidth={blockWidth}
+          character={character}
+          paused={paused}
+          onChangeCharacter={onChangeCharacter}
+          onResume={onResume}
+        />
         <LevelComplete
           levelCleared={levelCleared}
           onNewLevel={onNewLevel}

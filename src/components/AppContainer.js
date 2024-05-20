@@ -468,7 +468,9 @@ class AppContainer extends Component {
     );
   };
 
-  handleChangeCharacter = (character) => {};
+  handleChangeCharacter = (character) => {
+    this.setState({ character });
+  };
 
   render() {
     const {
@@ -507,7 +509,7 @@ class AppContainer extends Component {
           blocksForNextChili={blocksForNextChili}
           blocksToClearLevel={blocksToClearLevel}
           blockWidth={blockWidth}
-          character="miseh"
+          character={character}
           gameWidth={gameWidth}
           heldBlockIds={heldBlockIds}
           level={level}
