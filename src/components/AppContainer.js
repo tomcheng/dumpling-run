@@ -97,7 +97,6 @@ const newState = () => ({
   lost: false,
   paused: false,
   resetTimer: false,
-  character: "miseh",
 });
 
 class AppContainer extends Component {
