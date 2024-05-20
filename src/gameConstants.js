@@ -90,14 +90,15 @@ export const CHARACTER_WIDTH = simpleMemoize(({ blockWidth, character }) =>
 export const CHARACTER_VERTICAL_OFFSET = simpleMemoize(
   ({ blockWidth, character }) =>
     character === "miseh"
-      ? -Math.round((5 / 80) * CHARACTER_WIDTH({ blockWidth, character }))
+      ? -(Math.round((5 / 80) * CHARACTER_WIDTH({ blockWidth, character })) + 3)
       : -Math.round((5 / 64) * CHARACTER_WIDTH({ blockWidth, character }))
 );
 export const CHARACTER_HOLD_POSITION = simpleMemoize(
   ({ blockWidth, character }) =>
     character === "miseh"
       ? Math.round((34 / 80) * CHARACTER_WIDTH({ blockWidth, character })) +
-        CHARACTER_VERTICAL_OFFSET({ blockWidth, character })
+        CHARACTER_VERTICAL_OFFSET({ blockWidth, character }) +
+        3
       : Math.round((34 / 64) * CHARACTER_WIDTH({ blockWidth, character })) +
         CHARACTER_VERTICAL_OFFSET({ blockWidth, character })
 );
